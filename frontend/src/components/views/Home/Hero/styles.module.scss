@@ -1,0 +1,52 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 600px;
+  max-height: 100%;
+  width: 450px;
+  max-width: 100%;
+  padding: 20px;
+
+  svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+
+    path {
+      fill: #1f2935;
+    }
+  }
+
+  .features {
+    width: 100%;
+    max-width: 520px;
+    padding: 10px;
+
+    h3 {
+      font-family: "Inter", sans-serif;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    ul {
+      display: grid;
+      grid-template-areas:
+        "item item"
+        "item item";
+      place-items: bottom;
+      list-style: none;
+
+      li {
+        border-radius: 2px;
+        padding: 3px;
+        border: 1px solid whitesmoke;
+        margin: 5px;
+      }
+    }
+  }
+}

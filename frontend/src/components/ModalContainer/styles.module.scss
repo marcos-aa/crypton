@@ -1,0 +1,68 @@
+.modalContainer {
+  z-index: 10;
+  position: absolute !important;
+  top: 0;
+  border: none;
+  background-color: var(--modal-main);
+  max-height: 100%;
+  overflow-x: hidden;
+}
+
+#innerModal {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: var(--modal-sub);
+}
+#credentials {
+  width: 400px;
+}
+
+#innerModal {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: var(--modal-sub) !important;
+}
+
+#register {
+  align-items: flex-start;
+
+  > div,
+  > button {
+    animation: slidein 0.5s forwards;
+  }
+
+  > div {
+    position: absolute;
+    right: 0;
+    max-width: 100%;
+    width: 400px;
+    height: 100%;
+    padding: 10px;
+    padding-top: 50px;
+    animation: slidein 0.5s forwards;
+    transition: width 0.5s;
+    background-color: white;
+  }
+
+  @keyframes slidein {
+    from {
+      right: -400px;
+    }
+    to {
+      right: 0;
+    }
+  }
+}
+
+@media (max-width: 440px) {
+  .modalContainer {
+    padding: 0;
+  }
+
+  #register {
+    > div {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}

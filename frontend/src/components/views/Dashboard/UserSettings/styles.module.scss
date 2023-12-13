@@ -1,0 +1,108 @@
+#settingsTitle,
+.settingsList {
+  padding: 10px;
+  width: var(--modal-width);
+  background-color: white;
+  max-width: 100%;
+}
+
+.title {
+  text-transform: uppercase;
+}
+
+#settingsTitle {
+  text-align: center;
+}
+
+.settingsList {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  height: 700px;
+  max-height: 100%;
+
+  .updateField,
+  #directUpdate,
+  #deleteUser,
+  .minorTitle {
+    width: 700px;
+    max-width: 100%;
+  }
+
+  #directUpdate {
+    --action-width: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    label {
+      font-size: 1.2rem;
+      flex-basis: 100%;
+    }
+
+    input {
+      width: calc(100% - (var(--action-width) + 10px));
+      padding: 0 10px;
+      height: 30px;
+    }
+
+    button {
+      color: white;
+      background-color: var(--button-color);
+    }
+
+    button,
+    input {
+      border-radius: 2px;
+    }
+  }
+
+  .updateField {
+    display: flex;
+    justify-content: space-between;
+    row-gap: 10px;
+    align-items: center;
+    width: 700px;
+    max-width: 100%;
+    font-size: 1.2rem;
+
+    .credentialField {
+      display: flex;
+      flex-direction: column;
+
+      span {
+        font-size: 1rem;
+        color: #686565;
+      }
+    }
+  }
+
+  #directUpdate,
+  .updateField {
+    column-gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button,
+  .deleteAction {
+    font-size: 1rem;
+  }
+
+  #deleteUser {
+    display: flex;
+    border-top: 1px solid #00000020;
+
+    .deleteAction {
+      border: 1px solid black;
+      font-weight: bold;
+      font-size: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      color: #ff0d0d;
+      margin-top: 10px;
+      padding: 5px 10px;
+    }
+  }
+}

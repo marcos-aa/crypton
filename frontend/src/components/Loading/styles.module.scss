@@ -1,0 +1,24 @@
+.load {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 5px solid transparent;
+  border-color: rgba(0, 0, 0, 0.1);
+  border-top-color: var(--button-color);
+  animation: load linear 1s infinite;
+}
+
+.load.small {
+  width: 15px;
+  height: 15px;
+  border-width: 2px;
+}
+
+@keyframes load {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

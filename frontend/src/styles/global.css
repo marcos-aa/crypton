@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Lato:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+
+:root {
+  font-size: 16px;
+  --logo-color: #19b333;
+  --button-color: #0e7baf;
+  --button-color-op: #0e7caf59;
+  --loading-color: #2dcfff;
+  --loading-color-op: #1ea7d1;
+  --modal-main: #00000030;
+  --modal-sub: #ffffffd6;
+  --modal-border: #00000061;
+  --modal-width: 1200px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  text-decoration: none;
+  color: black;
+  box-sizing: border-box;
+  list-style: none;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.modal {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1100px;
+  height: 800px;
+  max-height: 80%;
+  background-color: var(--modal-main);
+  border-radius: 5px;
+  row-gap: 10px;
+  z-index: 99;
+  margin: 20px;
+  padding: 15px;
+}
+
+#credModalForm {
+  width: 400px;
+  max-width: 90%;
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid var(--modal-border);
+  border-radius: 5px;
+}
+a,
+button,
+input,
+select {
+  cursor: pointer;
+}
+
+input,
+button,
+select {
+  background: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 2px;
+  border: 1px solid black;
+}
+
+input {
+  border: 1px solid black;
+}
+
+form #formInput {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  line-height: 30px;
+}
+
+form label input {
+  height: 30px;
+}
+
+form .status {
+  text-align: start;
+  width: 100%;
+}
+
+form #actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px 10px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+form #actions button {
+  border: none;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 30px;
+  padding: 5px 10px;
+  color: white;
+  background-color: var(--button-color);
+  border-radius: 2px;
+  border: none;
+}
+
+.action.fullwd {
+  width: 100%;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+.action:disabled {
+  opacity: 0.6;
+}
+
+.redirLink {
+  color: var(--button-color);
+  background: none;
+}
+
+.redirLink:hover {
+  text-decoration: underline;
+}
+
+form .warning {
+  display: flex;
+  flex-direction: column;
+  color: red;
+  margin: 5px 0px;
+  text-align: start;
+  max-width: 100%;
+  word-wrap: break-word;
+  text-transform: none;
+}

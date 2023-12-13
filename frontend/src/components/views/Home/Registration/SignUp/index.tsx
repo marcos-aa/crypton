@@ -1,0 +1,48 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
+import api from "../../../../../services/api";
+import { ResMessage } from "../../../../../utils/datafetching";
+import { InputData, local, validateForm } from "../../../../../utils/helpers";
+import AuthForm from "../../../../AuthForm";
+import AuthButtons from "../../../../AuthForm/AuthButtons";
+import CheckboxField from "../../../../AuthForm/CheckboxField";
+const exfields = ["name", "email"];
+
+export default function SignUp() {
+  const [saveStreams, setSaveStreams] = useState(false);
+  const navigate = useNavigate();
+
+  const sign_up = async (input: InputData): Promise<void> => {
+    if (validateForm(input, "signup")) return;
+
+    await api.post<ResMessage>("/user", {
+      name: input.name,
+      email: input.email,
+      password: input.password,
+    });
+
+    if (saveStreams) localStorage.addItem(local.imp_streams, "import");
+
+    navigate("/register/validate", {
+      state: { newmail: input.email },
+    });
+  };
+
+  const handle_check = () => setSaveStreams(!saveStreams);
+
+  return (
+    <AuthForm exfields={exfields} validate={true} submit={sign_up}>
+      <AuthButtons action="Create account">
+        <CheckboxField
+          label="Import local streams"
+          checked={saveStreams}
+          handleChange={handle_check}
+        />
+      </AuthButtons>
+      <Link to="/register/signin" className="redirLink">
+        Already have an acccount?
+      </Link>
+    </AuthForm>
+  );
+}

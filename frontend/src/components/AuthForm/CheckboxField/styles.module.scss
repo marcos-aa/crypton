@@ -1,0 +1,16 @@
+.toggleField {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 10px;
+
+  input {
+    height: 18px;
+    width: 18px;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+  }
+}

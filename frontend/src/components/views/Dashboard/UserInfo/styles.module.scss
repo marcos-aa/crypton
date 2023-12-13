@@ -1,0 +1,48 @@
+.panel,
+main {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.userData {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  padding: 10px;
+
+  .name {
+    font-size: 1.4rem;
+    color: rgb(25, 179, 51);
+    width: 100%;
+  }
+
+  .userInfo {
+    display: flex;
+    height: 50px;
+    width: 100%;
+    max-width: 100%;
+    column-gap: 40px;
+    margin-top: 5px;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+    .infoItem {
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    #logout {
+      border: none;
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 400px) {
+    display: none;
+  }
+}

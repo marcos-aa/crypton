@@ -1,0 +1,14 @@
+.actionClose {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+  width: 100%;
+  border: none;
+  z-index: 1;
+  height: 30px;
+
+  svg {
+    font-size: 2em;
+  }
+}

@@ -1,0 +1,14 @@
+#credHeader {
+  column-gap: 10px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0;
+  margin: 10px 0;
+
+  button {
+    display: flex;
+    align-items: flex-start;
+  }
+}

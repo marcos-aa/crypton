@@ -1,0 +1,38 @@
+.logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  box-sizing: border-box;
+  background-color: white;
+  text-transform: uppercase;
+  width: 100%;
+  font-size: 32px;
+  --sign-width: calc(36px - 2px);
+
+  span:last-of-type {
+    color: green;
+  }
+
+  #cryptoSign {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sign-width);
+    height: var(--sign-width);
+    font-size: 24px;
+    border-radius: 50%;
+    color: white;
+    background-color: green;
+  }
+}
+
+#error {
+  span:last-of-type {
+    color: red;
+  }
+
+  #cryptoSign {
+    background-color: red;
+  }
+}

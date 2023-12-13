@@ -1,0 +1,20 @@
+#signwall {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 3;
+  width: var(--modal-width);
+  height: 100%;
+  max-width: 100%;
+  background-color: var(--modal-sub);
+
+  p {
+    max-width: 100%;
+    width: 400px;
+    padding: 10px;
+    font-size: 1.2em;
+    background-color: white;
+  }
+}

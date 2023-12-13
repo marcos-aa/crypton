@@ -1,0 +1,104 @@
+#dashboard {
+  position: relative;
+  justify-content: initial;
+  flex-direction: column;
+  row-gap: 20px;
+  height: 100vh;
+
+  header {
+    display: flex;
+    width: 100%;
+
+    h1 {
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+
+    #dropSettings {
+      position: relative;
+      display: block;
+      height: 100%;
+      width: 60px;
+      #dropBtn {
+        padding: 5px 0;
+        width: 100%;
+      }
+      &:hover ul {
+        visibility: visible;
+      }
+
+      ul {
+        display: flex;
+        visibility: hidden;
+        flex-direction: column;
+        position: absolute;
+        right: 0;
+        padding: 0;
+        width: 180px;
+        row-gap: 10px;
+        box-shadow: 0 0 2px 0 black;
+        background-color: white;
+        z-index: 2;
+        border-radius: 2px;
+
+        li {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          padding: 10px;
+          gap: 10px;
+          min-height: 30px;
+          font-size: 1.1em;
+
+          svg {
+            font-size: 1.2em;
+          }
+        }
+
+        li:hover {
+          cursor: pointer;
+          background-color: rgb(240, 236, 236);
+        }
+
+        li:last-of-type {
+          border-top: 0.5px solid #00000036;
+        }
+      }
+    }
+
+    .svgAction {
+      justify-content: center;
+      border: none;
+      flex-shrink: 0;
+      padding: 0;
+      path {
+        fill: var(--button-color);
+      }
+    }
+  }
+
+  .svgAction {
+    font-size: 1.6em;
+  }
+
+  header > .svgAction {
+    width: 60px;
+  }
+  header {
+    padding: 10px;
+  }
+
+  main {
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  button {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 1rem;
+    justify-content: center;
+  }
+}

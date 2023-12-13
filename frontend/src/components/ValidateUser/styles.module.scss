@@ -1,0 +1,27 @@
+.validationData {
+  justify-content: center;
+
+  h3 {
+    width: auto !important;
+  }
+
+  #exitButton {
+    text-align: start;
+    border: none;
+    font-size: 1.1rem;
+  }
+
+  input {
+    border: none;
+    border-bottom: 1px solid black;
+  }
+
+  .status {
+    color: red;
+    margin: 0;
+  }
+}
+
+#registration {
+  width: 100%;
+}
