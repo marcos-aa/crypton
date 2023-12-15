@@ -52,7 +52,7 @@ export const deleteStream =
       .catch(() => {
         const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set("newticks", JSON.stringify(ticks.delticks));
-        history.replaceState({}, "", url);
+        history.replaceState(history.state, "", url);
         qc.invalidateQueries(["streams"]);
       });
 
