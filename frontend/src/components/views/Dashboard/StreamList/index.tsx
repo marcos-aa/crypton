@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
-import { Link, createSearchParams, useSearchParams } from "react-router-dom";
+import { Link, createSearchParams } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import {
   StreamData,
@@ -52,7 +52,7 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   });
   const [tickers, setTickers] = useState<Tickers>(data.tickers);
   const location = useLocation();
-  const [, setParams] = useSearchParams();
+
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symcount)),
     {
@@ -88,8 +88,8 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   };
 
   useEffect(() => {
+    console.log("ran");
     let intervalId;
-
     if (location.pathname == "/dashboard") {
       intervalId = setInterval(updateValues, 1000);
     }
@@ -114,7 +114,8 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
       subscribeTickers(delticks, "UNSUBSCRIBE");
     }
 
-    setParams({});
+    const cleanURL = new URL(window.location.origin + window.location.pathname);
+    history.replaceState(history.state, "", cleanURL);
   }, [data.streams]);
 
   return (
