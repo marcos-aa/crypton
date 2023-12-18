@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./",
+    "outDir": "./dist",
+    "strict": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./src/@types"],
+    "strictPropertyInitialization": false
+  }
+}

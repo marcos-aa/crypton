@@ -1,0 +1,8 @@
+/node_modules
+/coverage
+.env
+.env.test
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
