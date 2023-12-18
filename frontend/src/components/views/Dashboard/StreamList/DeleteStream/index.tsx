@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
+import { redirect } from "react-router-dom";
 
 import api from "../../../../../services/api";
 import { StreamData } from "../../../../../utils/datafetching";
@@ -10,11 +10,8 @@ import {
   local,
   queryTicks,
 } from "../../../../../utils/helpers";
-import ModalContainer from "../../../../ModalContainer";
-import CancellableAction from "../../CancellableAction";
-import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
-import styles from "./styles.module.scss";
+import ConfirmPrompt from "../ConfirmPrompt";
 
 export const deleteStream =
   (qc: QueryClient) =>
@@ -60,20 +57,10 @@ export const deleteStream =
   };
 
 export default function DeleteStream() {
-  const { pathname } = useLocation();
   return (
-    <ModalContainer predecessor="/dashboard">
-      <RouterForm id={styles.deletionForm} method="delete" action={pathname}>
-        <h1> Do you wish to delete this stream? </h1>
-        <label>
-          <input title="Hide prompt" type="checkbox" name="remember" /> Do not
-          ask again
-        </label>
-
-        <CancellableAction>
-          <SubmitAction>Delete</SubmitAction>
-        </CancellableAction>
-      </RouterForm>
-    </ModalContainer>
+    <ConfirmPrompt
+      actionName="Delete"
+      question="Do you wish to delete this stream?"
+    />
   );
 }
