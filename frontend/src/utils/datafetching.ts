@@ -1,6 +1,6 @@
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { countSymbols, local } from "./helpers";
+import { genGStreamData, local } from "./helpers";
 
 export const udata = {
   id: "guest",
@@ -95,16 +95,8 @@ const getStreams = async (): Promise<StreamData> => {
   }
 };
 
-const parseLocalStreams = (user_id: string) => {
-  const streams: Stream[] =
-    JSON.parse(localStorage.getItem(local.streams)) || [];
-  const { symbols, symcount } = countSymbols(streams, user_id);
-
-  return { streams, symcount, symbols };
-};
-
 const getLocalStreams = async () => {
-  const { streams, symbols, symcount } = parseLocalStreams("guest");
+  const { streams, symbols, symcount } = genGStreamData("guest");
 
   try {
     const { data } = await api.get<Tickers>("/tickers", {
@@ -127,10 +119,4 @@ const getCurrencies = async (): Promise<string[] | string> => {
   }
 };
 
-export {
-  getCurrencies,
-  getLocalStreams,
-  getStreams,
-  getUser,
-  parseLocalStreams,
-};
+export { getCurrencies, getLocalStreams, getStreams, getUser };

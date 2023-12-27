@@ -1,7 +1,9 @@
+import { QueryClient } from "@tanstack/react-query";
 import { SyntheticEvent } from "react";
 import * as yup from "yup";
 import { Stream } from "../components/views/Dashboard/StreamList";
-import { SymCount, Tickers } from "./datafetching";
+import api from "../services/api";
+import { StreamData, SymCount, Tickers } from "./datafetching";
 
 export interface ReturnError {
   message: string;
@@ -19,24 +21,23 @@ export interface TickSubs {
   redirect?: boolean;
 }
 
-interface FmtTickers {
-  symbols: string[];
-  symcount: SymCount;
-}
-
-type DBStream = Stream & { user_id: string };
-
 interface OldStreamData {
   streams: Stream[];
   oldstream: Stream;
 }
+
+type SymbolData = Omit<StreamData, "tickers"> & {
+  symbols: string[];
+};
 
 export const local = {
   id: "u_id",
   token: "u_token",
   streams: "u_streams",
   joined: "u_joindate",
-  imp_streams: "u_impStreams",
+  imp_streams: "u_import_streams",
+  imp_prompt: "u:import_prompt",
+  del_prompt: "u:delete_prompt",
 };
 
 export const messages: { [key: string]: string } = {
@@ -74,26 +75,31 @@ const schemas = {
   signup: userSchema,
 };
 
-export const formatTicker = (symbol: string) => {
+const formatTicker = (symbol: string) => {
   const ticker = (symbol + "@ticker").toLowerCase();
   return ticker;
 };
 
-const countSymbols = (streams: Stream[], user_id: string): FmtTickers => {
-  let allsyms = [];
-
-  streams.forEach((stream: DBStream) => {
-    allsyms = allsyms.concat(stream.symbols);
+const countSymbols = (
+  user_id: string,
+  streams: Stream[],
+  prevcount: SymCount = {},
+): SymbolData => {
+  const allsyms = [];
+  const dbstreams = streams.map((stream) => {
+    allsyms.push(...stream.symbols);
     stream.user_id = user_id;
+    delete stream.id;
+    return stream;
   });
 
   const symcount = allsyms.reduce((store: SymCount, sym: string) => {
     store[sym] = store[sym] + 1 || 1;
     return store;
-  }, {});
+  }, prevcount);
 
   const symbols = Object.keys(symcount);
-  return { symbols, symcount };
+  return { streams: dbstreams, symbols, symcount };
 };
 
 const formatSymbols = (
@@ -136,6 +142,39 @@ const validateField = (
     const message = (e as yup.ValidationError).errors[0];
     throw message;
   }
+};
+
+const genGStreamData = (
+  user_id: string,
+  prevcount: SymCount = {},
+): SymbolData => {
+  const streams: Stream[] =
+    JSON.parse(localStorage.getItem(local.streams)) || [];
+  const { symcount, symbols } = countSymbols(user_id, streams, prevcount);
+  return { streams, symcount, symbols };
+};
+
+const importGStreams = (qc: QueryClient, uid: string) => {
+  let newstreams: Stream[];
+  qc.setQueryData<StreamData>(["streams"], (prev) => {
+    const { streams, symcount } = genGStreamData(uid, prev.symcount);
+    newstreams = streams;
+    const allstreams = streams.concat(prev.streams);
+    return { streams: allstreams, symcount, tickers: prev.tickers };
+  });
+
+  api
+    .post("/stream/import", {
+      streams: newstreams,
+    })
+    .then(() => {
+      localStorage.removeItem(local.streams);
+      localStorage.removeItem(local.imp_streams);
+    })
+    .catch(() => {
+      qc.invalidateQueries(["streams"]);
+      localStorage.removeItem(local.streams);
+    });
 };
 
 const addTicks = (symbols: string[], symcount: SymCount): string[] => {
@@ -184,6 +223,9 @@ export {
   delTicks,
   filterStreams,
   formatSymbols,
+  formatTicker,
+  genGStreamData,
+  importGStreams,
   queryTicks,
   stopPropagation,
   validateField,

@@ -10,6 +10,9 @@ import Dashboard, { dashLoader } from "./components/views/Dashboard";
 import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
+import ImpGStreams, {
+  impStreamsAction,
+} from "./components/views/Dashboard/StreamList/ImpGStreams";
 import SymbolList, {
   currenciesLoader,
   upsertStream,
@@ -73,12 +76,18 @@ const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     loader: dashLoader(queryClient),
     shouldRevalidate: () => false,
+    action: impStreamsAction(queryClient),
     children: [
       {
         path: "stream/:id?",
         element: <SymbolList />,
         loader: currenciesLoader(queryClient),
         action: upsertStream(queryClient),
+      },
+      {
+        path: "stream/import",
+        element: <ImpGStreams />,
+        action: impStreamsAction(queryClient),
       },
       {
         path: "stream/delete/:id",

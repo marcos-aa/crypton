@@ -5,17 +5,21 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 import { Link, createSearchParams } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
+import { useNotification } from "../../../../utils/customHooks";
 import {
   StreamData,
   Tickers,
   getLocalStreams,
   getStreams,
 } from "../../../../utils/datafetching";
-import { formatSymbols } from "../../../../utils/helpers";
+import { formatSymbols, local } from "../../../../utils/helpers";
+import Notification from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
+
 export interface Stream {
+  user_id: string;
   id: string;
   symbols: string[];
 }
@@ -52,6 +56,7 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   });
   const [tickers, setTickers] = useState<Tickers>(data.tickers);
   const location = useLocation();
+  const { message, updateNotif } = useNotification();
 
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symcount)),
@@ -88,7 +93,6 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   };
 
   useEffect(() => {
-    console.log("ran");
     let intervalId;
     if (location.pathname == "/dashboard") {
       intervalId = setInterval(updateValues, 1000);
@@ -100,11 +104,18 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   }, [location.pathname]);
 
   useEffect(() => {
+    const localPersists = localStorage.getItem(local.imp_streams);
     const qparams = createSearchParams(window.location.search);
     const [newticks, delticks] = [
       JSON.parse(qparams.get("newticks")),
       JSON.parse(qparams.get("delticks")),
     ];
+
+    if (localPersists) {
+      updateNotif(
+        "Failure trying to import local streams to server. Please try again.",
+      );
+    }
 
     if (newticks?.length > 0) {
       subscribeTickers(newticks, "SUBSCRIBE");
@@ -116,10 +127,11 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
 
     const cleanURL = new URL(window.location.origin + window.location.pathname);
     history.replaceState(history.state, "", cleanURL);
-  }, [data.streams]);
+  }, [data.symcount]);
 
   return (
     <main id={styles.streamPanel}>
+      {message && <Notification message={message} />}
       <Outlet />
 
       <div className={styles.streamSettings}>
