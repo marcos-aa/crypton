@@ -84,7 +84,7 @@ const getUser = async (id: string) => {
 
 const getStreams = async (): Promise<StreamData> => {
   try {
-    const { data } = await api.get<StreamData>("/stream");
+    const { data } = await api.get<StreamData>("/streams");
     return {
       streams: data.streams,
       symcount: data.symcount,

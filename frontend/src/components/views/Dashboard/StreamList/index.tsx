@@ -124,8 +124,8 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
 
       <div className={styles.streamSettings}>
         <h1> Your streams </h1>
-        <ActionAnimation actpath="/dashboard/stream">
-          <Link className="action" to="stream">
+        <ActionAnimation actpath="/dashboard/streams">
+          <Link className="action" to="streams">
             Create
           </Link>
         </ActionAnimation>
@@ -153,11 +153,11 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
             <div className={styles.streamButtons}>
               <ActionAnimation
                 small={true}
-                actpath={`/dashboard/stream/${stream.id}`}
+                actpath={`/dashboard/streams/${stream.id}`}
               >
                 <Link
                   replace
-                  to={`stream/${stream.id}`}
+                  to={`streams/${stream.id}`}
                   state={{
                     symbols: stream.symbols,
                     verified,
@@ -167,7 +167,7 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
                 </Link>
               </ActionAnimation>
 
-              <Link to={`stream/delete/${stream.id}`}>
+              <Link to={`streams/delete/${stream.id}`}>
                 <FontAwesomeIcon icon={faTrash} />
               </Link>
             </div>

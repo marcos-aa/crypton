@@ -19,11 +19,11 @@ router.delete("/user", isAuthorized, new UserController().delete)
 
 router.delete("/session", new SessionController().delete)
 
-router.post("/stream", isAuthorized, new StreamController().create)
-router.post("/stream/import", isAuthorized, new StreamController().createMany)
-router.get("/stream", isAuthorized, new StreamController().read)
-router.put("/stream", isAuthorized, new StreamController().update)
-router.delete("/stream", isAuthorized, new StreamController().delete)
+router.post("/streams", isAuthorized, new StreamController().create)
+router.post("/streams/import", isAuthorized, new StreamController().createMany)
+router.get("/streams", isAuthorized, new StreamController().read)
+router.put("/streams", isAuthorized, new StreamController().update)
+router.delete("/streams", isAuthorized, new StreamController().delete)
 
 //Utils microservices
 router.put("/user/name", isAuthorized, new UserHandler().updateName)

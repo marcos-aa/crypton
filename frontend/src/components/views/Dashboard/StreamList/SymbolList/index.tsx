@@ -79,7 +79,7 @@ export const upsertStream =
     const { data: stream } =
       userId == "guest"
         ? craLocStream(config.symbols)
-        : await api[method]<Stream>("/stream", config);
+        : await api[method]<Stream>("/streams", config);
 
     let { newticks, delticks }: TickSubs = { newticks: [], delticks: [] };
 

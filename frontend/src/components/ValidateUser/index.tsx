@@ -70,7 +70,7 @@ export default function ValidateUser({ style }: ValidationProps) {
         });
 
         api
-          .post("/stream/import")
+          .post("/streams/import")
           .then(() => {
             localStorage.removeItem(local.streams);
             localStorage.removeItem(local.imp_streams);

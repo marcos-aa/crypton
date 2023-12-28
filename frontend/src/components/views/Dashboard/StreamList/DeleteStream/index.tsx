@@ -44,7 +44,7 @@ export const deleteStream =
     }
 
     api
-      .delete("/stream", {
+      .delete("/streams", {
         data: {
           id: params.id,
         },

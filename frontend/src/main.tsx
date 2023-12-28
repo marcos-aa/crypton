@@ -75,13 +75,13 @@ const router = createBrowserRouter([
     shouldRevalidate: () => false,
     children: [
       {
-        path: "stream/:id?",
+        path: "streams/:id?",
         element: <SymbolList />,
         loader: currenciesLoader(queryClient),
         action: upsertStream(queryClient),
       },
       {
-        path: "stream/delete/:id",
+        path: "streams/delete/:id",
         element: <DeleteStream />,
         action: deleteStream(queryClient),
       },
