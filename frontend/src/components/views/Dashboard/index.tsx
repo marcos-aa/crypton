@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
-import { useLogout, useNotification } from "../../../utils/customHooks";
+import { useLogout } from "../../../utils/customHooks";
 import {
   ResMessage,
   StreamData,
@@ -17,7 +17,6 @@ import {
 } from "../../../utils/datafetching";
 import { local } from "../../../utils/helpers";
 import Logo from "../../Logo";
-import Notification from "./Notification";
 import StreamList, { streamQuery } from "./StreamList";
 import UserInfo, { userQuery } from "./UserInfo";
 import styles from "./styles.module.scss";
@@ -48,6 +47,7 @@ export const dashLoader =
         qc.ensureQueryData({ queryKey: streamKey, queryFn: streamFn }),
         qc.ensureQueryData({ queryKey: userKey, queryFn: userFn }),
       ]);
+
       return { streamData, userData };
     } catch (e) {
       const error = (e as AxiosError<ResMessage>).response;
@@ -64,12 +64,7 @@ export const dashLoader =
 
 export default function Dashboard() {
   const { streamData, userData } = useLoaderData() as DashLoader;
-  const { notif, updateNotif } = useNotification();
   const handleLogout = useLogout();
-
-  const handleNotif = () => {
-    updateNotif("Importing local streams", "success");
-  };
 
   return (
     <div className="page" id={styles.dashboard}>
@@ -87,7 +82,7 @@ export default function Dashboard() {
             <Link className={styles.svgAction} to="/dashboard/settings">
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
-            <li className={styles.svgAction} onClick={handleNotif}>
+            <li className={styles.svgAction}>
               <FontAwesomeIcon icon={faUpload} /> Import streams
             </li>
             <li className={styles.svgAction} onClick={handleLogout}>
@@ -97,11 +92,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {notif.message && (
-        <Notification type={notif.type} message={notif.message} />
-      )}
-
-      <UserInfo />
+      <UserInfo initialData={userData} id={userData.id} />
       <StreamList initialData={streamData} verified={userData.verified} />
     </div>
   );

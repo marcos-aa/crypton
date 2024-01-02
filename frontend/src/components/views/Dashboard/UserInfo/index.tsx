@@ -1,21 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLoaderData } from "react-router";
-import { getUser } from "../../../../utils/datafetching";
-import { DashLoader } from "../index";
+import { User, getUser } from "../../../../utils/datafetching";
 import styles from "./styles.module.scss";
 
 export const userQuery = (id: string) => ({
   queryKey: ["user", id],
   queryFn: async () => {
-    const user = await getUser(id);
+    const user = getUser(id);
     return user;
   },
 });
 
-export default function UserInfo() {
-  const { userData: initialData } = useLoaderData() as Awaited<DashLoader>;
+interface InfoProps {
+  initialData: User;
+  id: string;
+}
+
+export default function UserInfo({ initialData, id }: InfoProps) {
   const { data: user } = useQuery({
-    ...userQuery(initialData.id),
+    ...userQuery(id),
     initialData,
     refetchOnWindowFocus: false,
   });
