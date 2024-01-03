@@ -12,7 +12,7 @@ import api from "../../../../../services/api";
 import {
   StreamData,
   SymCount,
-  getCurrencies,
+  getPairs,
 } from "../../../../../utils/datafetching";
 import {
   TickSubs,
@@ -40,13 +40,13 @@ export interface CatchError {
   [response: string]: AxiosResponse;
 }
 
-const currenciesQuery = () => ({
+const pairsQuery = () => ({
   queryKey: ["currencies"],
-  queryFn: async () => getCurrencies(),
+  queryFn: async () => getPairs(),
 });
 
-export const currenciesLoader = (qc) => async () => {
-  const query = currenciesQuery();
+export const pairsLoader = (qc) => async () => {
+  const query = pairsQuery();
   const currencies: string[] = await qc.ensureQueryData(query);
   return currencies;
 };
@@ -110,7 +110,7 @@ export interface PageState {
 }
 
 export default function SymbolList() {
-  const currencies = useLoaderData() as string[];
+  const pairs = useLoaderData() as string[];
   const { state: pagestate, pathname }: PageState = useLocation();
   const [selected, setSelected] = useState<string[]>(pagestate?.symbols || []);
   const [search, setSearch] = useState<string>("");
@@ -132,8 +132,8 @@ export default function SymbolList() {
     setSearch(event.target.value);
   };
 
-  const pairs = useMemo(() => {
-    return (currencies as string[]).filter((symbol: string) =>
+  const matchingPairs = useMemo(() => {
+    return (pairs as string[]).filter((symbol: string) =>
       symbol.includes(search.toLocaleUpperCase()),
     );
   }, [search]);
@@ -194,7 +194,7 @@ export default function SymbolList() {
       </Form>
 
       <ul id={styles.symbolList}>
-        {pairs.map((pair: string) => {
+        {matchingPairs.map((pair: string) => {
           return (
             <li
               role="listitem"

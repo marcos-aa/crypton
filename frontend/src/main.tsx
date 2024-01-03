@@ -11,7 +11,7 @@ import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
 import SymbolList, {
-  currenciesLoader,
+  pairsLoader,
   upsertStream,
 } from "./components/views/Dashboard/StreamList/SymbolList";
 import UserSettings, {
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
       {
         path: "streams/:id?",
         element: <SymbolList />,
-        loader: currenciesLoader(queryClient),
+        loader: pairsLoader(queryClient),
         action: upsertStream(queryClient),
       },
       {

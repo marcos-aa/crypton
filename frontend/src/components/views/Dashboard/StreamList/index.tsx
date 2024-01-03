@@ -88,7 +88,6 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
   };
 
   useEffect(() => {
-    console.log("ran");
     let intervalId;
     if (location.pathname == "/dashboard") {
       intervalId = setInterval(updateValues, 1000);

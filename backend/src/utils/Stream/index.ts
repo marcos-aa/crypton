@@ -46,16 +46,19 @@ export default class StreamUtils {
     }
   }
 
-  async cacheTickers(params: Params = {}) {
-    try {
-      const { data }: { data: SpotTicker[] } = await axios.get(
-        baseURL + "/ticker/24hr",
-        { params }
-      )
-    } catch (e) {
-      console.log(e)
-    }
+  async getPairs(): Promise<string[]> {
+    const prices = cache.keys()
+    if (prices.length >= 1000) return prices.sort()
 
+    await this.cacheTickers()
+    return cache.keys().sort()
+  }
+
+  async cacheTickers(params: Params = {}) {
+    const { data }: { data: SpotTicker[] } = await axios.get(
+      baseURL + "/ticker/24hr",
+      { params }
+    )
     const tickers = data.map((tick) => {
       return {
         key: tick.symbol,
@@ -66,26 +69,6 @@ export default class StreamUtils {
     cache.mset(tickers)
   }
 
-  async getCurrencies(): Promise<string[]> {
-    const prices = cache.keys()
-    if (prices.length >= 1000) return prices.sort()
-
-    await this.cacheTickers()
-    return cache.keys().sort()
-  }
-
-  async getPreview(): Promise<FMTDTicker> {
-    const cached = cache.get<FMTDTicker>("BTCUSDT")
-    if (cached) return cached
-
-    const { data }: { data: SpotTicker } = await axios.get(
-      baseURL + "/ticker/24hr?symbol=BTCUSDT"
-    )
-    const ticker = this.formatTicker(data)
-    cache.set("BTCUSDT", ticker)
-    return ticker
-  }
-
   async getTickers(symbols: string[]): Promise<Tickers> {
     const uniques = Array.from(new Set(symbols))
     const cached = cache.mget<FMTDTicker>(uniques)
@@ -93,6 +76,7 @@ export default class StreamUtils {
     if (keys.length === uniques.length) return cached
 
     const notCached = uniques.filter((u) => !keys.includes(u))
+
     try {
       await this.cacheTickers({ symbols: JSON.stringify(notCached) })
       const tickers = Object.assign(cached, cache.mget<FMTDTicker>(notCached))

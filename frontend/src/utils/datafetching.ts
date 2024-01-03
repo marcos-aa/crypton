@@ -118,19 +118,13 @@ const getLocalStreams = async () => {
   }
 };
 
-const getCurrencies = async (): Promise<string[] | string> => {
+const getPairs = async (): Promise<string[] | string> => {
   try {
-    const { data: currencies } = await api.get<string[]>("/currencies");
-    return currencies;
+    const { data: pairs } = await api.get<string[]>("/pairs");
+    return pairs;
   } catch (e) {
     return "Something went wrong. Verify your connection and try again.";
   }
 };
 
-export {
-  getCurrencies,
-  getLocalStreams,
-  getStreams,
-  getUser,
-  parseLocalStreams,
-};
+export { getLocalStreams, getPairs, getStreams, getUser, parseLocalStreams };
