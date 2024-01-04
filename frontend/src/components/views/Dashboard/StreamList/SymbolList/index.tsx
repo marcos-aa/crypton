@@ -51,10 +51,11 @@ export const pairsLoader = (qc) => async () => {
   return currencies;
 };
 
-const craLocStream = (symbols: string[]): { data: Stream } => {
+const createGStream = (symbols: string[]): { data: Stream } => {
   const streams = JSON.parse(localStorage.getItem(local.streams)) || [];
   const id = uuid().substring(0, 8);
   const newStream = {
+    user_id: "guest",
     id: `g-streams-${id}`,
     symbols,
   };
@@ -73,12 +74,11 @@ export const upsertStream =
     const config: Partial<Stream> = {
       symbols: formData.getAll("selected") as string[],
     };
-    console.log("upsert");
     if (params.id) config.id = params.id;
 
     const { data: stream } =
       userId == "guest"
-        ? craLocStream(config.symbols)
+        ? createGStream(config.symbols)
         : await api[method]<Stream>("/streams", config);
 
     let { newticks, delticks }: TickSubs = { newticks: [], delticks: [] };
