@@ -19,17 +19,22 @@ export interface TickSubs {
   redirect?: boolean;
 }
 
-interface FmtTickers {
-  symbols: string[];
-  symcount: SymCount;
-}
-
-type DBStream = Stream & { user_id: string };
-
 interface OldStreamData {
   streams: Stream[];
   oldstream: Stream;
 }
+
+type IMPStream = Omit<Stream, "id">;
+
+interface SymcountData {
+  impstreams: IMPStream[];
+  symbols: string[];
+  symcount: SymCount;
+}
+
+type GStreamData = SymcountData & {
+  gstreams: Stream[];
+};
 
 export const local = {
   id: "u_id",
@@ -79,23 +84,6 @@ export const formatTicker = (symbol: string) => {
   return ticker;
 };
 
-const countSymbols = (streams: Stream[], user_id: string): FmtTickers => {
-  let allsyms = [];
-
-  streams.forEach((stream: DBStream) => {
-    allsyms = allsyms.concat(stream.symbols);
-    stream.user_id = user_id;
-  });
-
-  const symcount = allsyms.reduce((store: SymCount, sym: string) => {
-    store[sym] = store[sym] + 1 || 1;
-    return store;
-  }, {});
-
-  const symbols = Object.keys(symcount);
-  return { symbols, symcount };
-};
-
 const formatSymbols = (
   store: Tickers,
   formatter: Intl.NumberFormat,
@@ -109,6 +97,40 @@ const formatSymbols = (
     formatted[sym] = { average, change, last, pchange };
   }
   return formatted;
+};
+
+const genSymcount = (
+  uid: string,
+  streams: Stream[],
+  prevcount: SymCount,
+): SymcountData => {
+  const allsyms = [];
+
+  const impstreams = streams.map((stream) => {
+    allsyms.push(...stream.symbols);
+    return { user_id: uid, id: stream.id, symbols: stream.symbols };
+  });
+
+  const symcount = allsyms.reduce((store: SymCount, sym: string) => {
+    store[sym] = store[sym] + 1 || 1;
+    return store;
+  }, prevcount);
+
+  const symbols = Object.keys(symcount);
+
+  return { impstreams, symcount, symbols };
+};
+
+const genGStreamData = (uid: string, prevcount: SymCount = {}): GStreamData => {
+  const gstreams: Stream[] =
+    JSON.parse(localStorage.getItem(local.streams)) || [];
+  const { impstreams, symcount, symbols } = genSymcount(
+    uid,
+    gstreams,
+    prevcount,
+  );
+
+  return { gstreams, impstreams, symbols, symcount };
 };
 
 const validateForm = (
@@ -180,10 +202,10 @@ const filterStreams = (id: string, streams: Stream[]): OldStreamData => {
 
 export {
   addTicks,
-  countSymbols,
   delTicks,
   filterStreams,
   formatSymbols,
+  genGStreamData,
   queryTicks,
   stopPropagation,
   validateField,

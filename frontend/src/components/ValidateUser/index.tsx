@@ -12,10 +12,9 @@ import {
   StreamData,
   User,
   UserData,
-  parseLocalStreams,
   saveUser,
 } from "../../utils/datafetching";
-import { local, stopPropagation } from "../../utils/helpers";
+import { genGStreamData, local, stopPropagation } from "../../utils/helpers";
 import AuthButtons from "../AuthForm/AuthButtons";
 import ErrorResponse from "../LoadingError";
 import styles from "./styles.module.scss";
@@ -64,9 +63,8 @@ export default function ValidateUser({ style }: ValidationProps) {
 
       if (localStorage.getItem(local.imp_streams)) {
         qc.setQueryData<StreamData>(["stream"], (prev) => {
-          const { streams, symcount } = parseLocalStreams(data.user.id);
-          console.log(streams);
-          return { streams, symcount, tickers: prev.tickers };
+          const { gstreams, symcount } = genGStreamData(data.user.id);
+          return { streams: gstreams, symcount, tickers: prev.tickers };
         });
 
         api

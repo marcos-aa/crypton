@@ -8,7 +8,7 @@ import useWebSocket from "react-use-websocket";
 import {
   StreamData,
   Tickers,
-  getLocalStreams,
+  getGuestStreams,
   getStreams,
 } from "../../../../utils/datafetching";
 import { formatSymbols } from "../../../../utils/helpers";
@@ -30,7 +30,7 @@ const formatValue = Intl.NumberFormat("en-us", {
 export const streamQuery = (verified: boolean) => ({
   queryKey: ["streams"],
   queryFn: async () => {
-    const streamData = verified ? getStreams() : getLocalStreams();
+    const streamData = verified ? getStreams() : getGuestStreams();
     return streamData;
   },
 });
