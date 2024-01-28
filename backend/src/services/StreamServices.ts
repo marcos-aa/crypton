@@ -1,21 +1,39 @@
+import { Stream } from "@prisma/client"
+import ObjectID from "bson-objectid"
 import prisma from "../../prisma/client"
 import { Error } from "../controllers/UserController"
 import StreamUtils, { Tickers } from "../utils/Stream"
 import { streamSchema } from "../utils/schemas"
 
-export interface Stream {
-  id: string
-  symbols: string[]
+type RawStream = Omit<Stream, "id"> & {
+  _id: {
+    $oid: string
+  }
 }
-
-type StreamBatch = Stream & { user_id: string }
 
 interface SymCount {
   [symbol: string]: number
 }
 
-type StreamRes = Stream | Error
-type StreamTickers = { streams: Stream[]; symcount: SymCount; tickers: Tickers }
+type WriteErrors = Array<{
+  code: number
+  keyValue: {
+    _id: {
+      $oid: string
+    }
+  }
+}>
+
+interface NewIds {
+  [id: string]: string
+}
+type StreamReturn = Omit<Stream, "user_id">
+type StreamRes = StreamReturn | Error
+type StreamTickers = {
+  streams: StreamReturn[]
+  symcount: SymCount
+  tickers: Tickers
+}
 
 export default class StreamServices {
   async create(user_id: string, symbols: string[]): Promise<StreamRes> {
@@ -36,11 +54,38 @@ export default class StreamServices {
     return stream
   }
 
-  async createMany(allstreams: StreamBatch[]) {
-    const streams = await prisma.stream.createMany({
-      data: allstreams,
+  async createMany(
+    allstreams: RawStream[],
+    newids: NewIds = {}
+  ): Promise<NewIds> {
+    const res = await prisma.$runCommandRaw({
+      insert: "Stream",
+      ordered: false,
+      documents: allstreams,
     })
-    return streams
+
+    const werr = res.writeErrors as WriteErrors
+
+    if (werr) {
+      const duplicates: RawStream[] = []
+
+      werr.forEach((err) => {
+        if (err.code === 11000) {
+          const id = err.keyValue._id.$oid
+          const stream = allstreams.find(
+            (dupstream) => dupstream._id.$oid == id
+          ) as RawStream
+
+          newids[id] = ObjectID().toHexString()
+          stream._id.$oid = newids[id]
+          duplicates.push(stream)
+        }
+      })
+
+      return this.createMany(duplicates, newids)
+    }
+
+    return newids
   }
 
   async read(user_id: string): Promise<StreamTickers> {
