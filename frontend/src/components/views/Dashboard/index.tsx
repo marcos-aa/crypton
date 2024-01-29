@@ -5,7 +5,7 @@ import {
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
 import { useLogout } from "../../../utils/customHooks";
@@ -15,7 +15,7 @@ import {
   User,
   saveUser,
 } from "../../../utils/datafetching";
-import { local } from "../../../utils/helpers";
+import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import StreamList, { streamQuery } from "./StreamList";
 import UserInfo, { userQuery } from "./UserInfo";
@@ -63,8 +63,13 @@ export const dashLoader =
   };
 
 export default function Dashboard() {
-  const { streamData, userData } = useLoaderData() as DashLoader;
-  const handleLogout = useLogout();
+  const qc = useQueryClient();
+  const { userData, streamData } = useLoaderData() as DashLoader;
+  const handleLogout = useLogout(userData.id);
+
+  const handleImport = (qc: QueryClient) => {
+    importGStreams(qc, userData.id);
+  };
 
   return (
     <div className="page" id={styles.dashboard}>
@@ -82,7 +87,7 @@ export default function Dashboard() {
             <Link className={styles.svgAction} to="/dashboard/settings">
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
-            <li className={styles.svgAction}>
+            <li className={styles.svgAction} onClick={() => handleImport(qc)}>
               <FontAwesomeIcon icon={faUpload} /> Import streams
             </li>
             <li className={styles.svgAction} onClick={handleLogout}>

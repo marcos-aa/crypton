@@ -93,10 +93,6 @@ export default class StreamServices {
       where: {
         user_id,
       },
-      select: {
-        id: true,
-        symbols: true,
-      },
     })
 
     if (streams.length < 1) return { streams, symcount: {}, tickers: {} }

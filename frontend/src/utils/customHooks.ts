@@ -1,7 +1,7 @@
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router";
-import { InputData, validateField } from "./helpers";
+import { InputData, local, validateField } from "./helpers";
 
 type InputValidation = InputData & { path: string };
 
@@ -62,13 +62,15 @@ const useUserInput = () => {
   return { input, handleChange };
 };
 
-const useLogout = () => {
-  const qc = new QueryClient();
+const useLogout = (uid: string) => {
+  const qc = useQueryClient();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    qc.invalidateQueries(["streams", "user"]);
-    localStorage.clear();
+    qc.removeQueries(["streams"]);
+    qc.removeQueries(["user", uid]);
+    localStorage.removeItem(local.id);
+    localStorage.removeItem(local.token);
     navigate("/");
   };
 

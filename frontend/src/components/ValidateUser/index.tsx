@@ -7,14 +7,8 @@ import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
 import { useLoadError } from "../../utils/customHooks";
-import {
-  ResMessage,
-  StreamData,
-  User,
-  UserData,
-  saveUser,
-} from "../../utils/datafetching";
-import { genGStreamData, local, stopPropagation } from "../../utils/helpers";
+import { ResMessage, User, UserData, saveUser } from "../../utils/datafetching";
+import { importGStreams, local, stopPropagation } from "../../utils/helpers";
 import AuthButtons from "../AuthForm/AuthButtons";
 import ErrorResponse from "../LoadingError";
 import styles from "./styles.module.scss";
@@ -59,24 +53,10 @@ export default function ValidateUser({ style }: ValidationProps) {
       });
 
       saveUser(data.user.id, data.access_token);
-      qc.setQueryData<User>(["user"], () => data.user);
+      qc.setQueryData<User>(["user", data.user.id], () => data.user);
 
-      if (localStorage.getItem(local.imp_streams)) {
-        qc.setQueryData<StreamData>(["stream"], (prev) => {
-          const { gstreams, symcount } = genGStreamData(data.user.id);
-          return { streams: gstreams, symcount, tickers: prev.tickers };
-        });
-
-        api
-          .post("/streams/import")
-          .then(() => {
-            localStorage.removeItem(local.streams);
-            localStorage.removeItem(local.imp_streams);
-          })
-          .catch(() => {
-            qc.invalidateQueries(["streams"]);
-          });
-      }
+      if (localStorage.getItem(local.imp_streams))
+        importGStreams(qc, data.user.id);
 
       navigate("/dashboard");
     } catch (e) {

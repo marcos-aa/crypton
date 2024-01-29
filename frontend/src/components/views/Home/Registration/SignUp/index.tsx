@@ -22,14 +22,14 @@ export default function SignUp() {
       password: input.password,
     });
 
-    if (saveStreams) localStorage.addItem(local.imp_streams, "import");
+    if (saveStreams) localStorage.setItem(local.imp_streams, "import");
 
     navigate("/register/validate", {
       state: { newmail: input.email },
     });
   };
 
-  const handle_check = () => setSaveStreams(!saveStreams);
+  const handleGStreams = () => setSaveStreams(!saveStreams);
 
   return (
     <AuthForm exfields={exfields} validate={true} submit={sign_up}>
@@ -37,7 +37,7 @@ export default function SignUp() {
         <CheckboxField
           label="Import local streams"
           checked={saveStreams}
-          handleChange={handle_check}
+          handleChange={handleGStreams}
         />
       </AuthButtons>
       <Link to="/register/signin" className="redirLink">

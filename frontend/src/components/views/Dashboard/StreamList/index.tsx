@@ -1,4 +1,8 @@
-import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHourglass,
+  faPencil,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -11,11 +15,13 @@ import {
   getGuestStreams,
   getStreams,
 } from "../../../../utils/datafetching";
-import { formatSymbols } from "../../../../utils/helpers";
+import { formatSymbols, local } from "../../../../utils/helpers";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
+
 export interface Stream {
+  user_id: string;
   id: string;
   symbols: string[];
 }
@@ -150,25 +156,34 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
             })}
 
             <div className={styles.streamButtons}>
-              <ActionAnimation
-                small={true}
-                actpath={`/dashboard/streams/${stream.id}`}
-              >
-                <Link
-                  replace
-                  to={`streams/${stream.id}`}
-                  state={{
-                    symbols: stream.symbols,
-                    verified,
-                  }}
-                >
-                  <FontAwesomeIcon icon={faPencil} />
-                </Link>
-              </ActionAnimation>
-
-              <Link to={`streams/delete/${stream.id}`}>
-                <FontAwesomeIcon icon={faTrash} />
-              </Link>
+              {stream.user_id === "guest" &&
+              localStorage.getItem(local.imp_streams) ? (
+                <FontAwesomeIcon
+                  title="Please wait until stream is fully imported"
+                  icon={faHourglass}
+                />
+              ) : (
+                <>
+                  <ActionAnimation
+                    small={true}
+                    actpath={`/dashboard/streams/${stream.id}`}
+                  >
+                    <Link
+                      replace
+                      to={`streams/${stream.id}`}
+                      state={{
+                        symbols: stream.symbols,
+                        verified,
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPencil} />
+                    </Link>
+                  </ActionAnimation>
+                  <Link to={`streams/delete/${stream.id}`}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         );
