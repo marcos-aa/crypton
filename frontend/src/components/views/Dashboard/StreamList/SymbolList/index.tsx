@@ -2,11 +2,10 @@ import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import ObjectID from "bson-objectid";
 import { ChangeEvent, MouseEvent, useMemo, useState } from "react";
 import { redirect, useLoaderData, useLocation } from "react-router";
 import { Form } from "react-router-dom";
-import { v4 as uuid } from "uuid";
-
 import { Stream } from "..";
 import api from "../../../../../services/api";
 import {
@@ -53,10 +52,11 @@ export const pairsLoader = (qc) => async () => {
 
 const createGStream = (symbols: string[]): { data: Stream } => {
   const streams = JSON.parse(localStorage.getItem(local.streams)) || [];
-  const id = uuid().substring(0, 8);
+  const id = ObjectID().toHexString();
+
   const newStream = {
     user_id: "guest",
-    id: `g-streams-${id}`,
+    id,
     symbols,
   };
 
