@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
-import { Link, createSearchParams } from "react-router-dom";
+import { Link, createSearchParams, useFetcher } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import {
   StreamData,
@@ -51,6 +51,7 @@ interface StreamsProps {
   verified: boolean;
 }
 export default function StreamList({ initialData, verified }: StreamsProps) {
+  const fetcher = useFetcher();
   const { data } = useQuery({
     ...streamQuery(verified),
     initialData,
@@ -183,9 +184,20 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
                       <FontAwesomeIcon icon={faPencil} />
                     </Link>
                   </ActionAnimation>
-                  <Link to={`streams/delete/${stream.id}`}>
-                    <FontAwesomeIcon icon={faTrash} />
-                  </Link>
+                  {localStorage.getItem(local.del_prompt) ? (
+                    <fetcher.Form
+                      method="delete"
+                      action={`/dashboard/streams/delete/${stream.id}`}
+                    >
+                      <button type="submit">
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </fetcher.Form>
+                  ) : (
+                    <Link to={`streams/delete/${stream.id}`}>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </Link>
+                  )}
                 </>
               )}
             </div>

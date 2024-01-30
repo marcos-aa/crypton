@@ -10,6 +10,7 @@ import {
   local,
   queryTicks,
 } from "../../../../../utils/helpers";
+import CheckboxField from "../../../../AuthForm/CheckboxField";
 import ModalContainer from "../../../../ModalContainer";
 import CancellableAction from "../../CancellableAction";
 import SubmitAction from "../../SubmitAction";
@@ -20,8 +21,9 @@ export const deleteStream =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
     const formData = await request.formData();
-    const remember = formData.get("remember") as string;
-    if (remember) localStorage.setItem("u:prompt_delete", "off");
+    const askAgain = formData.get("prompt") as string;
+
+    if (askAgain) localStorage.setItem(local.del_prompt, "no");
 
     const ticks: TickSubs = { newticks: [], delticks: [] };
 
@@ -61,14 +63,12 @@ export const deleteStream =
 
 export default function DeleteStream() {
   const { pathname } = useLocation();
+
   return (
     <ModalContainer predecessor="/dashboard">
       <RouterForm id={styles.deletionForm} method="delete" action={pathname}>
         <h1> Do you wish to delete this stream? </h1>
-        <label>
-          <input title="Hide prompt" type="checkbox" name="remember" /> Do not
-          ask again
-        </label>
+        <CheckboxField label="Do not ask again" />
 
         <CancellableAction>
           <SubmitAction>Delete</SubmitAction>
