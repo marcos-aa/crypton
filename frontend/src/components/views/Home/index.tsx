@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import api from "../../../services/api";
 import { Tickers } from "../../../utils/datafetching";
 import { local } from "../../../utils/helpers";
 import Logo from "../../Logo";
@@ -22,24 +23,25 @@ export default function Home() {
     if (uid) return navigate("/dashboard");
 
     const controller = new AbortController();
-    // api
-    //   .get<Tickers>("tickers/preview", {
-    //     signal: controller.signal,
-    //     params: {
-    //       symbol: "BTCBUSD",
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setTicker(res.data);
-    //   });
-    setTickers({
-      BTCBUSD: {
-        last: "30,044.94",
-        change: "30,044.94",
-        pchange: "30,044.94",
-        average: "30,044.94",
-      },
-    });
+    api
+      .get<Tickers>("/tickers", {
+        signal: controller.signal,
+        params: {
+          symbols: [
+            "BTCBUSD",
+            "ETHBTC",
+            "SOLETH",
+            "DOGEBUSD",
+            "SUIUSDT",
+            "BTCFDUSD",
+            "ETHBUSD",
+            "AAVEBNB",
+          ],
+        },
+      })
+      .then((res) => {
+        setTickers(res.data);
+      });
 
     return () => controller.abort();
   }, []);
@@ -66,18 +68,19 @@ export default function Home() {
             </Link>
           </div>
         </section>
+
         <div id={styles.hero}>
           <div className={`${styles.stream} ${streamStyles.streamList}`}>
             <SymbolTicks symbol="BTCBUSD" prices={tickers.BTCBUSD} />
-            <SymbolTicks symbol="ETHBTC" prices={tickers.BTCBUSD} />
-            <SymbolTicks symbol="GBPBUSD" prices={tickers.BTCBUSD} />
-            <SymbolTicks symbol="GBPBUSD" prices={tickers.BTCBUSD} />
+            <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
+            <SymbolTicks symbol="SOLETH" prices={tickers.SOLETH} />
+            <SymbolTicks symbol="DOGEBUSD" prices={tickers.DOGEBUSD} />
           </div>
           <div className={`${styles.stream} ${streamStyles.streamList}`}>
-            <SymbolTicks symbol="BTCBUSD" prices={tickers.BTCBUSD} />
-            <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
-            <SymbolTicks symbol="GBPBUSD" prices={tickers.GBPBUSD} />
-            <SymbolTicks symbol="GBPBUSD" prices={tickers.BTCBUSD} />
+            <SymbolTicks symbol="SUIUSDT" prices={tickers.SUIUSDT} />
+            <SymbolTicks symbol="BTCFDUSD" prices={tickers.BTCFDUSD} />
+            <SymbolTicks symbol="ETHBUSD" prices={tickers.ETHBUSD} />
+            <SymbolTicks symbol="AAVEBNB" prices={tickers.AAVEBNB} />
           </div>
         </div>
       </main>
