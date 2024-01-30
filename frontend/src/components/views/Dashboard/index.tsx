@@ -1,4 +1,5 @@
 import {
+  faCloud,
   faCog,
   faSignOut,
   faUpload,
@@ -67,7 +68,7 @@ export default function Dashboard() {
   const { userData, streamData } = useLoaderData() as DashLoader;
   const handleLogout = useLogout(userData.id);
 
-  const handleImport = (qc: QueryClient) => {
+  const handleImport = () => {
     importGStreams(qc, userData.id);
   };
 
@@ -87,9 +88,15 @@ export default function Dashboard() {
             <Link className={styles.svgAction} to="/dashboard/settings">
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
-            <li className={styles.svgAction} onClick={() => handleImport(qc)}>
-              <FontAwesomeIcon icon={faUpload} /> Import streams
-            </li>
+            {userData.verified ? (
+              <li className={styles.svgAction} onClick={handleImport}>
+                <FontAwesomeIcon icon={faUpload} /> Import local streams
+              </li>
+            ) : (
+              <Link className={styles.svgAction} to="/dashboard/export">
+                <FontAwesomeIcon icon={faCloud} /> Export data to cloud
+              </Link>
+            )}
             <li className={styles.svgAction} onClick={handleLogout}>
               <FontAwesomeIcon icon={faSignOut} /> Logout
             </li>

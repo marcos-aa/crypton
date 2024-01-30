@@ -9,8 +9,12 @@ import AuthButtons from "../../../../AuthForm/AuthButtons";
 import CheckboxField from "../../../../AuthForm/CheckboxField";
 const exfields = ["name", "email"];
 
-export default function SignUp() {
-  const [saveStreams, setSaveStreams] = useState(false);
+interface SignProps {
+  isExport: boolean;
+}
+
+export default function SignUp({ isExport }: SignProps) {
+  const [saveStreams, setSaveStreams] = useState(isExport);
   const navigate = useNavigate();
 
   const sign_up = async (input: InputData): Promise<void> => {
@@ -23,8 +27,9 @@ export default function SignUp() {
     });
 
     if (saveStreams) localStorage.setItem(local.imp_streams, "import");
+    const destination = `/${isExport ? "dashboard" : "register"}/validate`;
 
-    navigate("/register/validate", {
+    navigate(destination, {
       state: { newmail: input.email },
     });
   };
@@ -35,14 +40,16 @@ export default function SignUp() {
     <AuthForm exfields={exfields} validate={true} submit={sign_up}>
       <AuthButtons action="Create account">
         <CheckboxField
-          label="Import local streams"
+          label="Export guest streams"
           checked={saveStreams}
           handleChange={handleGStreams}
         />
       </AuthButtons>
-      <Link to="/register/signin" className="redirLink">
-        Already have an acccount?
-      </Link>
+      {!isExport && (
+        <Link to="/register/signin" className="redirLink">
+          Already have an acccount?
+        </Link>
+      )}
     </AuthForm>
   );
 }

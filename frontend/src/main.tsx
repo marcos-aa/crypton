@@ -5,8 +5,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorPage";
 import ValidateUser from "./components/ValidateUser";
 
-import ModalContainer from "./components/ModalContainer";
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
+import ImportUser from "./components/views/Dashboard/ImportUser";
 import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
@@ -18,6 +18,7 @@ import UserSettings, {
   nameAction,
 } from "./components/views/Dashboard/UserSettings";
 import UpdateCredentials from "./components/views/Dashboard/UserSettings/UpdateCredentials";
+import ValidationModal from "./components/views/Dashboard/ValidationModal";
 import Home from "./components/views/Home";
 import Registration from "./components/views/Home/Registration";
 import ResetPassword from "./components/views/Home/Registration/ResetPassword";
@@ -55,7 +56,7 @@ const router = createBrowserRouter([
           },
           {
             path: "signup",
-            element: <SignUp />,
+            element: <SignUp isExport={false} />,
           },
           {
             path: "validate",
@@ -81,6 +82,15 @@ const router = createBrowserRouter([
         action: upsertStream(queryClient),
       },
       {
+        path: "export",
+        element: <ImportUser />,
+      },
+      {
+        path: "validate",
+        element: <ValidationModal origin="/dashboard/export" />,
+      },
+
+      {
         path: "streams/delete/:id",
         element: <DeleteStream />,
         action: deleteStream(queryClient),
@@ -105,11 +115,7 @@ const router = createBrowserRouter([
 
           {
             path: "validate",
-            element: (
-              <ModalContainer id="innerModal" predecessor="/dashboard/settings">
-                <ValidateUser />
-              </ModalContainer>
-            ),
+            element: <ValidationModal origin="/dashboard/settings" />,
           },
         ],
       },

@@ -180,15 +180,17 @@ const importGStreams = async (qc: QueryClient, uid: string) => {
   qc.setQueryData<StreamData>(["streams"], (curr) => {
     if (!curr) curr = { streams: [], symcount: {}, tickers: {} };
 
+    let streams: Stream[] = curr.streams;
+    const createdBy = curr.streams[0]?.user_id;
     const data = genGStreamData(uid, curr.symcount);
 
     gstreams = data.gstreams;
     impstreams = data.impstreams;
 
-    const allstreams = curr.streams.concat(gstreams);
+    if (createdBy !== "guest") streams = streams.concat(gstreams);
 
     return {
-      streams: allstreams,
+      streams,
       symcount: data.symcount,
       tickers: curr.tickers,
     };
@@ -199,6 +201,8 @@ const importGStreams = async (qc: QueryClient, uid: string) => {
       streams: impstreams,
     })
     .then((res) => {
+      localStorage.removeItem(local.streams);
+      localStorage.removeItem(local.imp_streams);
       qc.setQueryData<StreamData>(["streams"], (curr) => {
         const dupids = Object.keys(res.data);
 
@@ -211,8 +215,6 @@ const importGStreams = async (qc: QueryClient, uid: string) => {
 
         return { streams, symcount: curr.symcount, tickers: curr.tickers };
       });
-      localStorage.removeItem(local.streams);
-      localStorage.removeItem(local.imp_streams);
     })
     .catch(() => {
       qc.invalidateQueries(["streams"]);

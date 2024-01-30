@@ -23,7 +23,6 @@ import {
 } from "../../../../../utils/helpers";
 import ModalContainer from "../../../../ModalContainer";
 import CancellableAction from "../../CancellableAction";
-import Signwall from "../../Signwall";
 import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import ActionAnimation from "../ActionAnimation";
@@ -140,8 +139,6 @@ export default function SymbolList() {
 
   return (
     <ModalContainer id={styles.symbolModal} predecessor="/dashboard">
-      {!pagestate?.verified && pagestate?.symbols && <Signwall />}
-
       <header id={styles.modalHeader}>
         <h1> Select up to 5 currencies </h1>
         <label id={styles.searchBox}>
