@@ -1,20 +1,21 @@
 #signwall {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  z-index: 3;
-  width: var(--modal-width);
-  height: 100%;
-  max-width: 100%;
-  background-color: var(--modal-sub);
-
-  p {
-    max-width: 100%;
-    width: 400px;
+  h2,
+  a {
+    display: flex;
+    justify-content: center;
     padding: 10px;
-    font-size: 1.2em;
+    width: var(--modal-width);
+    max-width: 100%;
+    height: calc(var(--modal-height) / 2);
     background-color: white;
+  }
+
+  h2 {
+    align-items: flex-end;
+  }
+
+  a {
+    align-items: flex-start;
+    text-decoration: underline;
   }
 }

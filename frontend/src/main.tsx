@@ -7,6 +7,7 @@ import ValidateUser from "./components/ValidateUser";
 
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
 import ImportUser from "./components/views/Dashboard/ImportUser";
+import Signwall from "./components/views/Dashboard/Signwall";
 import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
       {
         path: "export",
         element: <ImportUser />,
+      },
+      {
+        path: "signwall",
+        element: <Signwall />,
       },
       {
         path: "validate",

@@ -170,7 +170,11 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
                   >
                     <Link
                       replace
-                      to={`streams/${stream.id}`}
+                      to={
+                        verified
+                          ? `/dashboard/${stream.id}`
+                          : "/dashboard/signwall"
+                      }
                       state={{
                         symbols: stream.symbols,
                         verified,

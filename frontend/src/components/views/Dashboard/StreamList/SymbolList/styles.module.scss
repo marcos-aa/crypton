@@ -23,8 +23,6 @@ svg {
   flex-wrap: wrap;
   width: 100%;
   gap: 10px;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
 
   h1 {
     font-size: 1.8rem;
@@ -111,11 +109,6 @@ svg {
   padding-right: 10px;
   gap: 15px;
   margin-top: 10px;
-  border-bottom-left-radius: 5px;
-
-  &::-webkit-scrollbar-corner {
-    border-bottom-right-radius: 5px;
-  }
 
   .symbol {
     display: flex;

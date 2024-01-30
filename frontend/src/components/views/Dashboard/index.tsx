@@ -85,7 +85,14 @@ export default function Dashboard() {
             <FontAwesomeIcon icon={faUserCircle} />
           </button>
           <ul>
-            <Link className={styles.svgAction} to="/dashboard/settings">
+            <Link
+              className={styles.svgAction}
+              to={
+                userData.verified
+                  ? "/dashboard/settings"
+                  : "/dashboard/signwall"
+              }
+            >
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
             {userData.verified ? (

@@ -7,7 +7,6 @@ import { User } from "../../../../utils/datafetching";
 import { local, messages, validateField } from "../../../../utils/helpers";
 import InputWarning from "../../../AuthForm/InputField/InputWarning";
 import ModalContainer from "../../../ModalContainer";
-import Signwall from "../Signwall";
 import ActionAnimation from "../StreamList/ActionAnimation";
 import SubmitAction from "../SubmitAction";
 import { userQuery } from "../UserInfo";
@@ -47,7 +46,6 @@ export default function UserSettings() {
 
   return (
     <ModalContainer predecessor="/dashboard">
-      {!user?.verified && <Signwall />}
       <Outlet />
 
       <h1 id={styles.settingsTitle} className={styles.title}>
