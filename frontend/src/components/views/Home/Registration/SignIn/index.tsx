@@ -4,8 +4,8 @@ import AuthForm from "../../../../AuthForm";
 
 import api from "../../../../../services/api";
 import {
-  ResData,
   ResMessage,
+  UserData,
   saveUser,
 } from "../../../../../utils/datafetching";
 import { InputData, validateForm } from "../../../../../utils/helpers";
@@ -16,7 +16,7 @@ export default function SignIn() {
 
   const sign_in = async (input: InputData): Promise<ResMessage | void> => {
     validateForm(input);
-    const { data, status } = await api.put<ResData>("/user", {
+    const { data, status } = await api.put<UserData>("/user", {
       email: input.email,
       password: input.password,
     });
