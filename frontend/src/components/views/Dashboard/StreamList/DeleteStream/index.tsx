@@ -23,7 +23,7 @@ export const deleteStream =
     const formData = await request.formData();
     const askAgain = formData.get("prompt") as string;
 
-    if (askAgain) localStorage.setItem(local.del_prompt, "no");
+    if (askAgain) localStorage.setItem(local.delPrompt, "false");
 
     const ticks: TickSubs = { newticks: [], delticks: [] };
 

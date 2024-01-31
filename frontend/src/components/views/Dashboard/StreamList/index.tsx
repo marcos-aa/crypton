@@ -49,8 +49,13 @@ export const generateURL = (symbols: string[]) => {
 interface StreamsProps {
   initialData: StreamData;
   verified: boolean;
+  notify(message: string, type: "success" | "error"): void;
 }
-export default function StreamList({ initialData, verified }: StreamsProps) {
+export default function StreamList({
+  initialData,
+  verified,
+  notify,
+}: StreamsProps) {
   const fetcher = useFetcher();
   const { data } = useQuery({
     ...streamQuery(verified),
@@ -120,6 +125,10 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
       subscribeTickers(delticks, "UNSUBSCRIBE");
     }
 
+    if (localStorage.getItem(local.expStreams)) {
+      notify(local.expStreams, "error");
+    }
+
     const cleanURL = new URL(window.location.origin + window.location.pathname);
     history.replaceState(history.state, "", cleanURL);
   }, [data.streams]);
@@ -158,7 +167,7 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
 
             <div className={styles.streamButtons}>
               {stream.user_id === "guest" &&
-              localStorage.getItem(local.imp_streams) ? (
+              localStorage.getItem(local.expStreams) == "exporting" ? (
                 <FontAwesomeIcon
                   title="Please wait until stream is fully imported"
                   icon={faHourglass}
@@ -184,7 +193,7 @@ export default function StreamList({ initialData, verified }: StreamsProps) {
                       <FontAwesomeIcon icon={faPencil} />
                     </Link>
                   </ActionAnimation>
-                  {localStorage.getItem(local.del_prompt) ? (
+                  {localStorage.getItem(local.delPrompt) ? (
                     <fetcher.Form
                       method="delete"
                       action={`/dashboard/streams/delete/${stream.id}`}

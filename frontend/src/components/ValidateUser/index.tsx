@@ -55,7 +55,7 @@ export default function ValidateUser({ style }: ValidationProps) {
       saveUser(data.user.id, data.access_token);
       qc.setQueryData<User>(["user", data.user.id], () => data.user);
 
-      if (localStorage.getItem(local.imp_streams))
+      if (localStorage.getItem(local.expStreams))
         importGStreams(qc, data.user.id);
 
       navigate("/dashboard");

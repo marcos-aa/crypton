@@ -26,7 +26,7 @@ export default function SignUp({ isExport }: SignProps) {
       password: input.password,
     });
 
-    if (saveStreams) localStorage.setItem(local.imp_streams, "import");
+    if (saveStreams) localStorage.setItem(local.expStreams, "true");
     const destination = `/${isExport ? "dashboard" : "register"}/validate`;
 
     navigate(destination, {

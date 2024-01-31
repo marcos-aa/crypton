@@ -7,19 +7,34 @@ type InputValidation = InputData & { path: string };
 
 const useNotification = () => {
   const [notif, setNotif] = useState<{
-    type?: "success" | "error";
+    type: "success" | "error";
     message: string;
+    timeout: number;
   }>({
-    type: undefined,
+    type: "success",
     message: "",
+    timeout: 0,
   });
 
-  const updateNotif = (message: string, type?: "error" | "success") => {
-    setNotif({ type, message });
+  const updateNotif = (message: string, type: "error" | "success") => {
+    clearTimeout(notif.timeout);
+
+    setNotif({
+      type,
+      message,
+      timeout: window.setTimeout(() => {
+        setNotif({
+          type: "success",
+          message: "",
+          timeout: null,
+        });
+      }, 2000),
+    });
   };
 
   return { notif, updateNotif };
 };
+
 const useCloseModal = (predecessor: string) => {
   const navigate = useNavigate();
 

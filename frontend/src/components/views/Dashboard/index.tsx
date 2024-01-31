@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
-import { useLogout } from "../../../utils/customHooks";
+import { useLogout, useNotification } from "../../../utils/customHooks";
 import {
   ResMessage,
   StreamData,
@@ -18,6 +18,7 @@ import {
 } from "../../../utils/datafetching";
 import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
+import Notification from "./Notification";
 import StreamList, { streamQuery } from "./StreamList";
 import UserInfo, { userQuery } from "./UserInfo";
 import styles from "./styles.module.scss";
@@ -67,9 +68,16 @@ export default function Dashboard() {
   const qc = useQueryClient();
   const { userData, streamData } = useLoaderData() as DashLoader;
   const handleLogout = useLogout(userData.id);
+  const { notif, updateNotif } = useNotification();
+
+  const notify = (message: string, type: "success" | "error") => {
+    updateNotif(message, type);
+  };
 
   const handleImport = () => {
-    importGStreams(qc, userData.id);
+    importGStreams(qc, userData.id).then((res) =>
+      updateNotif(res.message, res.type),
+    );
   };
 
   return (
@@ -111,8 +119,15 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {notif.message && (
+        <Notification message={notif.message} type={notif.type} />
+      )}
       <UserInfo initialData={userData} id={userData.id} />
-      <StreamList initialData={streamData} verified={userData.verified} />
+      <StreamList
+        initialData={streamData}
+        verified={userData.verified}
+        notify={notify}
+      />
     </div>
   );
 }

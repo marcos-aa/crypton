@@ -1,11 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
+import { AxiosError, AxiosResponse } from "axios";
 import { SyntheticEvent } from "react";
 import * as yup from "yup";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
 import { StreamData, SymCount, Tickers } from "./datafetching";
 
-export interface ReturnError {
+interface ResMessage {
   message: string;
 }
 
@@ -38,6 +39,11 @@ interface SymcountData {
   symcount: SymCount;
 }
 
+interface NotifReturn {
+  message: string;
+  type: "success" | "error";
+}
+
 type GStreamData = SymcountData & {
   gstreams: Stream[];
 };
@@ -52,10 +58,10 @@ export const local = {
   id: "u_id",
   token: "u_token",
   streams: "u_streams",
-  joined: "u_joindate",
-  imp_streams: "u_import_streams",
-  imp_prompt: "u:import_prompt",
-  del_prompt: "u:delete_prompt",
+  joined: "u_joinDate",
+  expStreams: "u_exportStreams",
+  expPrompt: "u:exportPrompt",
+  delPrompt: "u:delPrompt",
 };
 
 export const messages: { [key: string]: string } = {
@@ -174,7 +180,10 @@ const genGStreamData = (uid: string, prevcount: SymCount = {}): GStreamData => {
   return { gstreams, impstreams, symbols, symcount };
 };
 
-const importGStreams = async (qc: QueryClient, uid: string) => {
+const importGStreams = async (
+  qc: QueryClient,
+  uid: string,
+): Promise<NotifReturn> => {
   let gstreams: Stream[], impstreams: IMPStream[];
 
   qc.setQueryData<StreamData>(["streams"], (curr) => {
@@ -196,13 +205,14 @@ const importGStreams = async (qc: QueryClient, uid: string) => {
     };
   });
 
-  api
+  localStorage.removeItem(local.streams);
+  localStorage.removeItem(local.expStreams);
+
+  return api
     .post<NewIds>("/streams/import", {
       streams: impstreams,
     })
-    .then((res) => {
-      localStorage.removeItem(local.streams);
-      localStorage.removeItem(local.imp_streams);
+    .then((res: AxiosResponse<NewIds>): NotifReturn => {
       qc.setQueryData<StreamData>(["streams"], (curr) => {
         const dupids = Object.keys(res.data);
 
@@ -212,13 +222,24 @@ const importGStreams = async (qc: QueryClient, uid: string) => {
             stream.id = res.data[stream.id];
           }
         });
-
         return { streams, symcount: curr.symcount, tickers: curr.tickers };
       });
+
+      return {
+        message: "Data exported successfully",
+        type: "success",
+      };
     })
-    .catch(() => {
+    .catch((e: AxiosError<ResMessage>): NotifReturn => {
       qc.invalidateQueries(["streams"]);
+      localStorage.setItem(local.expStreams, "failure");
       localStorage.setItem(local.streams, JSON.stringify(gstreams));
+
+      return {
+        message:
+          e.response?.data?.message || "Something went wrong. Please try again",
+        type: "error",
+      };
     });
 };
 
