@@ -12,8 +12,9 @@
   border-radius: 5px;
   z-index: 2;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.427);
-  animation: linear entry 0.4s 1 forwards;
+  animation: linear entry 400ms 1 forwards;
   background-color: white;
+  transition: top 300ms;
 
   span,
   button {

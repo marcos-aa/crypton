@@ -127,11 +127,11 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-      </header>
 
-      {notif.message && (
-        <Notification message={notif.message} type={notif.type} />
-      )}
+        {notif.message && (
+          <Notification message={notif.message} type={notif.type} />
+        )}
+      </header>
 
       <UserInfo initialData={userData} id={userData.id} />
       <StreamList

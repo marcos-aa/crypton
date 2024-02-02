@@ -23,7 +23,15 @@
       flex-direction: column;
       align-items: flex-end;
       height: 100%;
-      width: 200px;
+      width: 60px;
+
+      &:hover #dropList {
+        visibility: visible;
+      }
+
+      &:hover + aside {
+        top: 220px;
+      }
 
       svg {
         font-size: 1.6rem;
@@ -43,10 +51,6 @@
         font-size: 1.6rem;
         height: var(--drop-height);
         width: var(--drop-height);
-
-        &:hover + #dropList {
-          visibility: visible;
-        }
       }
 
       #dropCta,
@@ -85,14 +89,9 @@
         display: flex;
         flex-direction: column;
         width: 200px;
-        max-width: 100%;
         visibility: hidden;
         box-shadow: 0 0 3px 0 black;
         row-gap: 10px;
-
-        &:hover {
-          visibility: visible;
-        }
 
         button:disabled {
           opacity: 0.5;
@@ -111,11 +110,12 @@
         right: 0;
         height: fit-content;
 
+        #dropCta,
+        #dropList {
+          width: 100%;
+        }
+
         &:hover {
-          #dropCta,
-          #dropList {
-            width: 100%;
-          }
           width: 100%;
         }
 
