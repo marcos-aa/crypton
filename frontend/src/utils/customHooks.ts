@@ -1,12 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router";
+import { NotifType } from "../components/views/Dashboard/Notification";
 import { InputData, local, validateField } from "./helpers";
 
 type InputValidation = InputData & { path: string };
 
 type Notif = {
-  type: "error" | "success";
+  type: NotifType;
   message: string;
   expires?: number;
 };
@@ -25,7 +26,7 @@ const useNotification = () => {
     });
   };
 
-  const updateNotif = (message: string, type: "error" | "success") => {
+  const updateNotif = (message: string, type: NotifType) => {
     const timeoutId = window.setTimeout(() => {
       clearNotif();
     }, 2000);

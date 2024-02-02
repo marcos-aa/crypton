@@ -1,16 +1,66 @@
 .notify {
   position: absolute;
-  right: 0;
-  top: 120px;
-  width: 250px;
-  height: 120px;
+  display: flex;
+  align-items: center;
+  right: 20px;
+  top: 100px;
+  min-height: 70px;
+  width: 400px;
+  max-width: 90%;
+  padding: 5px 10px;
+  gap: 20px;
   border-radius: 5px;
-}
+  z-index: 2;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.427);
+  animation: linear entry 0.4s 1 forwards;
+  background-color: white;
 
-.success {
-  background-color: green;
-}
+  span,
+  button {
+    flex-shrink: 0;
 
-.error {
-  background-color: red;
+    svg {
+      min-height: 26px;
+    }
+  }
+  button {
+    border: none;
+    margin-left: auto;
+  }
+
+  #operationType {
+    font-size: 18px;
+    text-transform: capitalize;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+
+    p {
+      text-transform: none;
+    }
+  }
+
+  svg[data-icon="circle-check"] path {
+    fill: green;
+  }
+
+  svg[data-icon="circle-exclamation"] path {
+    fill: red;
+  }
+
+  svg[data-icon="circle-info"] path {
+    fill: var(--button-color);
+  }
+
+  @media (max-width: 420px) {
+    right: auto;
+  }
+
+  @keyframes entry {
+    from {
+      margin-right: -400px;
+    }
+    to {
+      margin-right: 0;
+    }
+  }
 }

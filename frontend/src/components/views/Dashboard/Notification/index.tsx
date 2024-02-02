@@ -1,13 +1,41 @@
+import {
+  faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
+
+export type NotifType = "error" | "success" | "loading";
 
 interface NotifProps {
   message: string;
-  type: "error" | "success";
+  type: NotifType;
 }
+
 export default function Notification({ message, type }: NotifProps) {
   return (
-    <div className={`${styles.notify} ${styles[type]}`}>
-      <p> {message}</p>
-    </div>
+    <aside id="notif" className={styles.notify}>
+      <span>
+        <FontAwesomeIcon
+          icon={
+            type === "error"
+              ? faCircleExclamation
+              : type === "success"
+              ? faCircleCheck
+              : faCircleInfo
+          }
+        />
+      </span>
+
+      <div id={styles.operationType}>
+        <p>{message}</p>
+      </div>
+
+      <button>
+        <FontAwesomeIcon icon={faXmark} />
+      </button>
+    </aside>
   );
 }
