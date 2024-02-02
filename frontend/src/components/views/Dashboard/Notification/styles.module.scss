@@ -2,8 +2,8 @@
   position: absolute;
   display: flex;
   align-items: center;
-  right: 20px;
-  top: 100px;
+  right: 10px;
+  top: 210px;
   min-height: 70px;
   width: 400px;
   max-width: 90%;
@@ -14,7 +14,6 @@
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.427);
   animation: linear entry 400ms 1 forwards;
   background-color: white;
-  transition: top 300ms;
 
   span,
   button {

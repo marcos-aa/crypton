@@ -16,7 +16,7 @@ import {
   User,
   saveUser,
 } from "../../../utils/datafetching";
-import { importGStreams, local } from "../../../utils/helpers";
+import { local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import Notification from "./Notification";
 import StreamList, { streamQuery } from "./StreamList";
@@ -78,9 +78,9 @@ export default function Dashboard() {
   const handleImport = () => {
     updateNotif("Your streams are being uploaded to the server", "loading");
 
-    importGStreams(qc, userData.id).then((res) =>
-      updateNotif(res.message, res.type),
-    );
+    // importGStreams(qc, userData.id).then((res) =>
+    //   updateNotif(res.message, res.type),
+    // );
   };
 
   return (
@@ -129,7 +129,11 @@ export default function Dashboard() {
         </div>
 
         {notif.message && (
-          <Notification message={notif.message} type={notif.type} />
+          <Notification
+            message={notif.message}
+            type={notif.type}
+            dismiss={clearNotif}
+          />
         )}
       </header>
 

@@ -12,9 +12,10 @@ export type NotifType = "error" | "success" | "loading";
 interface NotifProps {
   message: string;
   type: NotifType;
+  dismiss(): void;
 }
 
-export default function Notification({ message, type }: NotifProps) {
+export default function Notification({ message, type, dismiss }: NotifProps) {
   return (
     <aside id="notif" className={styles.notify}>
       <span>
@@ -23,8 +24,8 @@ export default function Notification({ message, type }: NotifProps) {
             type === "error"
               ? faCircleExclamation
               : type === "success"
-              ? faCircleCheck
-              : faCircleInfo
+                ? faCircleCheck
+                : faCircleInfo
           }
         />
       </span>
@@ -34,7 +35,7 @@ export default function Notification({ message, type }: NotifProps) {
       </div>
 
       <button>
-        <FontAwesomeIcon icon={faXmark} />
+        <FontAwesomeIcon icon={faXmark} onClick={dismiss} />
       </button>
     </aside>
   );
