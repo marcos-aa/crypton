@@ -5,34 +5,37 @@ import { InputData, local, validateField } from "./helpers";
 
 type InputValidation = InputData & { path: string };
 
+type Notif = {
+  type: "error" | "success";
+  message: string;
+  expires?: number;
+};
+
 const useNotification = () => {
-  const [notif, setNotif] = useState<{
-    type: "success" | "error";
-    message: string;
-    timeout: number;
-  }>({
-    type: "success",
-    message: "",
-    timeout: 0,
+  const [notif, setNotif] = useState<Notif>({
+    type: null,
+    message: null,
+    expires: null,
   });
 
-  const updateNotif = (message: string, type: "error" | "success") => {
-    clearTimeout(notif.timeout);
-
-    setNotif({
-      type,
-      message,
-      timeout: window.setTimeout(() => {
-        setNotif({
-          type: "success",
-          message: "",
-          timeout: null,
-        });
-      }, 2000),
+  const clearNotif = () => {
+    setNotif((prev) => {
+      clearTimeout(prev.expires);
+      return { type: null, message: null };
     });
   };
 
-  return { notif, updateNotif };
+  const updateNotif = (message: string, type: "error" | "success") => {
+    const timeoutId = window.setTimeout(() => {
+      clearNotif();
+    }, 2000);
+
+    setNotif({ type, message, expires: timeoutId });
+
+    return timeoutId;
+  };
+
+  return { notif, updateNotif, clearNotif };
 };
 
 const useCloseModal = (predecessor: string) => {
