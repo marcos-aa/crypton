@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { SyntheticEvent } from "react";
 import * as yup from "yup";
+import { NotifType } from "../components/views/Dashboard/Notification";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
 import { StreamData, SymCount, Tickers } from "./datafetching";
@@ -41,7 +42,7 @@ interface SymcountData {
 
 interface NotifReturn {
   message: string;
-  type: "success" | "error";
+  type: Exclude<NotifType, "loading">;
 }
 
 type GStreamData = SymcountData & {
@@ -237,7 +238,8 @@ const importGStreams = async (
 
       return {
         message:
-          e.response?.data?.message || "Something went wrong. Please try again",
+          e.response?.data?.message ||
+          "Your streams failed to be exported. Please try again",
         type: "error",
       };
     });

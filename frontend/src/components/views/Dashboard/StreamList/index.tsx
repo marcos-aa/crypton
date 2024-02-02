@@ -16,6 +16,7 @@ import {
   getStreams,
 } from "../../../../utils/datafetching";
 import { formatSymbols, local } from "../../../../utils/helpers";
+import { NotifType } from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
@@ -49,8 +50,9 @@ export const generateURL = (symbols: string[]) => {
 interface StreamsProps {
   initialData: StreamData;
   verified: boolean;
-  notify(message: string, type: "success" | "error"): void;
+  notify(message: string, type: NotifType): void;
 }
+
 export default function StreamList({
   initialData,
   verified,
@@ -126,7 +128,7 @@ export default function StreamList({
     }
 
     if (localStorage.getItem(local.expStreams)) {
-      notify(local.expStreams, "error");
+      notify("Your streams failed to be exported. Please try again", "error");
     }
 
     const cleanURL = new URL(window.location.origin + window.location.pathname);

@@ -67,14 +67,17 @@ export const dashLoader =
 export default function Dashboard() {
   const qc = useQueryClient();
   const { userData, streamData } = useLoaderData() as DashLoader;
-  const handleLogout = useLogout(userData.id);
-  const { notif, updateNotif } = useNotification();
+  const { notif, updateNotif, clearNotif } = useNotification();
+  const logout = useLogout(userData.id);
 
-  const notify = (message: string, type: "success" | "error") => {
-    updateNotif(message, type);
+  const handleLogout = () => {
+    clearNotif();
+    logout();
   };
 
   const handleImport = () => {
+    updateNotif("Your streams are being uploaded to the server", "loading");
+
     importGStreams(qc, userData.id).then((res) =>
       updateNotif(res.message, res.type),
     );
@@ -85,16 +88,13 @@ export default function Dashboard() {
       <header>
         <Logo />
         <div id={styles.dropSettings}>
-          <button
-            id={styles.dropBtn}
-            className={styles.svgAction}
-            title="Settings"
-          >
+          <button id={styles.dropCta} title="Settings">
             <FontAwesomeIcon icon={faUserCircle} />
           </button>
-          <ul>
+
+          <div id={styles.dropList}>
             <Link
-              className={styles.svgAction}
+              className={styles.dropAction}
               to={
                 userData.verified
                   ? "/dashboard/settings"
@@ -103,30 +103,41 @@ export default function Dashboard() {
             >
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
+
             {userData.verified ? (
-              <li className={styles.svgAction} onClick={handleImport}>
+              <button
+                type="button"
+                className={styles.dropAction}
+                onClick={handleImport}
+                disabled={notif.type == "loading"}
+              >
                 <FontAwesomeIcon icon={faUpload} /> Import local streams
-              </li>
+              </button>
             ) : (
-              <Link className={styles.svgAction} to="/dashboard/export">
+              <Link className={styles.dropAction} to="/dashboard/export">
                 <FontAwesomeIcon icon={faCloud} /> Export data to cloud
               </Link>
             )}
-            <li className={styles.svgAction} onClick={handleLogout}>
+            <button
+              type="button"
+              className={styles.dropAction}
+              onClick={handleLogout}
+            >
               <FontAwesomeIcon icon={faSignOut} /> Logout
-            </li>
-          </ul>
+            </button>
+          </div>
         </div>
       </header>
 
       {notif.message && (
         <Notification message={notif.message} type={notif.type} />
       )}
+
       <UserInfo initialData={userData} id={userData.id} />
       <StreamList
         initialData={streamData}
         verified={userData.verified}
-        notify={notify}
+        notify={updateNotif}
       />
     </div>
   );

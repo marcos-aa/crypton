@@ -1,9 +1,11 @@
 #dashboard {
+  --drop-height: 40px;
   position: relative;
   justify-content: initial;
   flex-direction: column;
   row-gap: 20px;
   height: 100vh;
+  overflow-x: hidden;
 
   header {
     display: flex;
@@ -17,74 +19,113 @@
 
     #dropSettings {
       position: relative;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       height: 100%;
-      width: 60px;
-      #dropBtn {
-        padding: 5px 0;
-        width: 100%;
-      }
-      &:hover ul {
-        visibility: visible;
+      width: 200px;
+
+      svg {
+        font-size: 1.6rem;
       }
 
-      ul {
-        display: flex;
-        visibility: hidden;
-        flex-direction: column;
-        position: absolute;
-        right: 0;
-        padding: 0;
-        width: 180px;
-        row-gap: 10px;
-        box-shadow: 0 0 2px 0 black;
+      &,
+      #dropCta,
+      #dropList {
         background-color: white;
-        z-index: 2;
-        border-radius: 2px;
+        transition: width 1s;
+        z-index: 1;
+      }
 
-        li {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          padding: 10px;
-          gap: 10px;
-          min-height: 30px;
-          font-size: 1.1em;
+      #dropCta {
+        display: flex;
+        padding: 5px 0;
+        font-size: 1.6rem;
+        height: var(--drop-height);
+        width: var(--drop-height);
 
-          svg {
-            font-size: 1.2em;
-          }
-        }
-
-        li:hover {
-          cursor: pointer;
-          background-color: rgb(240, 236, 236);
-        }
-
-        li:last-of-type {
-          border-top: 0.5px solid #00000036;
+        &:hover + #dropList {
+          visibility: visible;
         }
       }
-    }
 
-    .svgAction {
-      justify-content: center;
-      border: none;
-      flex-shrink: 0;
-      padding: 0;
-      path {
+      #dropCta,
+      .dropAction {
+        border: none;
+
+        svg {
+          width: 30px;
+          font-size: 1.6rem;
+        }
+      }
+
+      .dropAction {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        text-align: left;
+        min-height: var(--drop-height);
+        max-width: 100%;
+        column-gap: 15px;
+        font-size: 20px;
+        padding: 0 10px;
+
+        &:hover {
+          background-color: #e7e6e6;
+        }
+
+        &:last-child {
+          border-top: 0.5px solid rgba(0, 0, 0, 0.426);
+        }
+      }
+
+      #dropList {
+        position: absolute;
+        top: var(--drop-height);
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        max-width: 100%;
+        visibility: hidden;
+        box-shadow: 0 0 3px 0 black;
+        row-gap: 10px;
+
+        &:hover {
+          visibility: visible;
+        }
+
+        button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      svg path {
         fill: var(--button-color);
       }
     }
+
+    @media (max-width: 400px) {
+      #dropSettings {
+        position: absolute;
+        right: 0;
+        height: fit-content;
+
+        &:hover {
+          #dropCta,
+          #dropList {
+            width: 100%;
+          }
+          width: 100%;
+        }
+
+        #dropList {
+          box-shadow: 0 5px 5px -4px rgba(0, 0, 0, 0.5);
+        }
+      }
+    }
   }
 
-  .svgAction {
-    font-size: 1.6em;
-  }
-
-  header > .svgAction {
-    width: 60px;
-  }
   header {
     padding: 10px;
   }
