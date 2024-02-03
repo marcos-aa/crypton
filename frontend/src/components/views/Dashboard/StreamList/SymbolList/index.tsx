@@ -133,7 +133,7 @@ export default function SymbolList() {
 
   const matchingPairs = useMemo(() => {
     return (pairs as string[]).filter((symbol: string) =>
-      symbol.includes(search.toLocaleUpperCase()),
+      symbol.includes(search.trim().toLocaleUpperCase()),
     );
   }, [search]);
 

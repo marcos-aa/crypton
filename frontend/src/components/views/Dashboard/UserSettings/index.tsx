@@ -21,7 +21,7 @@ export const nameAction =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
     const formData = await request.formData();
-    const name = formData.get("name") as string;
+    const name = (formData.get("name") as string).trim();
 
     try {
       validateField("name", { name });

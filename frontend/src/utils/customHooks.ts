@@ -73,7 +73,7 @@ const useUserInput = () => {
     const { name, value } = e.target;
     setInput((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value.trim(),
       path: name,
     }));
   };

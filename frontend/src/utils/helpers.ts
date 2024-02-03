@@ -66,7 +66,7 @@ export const local = {
 };
 
 export const messages: { [key: string]: string } = {
-  name: "Name must contain only alphabet characters.",
+  name: "Name must contain only word characters.",
   email: "Please enter a valid email.",
   pass: "Passwords must have special, uppercase, lowercase and digit characters",
   passmin: "Password must have at least 8 characters",
@@ -74,25 +74,25 @@ export const messages: { [key: string]: string } = {
   cpassword: "Passwords must match",
 };
 
-const reg = /^([^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$/;
+const passRegex = /^([^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$/;
 
 const userSchema = yup
   .object({
-    name: yup
+    name: yup.string().matches(/\w/, messages.name).required(),
+    email: yup
       .string()
-      .matches(/^[^0-9]+$/, messages.name)
-      .required(),
-    email: yup.string().email(messages.email).required(),
+      .email(messages.email)
+      .required("Email must not be empty"),
     password: yup
       .string()
       .min(8, messages.passmin)
       .max(32, messages.passmax)
       .test({
-        test: (v: string) => !reg.test(v),
+        test: (v: string) => !passRegex.test(v),
         message: messages.pass,
       }),
   })
-  .noUnknown(true, "Invalid fields detected");
+  .noUnknown(true, "Form must not contain invalid fields");
 
 const schemas = {
   auth: userSchema.pick(["email", "password"]).noUnknown(true),
