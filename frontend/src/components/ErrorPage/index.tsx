@@ -1,22 +1,33 @@
 import { AxiosError } from "axios";
 import { useRouteError } from "react-router";
 import { Link } from "react-router-dom";
+import { useLogout } from "../../utils/customHooks";
 import { ResMessage } from "../../utils/datafetching";
+import { local } from "../../utils/helpers";
 import Logo from "../Logo";
 import styles from "./styles.module.scss";
 
 export default function ErrorPage() {
+  const logout = useLogout(localStorage.getItem(local.id));
   const error = useRouteError() as AxiosError<ResMessage>;
 
   return (
     <div className="page">
       <section id={styles.errorPage}>
         <Logo isError={true} />
-        <h2>Something went wrong {error?.message} </h2>
+        <h2>OOPS! Something went wrong.</h2>
 
-        <Link to="/register/signin" className="redirLink">
-          Back to signin
-        </Link>
+        <p>{error?.response?.data?.message}</p>
+
+        <div id={styles.errActions}>
+          <Link to="/dashboard" className={styles.errOption}>
+            Go to dashboard
+          </Link>
+
+          <button onClick={logout} className={styles.errOption}>
+            Logout
+          </button>
+        </div>
       </section>
     </div>
   );
