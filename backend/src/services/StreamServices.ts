@@ -38,7 +38,7 @@ type StreamTickers = {
 export default class StreamServices {
   async create(user_id: string, symbols: string[]): Promise<StreamRes> {
     const { error: e } = streamSchema.validate({ id: user_id, symbols })
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const stream = await prisma.stream.create({
       data: {
@@ -114,7 +114,7 @@ export default class StreamServices {
 
   async update(id: string, symbols: string[]): Promise<StreamRes> {
     const { error: e } = streamSchema.validate({ id, symbols })
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const stream = await prisma.stream.update({
       where: {

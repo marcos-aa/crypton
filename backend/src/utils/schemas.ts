@@ -22,11 +22,10 @@ const messages = {
 }
 
 const userSchema = Joi.object({
-  name: Joi.string()
-    .pattern(/\w/)
-    .min(2)
-    .required()
-    .messages({ "string.min": "Name must contain at least two characters" }),
+  name: Joi.string().pattern(/\w/).messages({
+    "string.min": "Name must contain at least two characters",
+    "string.pattern.base": "Name must only contain word characters",
+  }),
   email: Joi.string().email().required().messages({
     "string.email": "Email must contain a valid domain",
   }),

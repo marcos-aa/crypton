@@ -93,7 +93,7 @@ export default class UserUtils {
       email,
       newmail,
     })
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const oauth2Client = new OAuth2(
       OAUTH_CLIENTID,
@@ -155,7 +155,7 @@ export default class UserUtils {
     code: string,
     newmail: string | undefined = undefined
   ): Promise<UserData | EMessage> {
-    const cleanCode = code.replace(/\s/g, "")
+    const cleanCode = code.trim()
     const ucode = await prisma.ucodes.findUnique({
       where: {
         code: cleanCode,
@@ -195,6 +195,9 @@ export default class UserUtils {
   }
 
   async updateName(id: string, name: string) {
+    const { error: e } = userSchema.extract("name").validate(name)
+    if (e) return { status: 422, message: e.details[0].message }
+
     await prisma.user.update({
       where: { id },
       data: {
@@ -207,7 +210,7 @@ export default class UserUtils {
 
   async updatePassword(email: string, password: string): Promise<EMessage> {
     const { error: e } = userSchema.extract("pass").validate(password)
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -228,6 +231,9 @@ export default class UserUtils {
     newmail: string,
     password: string
   ): Promise<EMessage> {
+    const { error: e } = userSchema.extract("email").validate(newmail)
+    if (e) return { status: 422, message: e.details[0].message }
+
     const users = await prisma.user.findMany({
       where: {
         OR: [{ email }, { email: newmail }],

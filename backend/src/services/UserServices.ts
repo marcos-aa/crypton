@@ -14,7 +14,7 @@ export interface UserData {
 export default class UserServices {
   async create(name: string, email: string, pass: string): Promise<EMessage> {
     const { error: e } = userSchema.validate({ name, email, pass })
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const utils = new UserUtils()
     const dup = await utils.isVerified("email", email, {
@@ -89,7 +89,7 @@ export default class UserServices {
       }),
     }).validate({ email, pass })
 
-    if (e) return { status: 401, message: e.details[0].message }
+    if (e) return { status: 422, message: e.details[0].message }
 
     const utils = new UserUtils()
     const res = await utils.isVerified("email", email, {
