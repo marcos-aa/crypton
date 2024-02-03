@@ -184,7 +184,7 @@ export default function StreamList({
                       replace
                       to={
                         verified
-                          ? `/dashboard/${stream.id}`
+                          ? `/dashboard/streams/${stream.id}`
                           : "/dashboard/signwall"
                       }
                       state={{
