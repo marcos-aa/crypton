@@ -6,7 +6,7 @@ import UserUtils from "../utils/User"
 import { EMessage, messages as m, userSchema } from "../utils/schemas"
 
 export interface UserData {
-  user: Omit<User, "id" | "hashpass">
+  user: Omit<User, "hashpass">
   status: number
   access_token: string
 }
@@ -63,7 +63,6 @@ export default class UserServices {
         refresh_token: true,
         verified: true,
         created_at: true,
-        last_session: true,
       })
 
       if (!res.user?.verified)
@@ -122,7 +121,6 @@ export default class UserServices {
       where: { email },
       data: {
         refresh_token,
-        last_session: new Date(),
       },
     })
 

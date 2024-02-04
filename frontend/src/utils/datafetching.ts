@@ -7,7 +7,6 @@ export const udata = {
   name: "Guest",
   email: "No email",
   created_at: new Date(),
-  last_session: new Date(),
   verified: false,
 };
 
@@ -24,7 +23,6 @@ export interface User {
   name: string;
   email: string;
   created_at: Date;
-  last_session: Date;
   verified: boolean;
 }
 
@@ -67,7 +65,6 @@ const guestData = () => {
     name: "Guest",
     email: "No email",
     created_at: joinDate,
-    last_session: new Date(),
     verified: false,
   };
 

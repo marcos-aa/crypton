@@ -21,10 +21,7 @@ export default function UserInfo({ initialData, id }: InfoProps) {
     initialData,
     refetchOnWindowFocus: false,
   });
-  const uDates = {
-    createdAt: new Date(`${user?.created_at}`),
-    lastSession: new Date(`${user?.last_session}`),
-  };
+  const createdAt = new Date(`${user?.created_at}`);
 
   return (
     <section className={`${styles.userData} ${styles.panel}`}>
@@ -40,20 +37,8 @@ export default function UserInfo({ initialData, id }: InfoProps) {
         <p aria-label="created at" role="listitem" className={styles.infoItem}>
           Joined at
           <span>
-            {uDates.createdAt.getUTCDate()}/{uDates.createdAt.getUTCMonth() + 1}
-            /{uDates.createdAt.getUTCFullYear()}
-          </span>
-        </p>
-        <p
-          aria-label="last session"
-          role="listitem"
-          className={styles.infoItem}
-        >
-          Last login
-          <span>
-            {uDates.lastSession.getUTCDate()}/
-            {uDates.lastSession.getUTCMonth() + 1}/
-            {uDates.lastSession.getUTCFullYear()}
+            {createdAt.getUTCDate()}/{createdAt.getUTCMonth() + 1}/
+            {createdAt.getUTCFullYear()}
           </span>
         </p>
       </div>
