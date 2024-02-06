@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { User, getUser } from "../../../../utils/datafetching";
+import { memo } from "react";
+import { SymNumbers, User, getUser } from "../../../../utils/datafetching";
 import styles from "./styles.module.scss";
 
 export const userQuery = (id: string) => ({
@@ -12,12 +13,12 @@ export const userQuery = (id: string) => ({
 
 interface InfoProps {
   initialData: User;
-  id: string;
+  symData: SymNumbers;
 }
 
-export default function UserInfo({ initialData, id }: InfoProps) {
+function UserInfo({ initialData, symData }: InfoProps) {
   const { data: user } = useQuery({
-    ...userQuery(id),
+    ...userQuery(initialData.id),
     initialData,
     refetchOnWindowFocus: false,
   });
@@ -35,6 +36,15 @@ export default function UserInfo({ initialData, id }: InfoProps) {
 
       <div className={styles.userInfo} role="list">
         <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Total streams: <span> {symData.tstreams} </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Total symbols: <span> {symData.tsyms} </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Unique symbols: <span> {symData.usyms} </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
           Joined at
           <span>
             {createdAt.getUTCDate()}/{createdAt.getUTCMonth() + 1}/
@@ -45,3 +55,5 @@ export default function UserInfo({ initialData, id }: InfoProps) {
     </section>
   );
 }
+
+export default memo(UserInfo);
