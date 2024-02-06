@@ -70,19 +70,14 @@ export default class StreamUtils {
   }
 
   async getTickers(symbols: string[]): Promise<Tickers> {
-    const uniques = Array.from(new Set(symbols))
-    const cached = cache.mget<FMTDTicker>(uniques)
+    const cached = cache.mget<FMTDTicker>(symbols)
     const keys = Object.keys(cached)
-    if (keys.length === uniques.length) return cached
+    if (keys.length === symbols.length) return cached
 
-    const notCached = uniques.filter((u) => !keys.includes(u))
+    const notCached = symbols.filter((u) => !keys.includes(u))
 
-    try {
-      await this.cacheTickers({ symbols: JSON.stringify(notCached) })
-      const tickers = Object.assign(cached, cache.mget<FMTDTicker>(notCached))
-      return tickers
-    } catch (e) {
-      return {}
-    }
+    await this.cacheTickers({ symbols: JSON.stringify(notCached) })
+    const tickers = Object.assign(cached, cache.mget<FMTDTicker>(notCached))
+    return tickers
   }
 }
