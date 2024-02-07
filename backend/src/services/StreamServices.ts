@@ -27,10 +27,11 @@ type WriteErrors = Array<{
 interface NewIds {
   [id: string]: string
 }
-type StreamReturn = Omit<Stream, "user_id">
-type StreamRes = StreamReturn | Error
-type StreamTickers = {
-  streams: StreamReturn[]
+
+type StreamRes = Stream | Error
+
+type StreamData = {
+  streams: Stream[]
   symcount: SymCount
   tickers: Tickers
 }
@@ -44,10 +45,6 @@ export default class StreamServices {
       data: {
         user_id,
         symbols,
-      },
-      select: {
-        id: true,
-        symbols: true,
       },
     })
 
@@ -88,7 +85,7 @@ export default class StreamServices {
     return newids
   }
 
-  async read(user_id: string): Promise<StreamTickers> {
+  async read(user_id: string): Promise<StreamData> {
     const streams = await prisma.stream.findMany({
       where: {
         user_id,
@@ -122,10 +119,6 @@ export default class StreamServices {
       },
       data: {
         symbols,
-      },
-      select: {
-        id: true,
-        symbols: true,
       },
     })
 
