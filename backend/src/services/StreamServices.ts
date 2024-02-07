@@ -34,6 +34,9 @@ type StreamData = {
   streams: Stream[]
   symcount: SymCount
   tickers: Tickers
+  tstreams: number
+  tsyms: number
+  usyms: number
 }
 
 export default class StreamServices {
@@ -85,27 +88,33 @@ export default class StreamServices {
     return newids
   }
 
-  async read(user_id: string): Promise<StreamData> {
+  async read(user_id: string): Promise<StreamData | null> {
     const streams = await prisma.stream.findMany({
       where: {
         user_id,
       },
     })
 
-    if (streams.length < 1) return { streams, symcount: {}, tickers: {} }
+    if (streams.length < 1) return null
 
+    let usyms: string[] = []
     const allsyms = streams.flatMap((stream) => stream.symbols)
     const symcount = allsyms.reduce((store: SymCount, sym: string) => {
       store[sym] = store[sym] + 1 || 1
+      if (store[sym] == 1) usyms.push(sym)
       return store
     }, {})
-
-    const tickers = await new StreamUtils().getTickers(allsyms)
+    const tsyms = allsyms.length
+    const tstreams = streams.length
+    const tickers = await new StreamUtils().getTickers(usyms)
 
     return {
       streams,
       symcount,
       tickers,
+      tstreams,
+      tsyms,
+      usyms: usyms.length,
     }
   }
 
