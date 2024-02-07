@@ -194,12 +194,16 @@ const importGStreams = async (
     impstreams = data.impstreams;
     delete data.impstreams;
 
-    if (createdBy !== "guest") streams = streams.concat(gstreams);
+    if (createdBy == uid) {
+      streams = streams.concat(gstreams);
+      data.tstreams += curr.tstreams;
+      data.tsyms += curr.tsyms;
+    }
 
     return {
       ...data,
       streams,
-      tickers: curr.tickers,
+      tickers: curr?.tickers,
     };
   });
 
