@@ -162,7 +162,7 @@ export default function StreamList({
                 <SymbolTicks
                   key={symbol}
                   symbol={symbol}
-                  prices={tickers[symbol]}
+                  prices={tickers?.[symbol]}
                 />
               );
             })}

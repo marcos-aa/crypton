@@ -44,11 +44,13 @@ export interface SymCount {
   [symbol: string]: number;
 }
 
-export interface StreamData {
+export interface StreamData extends SymNumbers {
   streams: Stream[];
   symcount: SymCount;
   tickers: Tickers;
 }
+
+export type SymNumbers = { tsyms: number; usyms: number; tstreams: number };
 
 export const saveUser = (id: string, token?: string) => {
   localStorage.setItem(local.id, id);
@@ -57,7 +59,7 @@ export const saveUser = (id: string, token?: string) => {
   api.defaults.headers.common.authorization = `Bearer ${token}`;
 };
 
-const guestData = () => {
+const guestData = (): User => {
   const joinDate = new Date(localStorage.getItem(local.joined)) ?? new Date();
 
   const udata: User = {
@@ -72,7 +74,7 @@ const guestData = () => {
   return udata;
 };
 
-const getUser = async (id: string) => {
+const getUser = async (id: string): Promise<User> => {
   if (id === "guest") return guestData();
   const { data } = await api.get<UserData>("/user");
   saveUser(id, data.access_token);
@@ -80,31 +82,19 @@ const getUser = async (id: string) => {
 };
 
 const getStreams = async (): Promise<StreamData> => {
-  try {
-    const { data } = await api.get<StreamData>("/streams");
-    return {
-      streams: data.streams,
-      symcount: data.symcount,
-      tickers: data.tickers,
-    };
-  } catch (e) {
-    return { streams: [], symcount: {}, tickers: {} };
-  }
+  const { data: streamData } = await api.get<StreamData>("/streams");
+  return streamData;
 };
 
-const getGuestStreams = async () => {
-  const { gstreams: streams, symbols, symcount } = genGStreamData("guest");
-
-  try {
-    const { data } = await api.get<Tickers>("/tickers", {
-      params: {
-        symbols,
-      },
-    });
-    return { streams, symcount, tickers: data };
-  } catch (e) {
-    return { streams, symcount, tickers: {} };
-  }
+const getGuestStreams = async (): Promise<StreamData> => {
+  const symData = genGStreamData("guest");
+  const { data: tickers } = await api.get<Tickers>("/tickers", {
+    params: {
+      symbols: symData.symbols,
+    },
+  });
+  const streamData = Object.assign(symData, { tickers });
+  return streamData;
 };
 
 const getPairs = async (): Promise<string[] | string> => {

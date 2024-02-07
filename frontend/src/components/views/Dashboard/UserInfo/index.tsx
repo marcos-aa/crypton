@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
-import { SymNumbers, User, getUser } from "../../../../utils/datafetching";
+import { User, getUser } from "../../../../utils/datafetching";
 import styles from "./styles.module.scss";
 
 export const userQuery = (id: string) => ({
@@ -13,10 +13,12 @@ export const userQuery = (id: string) => ({
 
 interface InfoProps {
   initialData: User;
-  symData: SymNumbers;
+  usyms: number;
+  tsyms: number;
+  tstreams: number;
 }
 
-function UserInfo({ initialData, symData }: InfoProps) {
+function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
   const { data: user } = useQuery({
     ...userQuery(initialData.id),
     initialData,
@@ -33,23 +35,22 @@ function UserInfo({ initialData, symData }: InfoProps) {
       >
         {user?.name}
       </h2>
-
       <div className={styles.userInfo} role="list">
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
-          Total streams: <span> {symData.tstreams} </span>
-        </p>
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
-          Total symbols: <span> {symData.tsyms} </span>
-        </p>
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
-          Unique symbols: <span> {symData.usyms} </span>
-        </p>
         <p aria-label="created at" role="listitem" className={styles.infoItem}>
           Joined at
           <span>
             {createdAt.getUTCDate()}/{createdAt.getUTCMonth() + 1}/
             {createdAt.getUTCFullYear()}
           </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Total streams: <span> {tstreams} </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Total symbols: <span> {tsyms} </span>
+        </p>
+        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+          Unique symbols: <span> {usyms} </span>
         </p>
       </div>
     </section>

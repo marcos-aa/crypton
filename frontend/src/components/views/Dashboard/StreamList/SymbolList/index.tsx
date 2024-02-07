@@ -67,7 +67,7 @@ const createGStream = (symbols: string[]): { data: Stream } => {
 export const upsertStream =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
-    const method = request.method.toLowerCase();
+    const method = request.method.toLowerCase() as "put" | "post";
     const formData = await request.formData();
     const userId = localStorage.getItem(local.id);
     const config: Partial<Stream> = {
@@ -82,17 +82,31 @@ export const upsertStream =
 
     let { newticks, delticks }: TickSubs = { newticks: [], delticks: [] };
 
-    qc.setQueryData<StreamData>(["streams"], (cached) => {
+    qc.setQueryData<StreamData>(["streams"], (cached): StreamData => {
       const { streams, oldstream } = filterStreams(config.id, cached.streams);
-      const newcount: SymCount = { ...cached.symcount };
-      streams.unshift(stream);
-      newticks = addTicks(stream.symbols, newcount);
+      const symcount: SymCount = { ...cached.symcount };
+      const tstreams = streams.unshift(stream);
+
+      newticks = addTicks(stream.symbols, symcount);
 
       if (method === "put") {
-        delticks = delTicks(oldstream.symbols, newcount);
+        delticks = delTicks(oldstream.symbols, symcount);
       }
 
-      return { symcount: newcount, streams, tickers: cached.tickers };
+      const usyms = cached.usyms + newticks.length - delticks.length;
+      const tsyms =
+        cached.tsyms -
+        (oldstream?.symbols?.length || 0) +
+        stream.symbols.length;
+
+      return {
+        streams,
+        symcount,
+        tickers: cached.tickers,
+        tstreams,
+        usyms,
+        tsyms,
+      };
     });
 
     const [sub, unsub] = [

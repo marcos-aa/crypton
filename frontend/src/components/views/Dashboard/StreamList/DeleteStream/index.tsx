@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
 
 import api from "../../../../../services/api";
-import { StreamData } from "../../../../../utils/datafetching";
+import { StreamData, SymCount } from "../../../../../utils/datafetching";
 import {
   TickSubs,
   delTicks,
@@ -21,19 +21,31 @@ export const deleteStream =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
     const formData = await request.formData();
-    const askAgain = formData.get("prompt") as string;
+    const noPrompt = formData.get("prompt") as string;
 
-    if (askAgain) localStorage.setItem(local.delPrompt, "false");
+    if (noPrompt) localStorage.setItem(local.delPrompt, "false");
 
     const ticks: TickSubs = { newticks: [], delticks: [] };
 
     const { streams } = qc.setQueryData<StreamData>(
       ["streams"],
-      (cached: StreamData) => {
-        const newcount = { ...cached.symcount };
+      (cached): StreamData => {
+        const newcount: SymCount = { ...cached.symcount };
         const { streams, oldstream } = filterStreams(params.id, cached.streams);
         ticks.delticks = delTicks(oldstream?.symbols, newcount);
-        return { ...cached, streams, symcount: newcount };
+
+        const tstreams = cached.tstreams - 1;
+        const tsyms = cached.tsyms - oldstream.symbols.length;
+        const usyms = cached.usyms - ticks.delticks.length;
+
+        return {
+          streams,
+          symcount: newcount,
+          tickers: cached.tickers,
+          tstreams,
+          tsyms,
+          usyms,
+        };
       },
     );
 

@@ -5,7 +5,34 @@ import * as yup from "yup";
 import { NotifType } from "../components/views/Dashboard/Notification";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { StreamData, SymCount, Tickers } from "./datafetching";
+import { StreamData, SymCount, SymNumbers, Tickers } from "./datafetching";
+
+interface SymData extends SymNumbers {
+  impstreams: IMPStream[];
+  symbols: string[];
+  symcount: SymCount;
+}
+
+interface FilteredStreams {
+  streams: Stream[];
+  oldstream: Stream | null;
+}
+
+type RawStream = Omit<Stream, "id"> & {
+  _id: {
+    $oid: string;
+  };
+};
+
+type IMPStream = Omit<Stream, "id">;
+
+type GStreamData = SymData & {
+  streams: Stream[];
+};
+
+interface NewIds {
+  [id: string]: string;
+}
 
 interface ResMessage {
   message: string;
@@ -23,37 +50,10 @@ export interface TickSubs {
   redirect?: boolean;
 }
 
-interface OldStreamData {
-  streams: Stream[];
-  oldstream: Stream;
-}
-
-interface NewIds {
-  [id: string]: string;
-}
-
-type IMPStream = Omit<Stream, "id">;
-
-interface SymcountData {
-  impstreams: IMPStream[];
-  symbols: string[];
-  symcount: SymCount;
-}
-
 interface NotifReturn {
   message: string;
   type: Exclude<NotifType, "loading">;
 }
-
-type GStreamData = SymcountData & {
-  gstreams: Stream[];
-};
-
-type RawStream = Omit<Stream, "id"> & {
-  _id: {
-    $oid: string;
-  };
-};
 
 export const local = {
   id: "u_id",
@@ -100,7 +100,7 @@ const schemas = {
   signup: userSchema,
 };
 
-const formatTicker = (symbol: string) => {
+const formatTicker = (symbol: string): string => {
   const ticker = (symbol + "@ticker").toLowerCase();
   return ticker;
 };
@@ -151,34 +151,32 @@ const genSymcount = (
   uid: string,
   streams: Stream[],
   prevcount: SymCount,
-): SymcountData => {
-  const allsyms = [];
-
+): SymData => {
+  const allsyms: string[] = [];
   const impstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols);
     return { _id: { $oid: stream.id }, user_id: uid, symbols: stream.symbols };
   });
 
-  const symcount = allsyms.reduce((store: SymCount, sym: string) => {
+  const symcount = allsyms.reduce<SymCount>((store, sym: string) => {
     store[sym] = store[sym] + 1 || 1;
     return store;
   }, prevcount);
 
   const symbols = Object.keys(symcount);
+  const usyms = symbols.length;
+  const tsyms = allsyms.length;
+  const tstreams = streams.length;
 
-  return { impstreams, symcount, symbols };
+  return { impstreams, symcount, symbols, tsyms, usyms, tstreams };
 };
 
 const genGStreamData = (uid: string, prevcount: SymCount = {}): GStreamData => {
-  const gstreams: Stream[] =
+  const streams: Stream[] =
     JSON.parse(localStorage.getItem(local.streams)) || [];
-  const { impstreams, symcount, symbols } = genSymcount(
-    uid,
-    gstreams,
-    prevcount,
-  );
-
-  return { gstreams, impstreams, symbols, symcount };
+  const symdata = genSymcount(uid, streams, prevcount);
+  const streamData = Object.assign(symdata, { streams });
+  return streamData;
 };
 
 const importGStreams = async (
@@ -187,21 +185,19 @@ const importGStreams = async (
 ): Promise<NotifReturn> => {
   let gstreams: Stream[], impstreams: IMPStream[];
 
-  qc.setQueryData<StreamData>(["streams"], (curr) => {
-    if (!curr) curr = { streams: [], symcount: {}, tickers: {} };
+  qc.setQueryData<StreamData>(["streams"], (curr: StreamData) => {
+    let streams: Stream[] = curr?.streams || [];
+    const createdBy = curr?.streams[0]?.user_id;
+    const data = genGStreamData(uid, curr?.symcount);
 
-    let streams: Stream[] = curr.streams;
-    const createdBy = curr.streams[0]?.user_id;
-    const data = genGStreamData(uid, curr.symcount);
-
-    gstreams = data.gstreams;
+    gstreams = data.streams;
     impstreams = data.impstreams;
 
     if (createdBy !== "guest") streams = streams.concat(gstreams);
 
     return {
+      ...data,
       streams,
-      symcount: data.symcount,
       tickers: curr.tickers,
     };
   });
@@ -223,7 +219,7 @@ const importGStreams = async (
             stream.id = res.data[stream.id];
           }
         });
-        return { streams, symcount: curr.symcount, tickers: curr.tickers };
+        return { streams, ...curr };
       });
 
       return {
@@ -255,7 +251,7 @@ const addTicks = (symbols: string[], symcount: SymCount): string[] => {
   return newticks;
 };
 
-const delTicks = (oldsymbols: string[], symcount: SymCount) => {
+const delTicks = (oldsymbols: string[], symcount: SymCount): string[] => {
   const delticks = oldsymbols.reduce((store: string[], oldsym) => {
     symcount[oldsym] -= 1;
     if (symcount[oldsym] < 1) {
@@ -276,7 +272,7 @@ const queryTicks = (ticks: string[], key: string): string => {
   return tickParam;
 };
 
-const filterStreams = (id: string, streams: Stream[]): OldStreamData => {
+const filterStreams = (id: string, streams: Stream[]): FilteredStreams => {
   let oldstream: Stream;
   const newstreams = streams.filter((stream) => {
     if (stream.id === id) oldstream = stream;
