@@ -185,13 +185,14 @@ const importGStreams = async (
 ): Promise<NotifReturn> => {
   let gstreams: Stream[], impstreams: IMPStream[];
 
-  qc.setQueryData<StreamData>(["streams"], (curr: StreamData) => {
+  qc.setQueryData<StreamData>(["streams"], (curr): StreamData => {
     let streams: Stream[] = curr?.streams || [];
     const createdBy = curr?.streams[0]?.user_id;
     const data = genGStreamData(uid, curr?.symcount);
 
     gstreams = data.streams;
     impstreams = data.impstreams;
+    delete data.impstreams;
 
     if (createdBy !== "guest") streams = streams.concat(gstreams);
 
