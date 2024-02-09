@@ -5,9 +5,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router";
-import { Link, createSearchParams, useFetcher } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import { Outlet } from "react-router";
+import {
+  Link,
+  createSearchParams,
+  useFetcher,
+  useLocation,
+} from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import {
   StreamData,
@@ -53,11 +58,7 @@ interface StreamsProps {
   notify(message: string, type: NotifType): void;
 }
 
-export default function StreamList({
-  initialData,
-  verified,
-  notify,
-}: StreamsProps) {
+function StreamList({ initialData, verified, notify }: StreamsProps) {
   const fetcher = useFetcher();
   const { data } = useQuery({
     ...streamQuery(verified),
@@ -101,6 +102,7 @@ export default function StreamList({
     tmpTickers = {};
   };
 
+  console.log("ticked");
   useEffect(() => {
     let intervalId;
     if (location.pathname == "/dashboard") {
@@ -218,3 +220,5 @@ export default function StreamList({
     </main>
   );
 }
+
+export default memo(StreamList);

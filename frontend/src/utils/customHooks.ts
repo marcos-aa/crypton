@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { NotifType } from "../components/views/Dashboard/Notification";
 import { InputData, local, validateField } from "./helpers";
@@ -26,7 +26,7 @@ const useNotification = () => {
     });
   };
 
-  const updateNotif = (message: string, type: NotifType) => {
+  const updateNotif = useCallback((message: string, type: NotifType) => {
     const timeoutId = window.setTimeout(() => {
       clearNotif();
     }, 2000);
@@ -34,7 +34,7 @@ const useNotification = () => {
     setNotif({ type, message, expires: timeoutId });
 
     return timeoutId;
-  };
+  }, []);
 
   return { notif, updateNotif, clearNotif };
 };
