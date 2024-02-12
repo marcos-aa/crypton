@@ -11,7 +11,7 @@ type RawStream = Omit<Stream, "id"> & {
   }
 }
 
-interface SymCount {
+interface SymTracker {
   [symbol: string]: number
 }
 
@@ -32,7 +32,7 @@ type StreamRes = Stream | Error
 
 type StreamData = {
   streams: Stream[]
-  symcount: SymCount
+  symtracker: SymTracker
   tickers: Tickers
   tstreams: number
   tsyms: number
@@ -99,7 +99,7 @@ export default class StreamServices {
 
     let usyms: string[] = []
     const allsyms = streams.flatMap((stream) => stream.symbols)
-    const symcount = allsyms.reduce((store: SymCount, sym: string) => {
+    const symtracker = allsyms.reduce((store: SymTracker, sym: string) => {
       store[sym] = store[sym] + 1 || 1
       if (store[sym] == 1) usyms.push(sym)
       return store
@@ -110,7 +110,7 @@ export default class StreamServices {
 
     return {
       streams,
-      symcount,
+      symtracker,
       tickers,
       tstreams,
       tsyms,

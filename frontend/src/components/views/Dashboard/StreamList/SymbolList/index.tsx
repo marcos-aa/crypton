@@ -10,7 +10,7 @@ import { Stream } from "..";
 import api from "../../../../../services/api";
 import {
   StreamData,
-  SymCount,
+  SymTracker,
   getPairs,
 } from "../../../../../utils/datafetching";
 import {
@@ -84,13 +84,13 @@ export const upsertStream =
 
     qc.setQueryData<StreamData>(["streams"], (cached): StreamData => {
       const { streams, oldstream } = filterStreams(config.id, cached.streams);
-      const symcount: SymCount = { ...cached.symcount };
+      const symtracker: SymTracker = { ...cached.symtracker };
       const tstreams = streams.unshift(stream);
 
-      newticks = addTicks(stream.symbols, symcount);
+      newticks = addTicks(stream.symbols, symtracker);
 
       if (method === "put") {
-        delticks = delTicks(oldstream.symbols, symcount);
+        delticks = delTicks(oldstream.symbols, symtracker);
       }
 
       const usyms = cached.usyms + newticks.length - delticks.length;
@@ -101,7 +101,7 @@ export const upsertStream =
 
       return {
         streams,
-        symcount,
+        symtracker,
         tickers: cached.tickers,
         tstreams,
         usyms,

@@ -5,12 +5,17 @@ import * as yup from "yup";
 import { NotifType } from "../components/views/Dashboard/Notification";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { StreamData, SymCount, SymNumbers, Tickers } from "./datafetching";
+import { StreamData, SymTracker, Tickers } from "./datafetching";
 
-interface SymData extends SymNumbers {
-  impstreams: IMPStream[];
+interface SymcountData {
+  count: TotalCount;
+  rawstreams: RawStream[];
   symbols: string[];
-  symcount: SymCount;
+  newticks: string[];
+}
+
+interface GStreamData extends Omit<SymcountData, "count"> {
+  data: TotalCount & { streams: Stream[] };
 }
 
 interface FilteredStreams {
@@ -18,16 +23,17 @@ interface FilteredStreams {
   oldstream: Stream | null;
 }
 
+export type TotalCount = {
+  tsyms: number;
+  usyms: number;
+  tstreams: number;
+  symtracker: SymTracker;
+};
+
 type RawStream = Omit<Stream, "id"> & {
   _id: {
     $oid: string;
   };
-};
-
-type IMPStream = Omit<Stream, "id">;
-
-type GStreamData = SymData & {
-  streams: Stream[];
 };
 
 interface NewIds {
@@ -150,52 +156,63 @@ const validateField = (
 const genSymcount = (
   uid: string,
   streams: Stream[],
-  prevcount: SymCount,
-): SymData => {
+  tracker: SymTracker,
+): SymcountData => {
   const allsyms: string[] = [];
-  const impstreams: RawStream[] = streams.map((stream) => {
+  const rawstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols);
     return { _id: { $oid: stream.id }, user_id: uid, symbols: stream.symbols };
   });
 
-  const symcount = allsyms.reduce<SymCount>((store, sym: string) => {
-    store[sym] = store[sym] + 1 || 1;
-    return store;
-  }, prevcount);
+  const newticks = addTicks(allsyms, tracker);
 
-  const symbols = Object.keys(symcount);
+  const symbols = Object.keys(tracker);
   const usyms = symbols.length;
   const tsyms = allsyms.length;
   const tstreams = streams.length;
 
-  return { impstreams, symcount, symbols, tsyms, usyms, tstreams };
+  return {
+    count: {
+      tstreams,
+      tsyms,
+      usyms,
+      symtracker: tracker,
+    },
+    rawstreams,
+    symbols,
+    newticks,
+  };
 };
 
-const genGStreamData = (uid: string, prevcount: SymCount = {}): GStreamData => {
+const genGStreamData = (uid: string, tracker: SymTracker = {}): GStreamData => {
   const streams: Stream[] =
     JSON.parse(localStorage.getItem(local.streams)) || [];
-  const symdata = genSymcount(uid, streams, prevcount);
-  const streamData = Object.assign(symdata, { streams });
-  return streamData;
+  const { count, rawstreams, newticks, symbols } = genSymcount(
+    uid,
+    streams,
+    tracker,
+  );
+  const data = Object.assign(count, { streams });
+  return { data, rawstreams, newticks, symbols };
 };
 
 const importGStreams = async (
   qc: QueryClient,
   uid: string,
 ): Promise<NotifReturn> => {
-  let gstreams: Stream[], impstreams: IMPStream[];
-
+  let rawstreams: RawStream[] = [];
   qc.setQueryData<StreamData>(["streams"], (curr): StreamData => {
-    let streams: Stream[] = curr?.streams || [];
+    let streams: Stream[] = curr?.streams;
     const createdBy = curr?.streams[0]?.user_id;
-    const data = genGStreamData(uid, curr?.symcount);
 
-    gstreams = data.streams;
-    impstreams = data.impstreams;
-    delete data.impstreams;
+    const { data, rawstreams: rstreams } = genGStreamData(uid, {
+      ...curr?.symtracker,
+    });
+
+    rawstreams = rstreams;
 
     if (createdBy == uid) {
-      streams = streams.concat(gstreams);
+      streams = streams.concat(streams);
       data.tstreams += curr.tstreams;
       data.tsyms += curr.tsyms;
     }
@@ -207,21 +224,22 @@ const importGStreams = async (
     };
   });
 
-  localStorage.removeItem(local.streams);
   localStorage.removeItem(local.expStreams);
 
   return api
     .post<NewIds>("/streams/import", {
-      streams: impstreams,
+      streams: rawstreams,
     })
     .then((res: AxiosResponse<NewIds>): NotifReturn => {
+      localStorage.removeItem(local.streams);
+
       qc.setQueryData<StreamData>(["streams"], (curr) => {
+        const streams = [];
         const dupids = Object.keys(res.data);
 
-        const streams = [...curr.streams];
-        streams.forEach((stream) => {
+        curr.streams.forEach((stream) => {
           if (dupids.includes(stream.id)) {
-            stream.id = res.data[stream.id];
+            streams.push({ ...stream, id: res.data[stream.id] });
           }
         });
         return { streams, ...curr };
@@ -235,7 +253,6 @@ const importGStreams = async (
     .catch((e: AxiosError<ResMessage>): NotifReturn => {
       qc.invalidateQueries(["streams"]);
       localStorage.setItem(local.expStreams, "failure");
-      localStorage.setItem(local.streams, JSON.stringify(gstreams));
 
       return {
         message:
@@ -246,21 +263,26 @@ const importGStreams = async (
     });
 };
 
-const addTicks = (symbols: string[], symcount: SymCount): string[] => {
+const genTickUrl = (ticks: string[], type: "newticks" | "delticks") => {
+  const url = new URL(window.location.origin + window.location.pathname);
+  url.searchParams.set(type, JSON.stringify(ticks));
+  history.replaceState(history.state, "", url);
+};
+
+const addTicks = (symbols: string[], symtracker: SymTracker): string[] => {
   const newticks = symbols.reduce((store: string[], sym) => {
-    symcount[sym] = symcount[sym] + 1 || 1;
-    if (symcount[sym] == 1) store.push(formatTicker(sym));
+    symtracker[sym] = symtracker[sym] + 1 || 1;
+    if (symtracker[sym] == 1) store.push(formatTicker(sym));
     return store;
   }, []);
-
   return newticks;
 };
 
-const delTicks = (oldsymbols: string[], symcount: SymCount): string[] => {
+const delTicks = (oldsymbols: string[], symtracker: SymTracker): string[] => {
   const delticks = oldsymbols.reduce((store: string[], oldsym) => {
-    symcount[oldsym] -= 1;
-    if (symcount[oldsym] < 1) {
-      delete symcount[oldsym];
+    symtracker[oldsym] -= 1;
+    if (symtracker[oldsym] < 1) {
+      delete symtracker[oldsym];
       store.push(formatTicker(oldsym));
     }
     return store;

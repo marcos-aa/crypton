@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
 
 import api from "../../../../../services/api";
-import { StreamData, SymCount } from "../../../../../utils/datafetching";
+import { StreamData, SymTracker } from "../../../../../utils/datafetching";
 import {
   TickSubs,
   delTicks,
@@ -30,9 +30,9 @@ export const deleteStream =
     const { streams } = qc.setQueryData<StreamData>(
       ["streams"],
       (cached): StreamData => {
-        const newcount: SymCount = { ...cached.symcount };
+        const symtracker: SymTracker = { ...cached.symtracker };
         const { streams, oldstream } = filterStreams(params.id, cached.streams);
-        ticks.delticks = delTicks(oldstream?.symbols, newcount);
+        ticks.delticks = delTicks(oldstream?.symbols, symtracker);
 
         const tstreams = cached.tstreams - 1;
         const tsyms = cached.tsyms - oldstream.symbols.length;
@@ -40,7 +40,7 @@ export const deleteStream =
 
         return {
           streams,
-          symcount: newcount,
+          symtracker,
           tickers: cached.tickers,
           tstreams,
           tsyms,

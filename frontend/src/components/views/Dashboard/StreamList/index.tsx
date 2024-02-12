@@ -69,7 +69,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
   const location = useLocation();
 
   const { sendMessage } = useWebSocket(
-    generateURL(Object.keys(initialData.symcount)),
+    generateURL(Object.keys(initialData.symtracker)),
     {
       onMessage: (item) => {
         const trade = JSON.parse(item.data);
@@ -102,7 +102,6 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     tmpTickers = {};
   };
 
-  console.log("ticked");
   useEffect(() => {
     let intervalId;
     if (location.pathname == "/dashboard") {

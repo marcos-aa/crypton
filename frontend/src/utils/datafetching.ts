@@ -1,6 +1,6 @@
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { genGStreamData, local } from "./helpers";
+import { TotalCount, genGStreamData, local } from "./helpers";
 
 export const udata = {
   id: "guest",
@@ -40,17 +40,14 @@ export type Tickers = {
   [symbol: string]: Omit<Ticker, "symbol">;
 };
 
-export interface SymCount {
+export interface SymTracker {
   [symbol: string]: number;
 }
 
-export interface StreamData extends SymNumbers {
+export interface StreamData extends TotalCount {
   streams: Stream[];
-  symcount: SymCount;
   tickers: Tickers;
 }
-
-export type SymNumbers = { tsyms: number; usyms: number; tstreams: number };
 
 export const saveUser = (id: string, token?: string) => {
   localStorage.setItem(local.id, id);
@@ -87,13 +84,13 @@ const getStreams = async (): Promise<StreamData> => {
 };
 
 const getGuestStreams = async (): Promise<StreamData> => {
-  const symData = genGStreamData("guest");
+  const { data, symbols } = genGStreamData("guest");
   const { data: tickers } = await api.get<Tickers>("/tickers", {
     params: {
-      symbols: symData.symbols,
+      symbols: symbols,
     },
   });
-  const streamData = Object.assign(symData, { tickers });
+  const streamData = Object.assign(data, { tickers });
   return streamData;
 };
 
