@@ -161,6 +161,7 @@ const genSymcount = (
   const allsyms: string[] = [];
   const rawstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols);
+    stream.user_id = uid;
     return { _id: { $oid: stream.id }, user_id: uid, symbols: stream.symbols };
   });
 
@@ -200,23 +201,33 @@ const importGStreams = async (
   qc: QueryClient,
   uid: string,
 ): Promise<NotifReturn> => {
-  let rawstreams: RawStream[] = [];
-  qc.setQueryData<StreamData>(["streams"], (curr): StreamData => {
-    let streams: Stream[] = curr?.streams;
-    const createdBy = curr?.streams[0]?.user_id;
+  let rawstreams: RawStream[], prevstreams: Stream[];
+  let subticks: string[];
 
-    const { data, rawstreams: rstreams } = genGStreamData(uid, {
-      ...curr?.symtracker,
+  genTickUrl(subticks, "newticks");
+  qc.setQueryData<StreamData>(["streams"], (curr): StreamData => {
+    prevstreams = [...curr.streams];
+    let streams: Stream[];
+    const createdBy = curr.streams[0]?.user_id;
+
+    const {
+      data,
+      rawstreams: rstreams,
+      newticks,
+    } = genGStreamData(uid, {
+      ...curr.symtracker,
     });
 
     rawstreams = rstreams;
+    subticks = newticks;
 
-    if (createdBy == uid) {
-      streams = streams.concat(streams);
+    if (createdBy != "guest") {
+      streams = prevstreams.concat(data.streams);
       data.tstreams += curr.tstreams;
       data.tsyms += curr.tsyms;
     }
 
+    genTickUrl(subticks, "newticks");
     return {
       ...data,
       streams,
@@ -234,13 +245,14 @@ const importGStreams = async (
       localStorage.removeItem(local.streams);
 
       qc.setQueryData<StreamData>(["streams"], (curr) => {
-        const streams = [];
         const dupids = Object.keys(res.data);
 
-        curr.streams.forEach((stream) => {
-          if (dupids.includes(stream.id)) {
-            streams.push({ ...stream, id: res.data[stream.id] });
-          }
+        const streams = curr.streams.map<Stream>((stream) => {
+          const id = dupids.includes(stream.id)
+            ? res.data[stream.id]
+            : stream.id;
+
+          return { id, user_id: stream.user_id, symbols: stream.symbols };
         });
         return { streams, ...curr };
       });
@@ -251,7 +263,7 @@ const importGStreams = async (
       };
     })
     .catch((e: AxiosError<ResMessage>): NotifReturn => {
-      qc.invalidateQueries(["streams"]);
+      revertStreams(qc, prevstreams, subticks, "delticks");
       localStorage.setItem(local.expStreams, "failure");
 
       return {
@@ -261,6 +273,19 @@ const importGStreams = async (
         type: "error",
       };
     });
+};
+
+const revertStreams = (
+  qc: QueryClient,
+  streams: Stream[],
+  ticks: string[],
+  type: "newticks" | "delticks",
+) => {
+  genTickUrl(ticks, type);
+  qc.setQueryData<StreamData>(["streams"], (data) => ({
+    ...data,
+    streams,
+  }));
 };
 
 const genTickUrl = (ticks: string[], type: "newticks" | "delticks") => {

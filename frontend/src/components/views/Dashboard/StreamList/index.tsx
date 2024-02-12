@@ -130,6 +130,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
     if (localStorage.getItem(local.expStreams)) {
       notify("Your streams failed to be exported. Please try again", "error");
+      localStorage.removeItem(local.expStreams);
     }
 
     const cleanURL = new URL(window.location.origin + window.location.pathname);

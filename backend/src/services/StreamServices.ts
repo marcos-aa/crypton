@@ -40,6 +40,15 @@ type StreamData = {
 }
 
 export default class StreamServices {
+  private streamData: StreamData = {
+    streams: [],
+    symtracker: {},
+    tickers: {},
+    tstreams: 0,
+    tsyms: 0,
+    usyms: 0,
+  }
+
   async create(user_id: string, symbols: string[]): Promise<StreamRes> {
     const { error: e } = streamSchema.validate({ id: user_id, symbols })
     if (e) return { status: 422, message: e.details[0].message }
@@ -88,14 +97,14 @@ export default class StreamServices {
     return newids
   }
 
-  async read(user_id: string): Promise<StreamData | null> {
+  async read(user_id: string): Promise<StreamData> {
     const streams = await prisma.stream.findMany({
       where: {
         user_id,
       },
     })
 
-    if (streams.length < 1) return null
+    if (streams.length < 1) return this.streamData
 
     let usyms: string[] = []
     const allsyms = streams.flatMap((stream) => stream.symbols)
