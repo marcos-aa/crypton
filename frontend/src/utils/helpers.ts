@@ -201,13 +201,12 @@ const importGStreams = async (
   qc: QueryClient,
   uid: string,
 ): Promise<NotifReturn> => {
-  let rawstreams: RawStream[], prevstreams: Stream[];
+  let rawstreams: RawStream[];
   let subticks: string[];
+  let gtsyms: number = 0;
 
-  genTickUrl(subticks, "newticks");
   qc.setQueryData<StreamData>(["streams"], (curr): StreamData => {
-    prevstreams = [...curr.streams];
-    let streams: Stream[];
+    let streams: Stream[] = [...curr.streams];
     const createdBy = curr.streams[0]?.user_id;
 
     const {
@@ -222,7 +221,8 @@ const importGStreams = async (
     subticks = newticks;
 
     if (createdBy != "guest") {
-      streams = prevstreams.concat(data.streams);
+      gtsyms = data.tsyms;
+      streams = streams.concat(data.streams);
       data.tstreams += curr.tstreams;
       data.tsyms += curr.tsyms;
     }
@@ -263,7 +263,8 @@ const importGStreams = async (
       };
     })
     .catch((e: AxiosError<ResMessage>): NotifReturn => {
-      revertStreams(qc, prevstreams, subticks, "delticks");
+      const rawstart = rawstreams[0]._id.$oid;
+      revertStreams(qc, rawstart, rawstreams.length, gtsyms, subticks);
       localStorage.setItem(local.expStreams, "failure");
 
       return {
@@ -277,15 +278,41 @@ const importGStreams = async (
 
 const revertStreams = (
   qc: QueryClient,
-  streams: Stream[],
-  ticks: string[],
-  type: "newticks" | "delticks",
+  rawid: string,
+  rawlength: number,
+  rawtsyms: number,
+  newticks: string[],
 ) => {
-  genTickUrl(ticks, type);
-  qc.setQueryData<StreamData>(["streams"], (data) => ({
-    ...data,
-    streams,
-  }));
+  qc.setQueryData<StreamData>(["streams"], (data) => {
+    const symtracker = { ...data.symtracker };
+    let { tsyms, usyms } = data;
+
+    const delticks = [];
+    newticks.forEach((symbol) => {
+      const key = symbol.split("@")[0].toUpperCase();
+      const count = symtracker[key] - 1 || 0;
+
+      if (count < 1) {
+        delete symtracker[key];
+        delticks.push(symbol);
+        usyms -= 1;
+      }
+    });
+    genTickUrl(delticks, "delticks");
+
+    const streams = [...data.streams];
+    const rawstart = data.streams.findIndex((stream) => stream.id === rawid);
+    streams.splice(rawstart, rawstart + rawlength);
+
+    return {
+      ...data,
+      symtracker,
+      streams,
+      tstreams: streams.length,
+      tsyms: tsyms - rawtsyms,
+      usyms,
+    };
+  });
 };
 
 const genTickUrl = (ticks: string[], type: "newticks" | "delticks") => {
