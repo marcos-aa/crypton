@@ -14,7 +14,6 @@ import {
   getPairs,
 } from "../../../../../utils/datafetching";
 import {
-  TickSubs,
   addTicks,
   delTicks,
   filterStreams,
@@ -34,6 +33,11 @@ export interface StreamProps {
   verified: boolean;
 }
 
+interface TickSubs {
+  newticks: string[];
+  delticks: string[];
+  redirect?: boolean;
+}
 export interface CatchError {
   [response: string]: AxiosResponse;
 }

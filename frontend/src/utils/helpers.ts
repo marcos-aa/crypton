@@ -50,12 +50,6 @@ export interface InputData {
   password: string | null;
 }
 
-export interface TickSubs {
-  newticks: string[];
-  delticks: string[];
-  redirect?: boolean;
-}
-
 interface NotifReturn {
   message: string;
   type: Exclude<NotifType, "loading">;
