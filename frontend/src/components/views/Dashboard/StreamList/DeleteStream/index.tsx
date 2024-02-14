@@ -1,12 +1,14 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
 
+import { Stream } from "..";
 import api from "../../../../../services/api";
 import { StreamData, SymTracker } from "../../../../../utils/datafetching";
 import {
   TickSubs,
   delTicks,
   filterStreams,
+  genTickUrl,
   local,
   queryTicks,
 } from "../../../../../utils/helpers";
@@ -24,7 +26,7 @@ export const deleteStream =
     const noPrompt = formData.get("prompt") as string;
 
     if (noPrompt) localStorage.setItem(local.delPrompt, "false");
-
+    let delstream: Stream;
     const ticks: TickSubs = { newticks: [], delticks: [] };
 
     const { streams } = qc.setQueryData<StreamData>(
@@ -32,6 +34,7 @@ export const deleteStream =
       (cached): StreamData => {
         const symtracker: SymTracker = { ...cached.symtracker };
         const { streams, oldstream } = filterStreams(params.id, cached.streams);
+        delstream = oldstream;
         ticks.delticks = delTicks(oldstream?.symbols, symtracker);
 
         const tstreams = cached.tstreams - 1;
@@ -64,10 +67,12 @@ export const deleteStream =
         },
       })
       .catch(() => {
-        const url = new URL(window.location.origin + window.location.pathname);
-        url.searchParams.set("newticks", JSON.stringify(ticks.delticks));
-        history.replaceState(history.state, "", url);
-        qc.invalidateQueries(["streams"]);
+        genTickUrl(ticks.delticks, "newticks");
+        qc.setQueryData<StreamData>(["streams"], (curr) => {
+          const streams = [...curr.streams];
+          streams.unshift(delstream);
+          return { ...curr, streams };
+        });
       });
 
     return redirect(`/dashboard` + delparams);

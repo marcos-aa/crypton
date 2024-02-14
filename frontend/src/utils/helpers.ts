@@ -367,6 +367,7 @@ export {
   formatSymbols,
   formatTicker,
   genGStreamData,
+  genTickUrl,
   importGStreams,
   queryTicks,
   stopPropagation,
