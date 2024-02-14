@@ -5,7 +5,6 @@ import { Stream } from "..";
 import api from "../../../../../services/api";
 import { StreamData, SymTracker } from "../../../../../utils/datafetching";
 import {
-  TickSubs,
   delTicks,
   filterStreams,
   genTickUrl,
@@ -27,7 +26,7 @@ export const deleteStream =
 
     if (noPrompt) localStorage.setItem(local.delPrompt, "false");
     let delstream: Stream;
-    const ticks: TickSubs = { newticks: [], delticks: [] };
+    let delticks: string[];
 
     const { streams } = qc.setQueryData<StreamData>(
       ["streams"],
@@ -35,11 +34,11 @@ export const deleteStream =
         const symtracker: SymTracker = { ...cached.symtracker };
         const { streams, oldstream } = filterStreams(params.id, cached.streams);
         delstream = oldstream;
-        ticks.delticks = delTicks(oldstream?.symbols, symtracker);
+        delticks = delTicks(oldstream?.symbols, symtracker);
 
         const tstreams = cached.tstreams - 1;
         const tsyms = cached.tsyms - oldstream.symbols.length;
-        const usyms = cached.usyms - ticks.delticks.length;
+        const usyms = cached.usyms - delticks.length;
 
         return {
           streams,
@@ -53,7 +52,7 @@ export const deleteStream =
     );
 
     const isGuest = localStorage.getItem(local.id) === "guest";
-    const delparams = queryTicks(ticks.delticks, "?delticks");
+    const delparams = queryTicks(delticks, "?delticks");
 
     if (isGuest) {
       localStorage.setItem(local.streams, JSON.stringify(streams));
@@ -67,7 +66,7 @@ export const deleteStream =
         },
       })
       .catch(() => {
-        genTickUrl(ticks.delticks, "newticks");
+        genTickUrl(delticks, "newticks");
         qc.setQueryData<StreamData>(["streams"], (curr) => {
           const streams = [...curr.streams];
           streams.unshift(delstream);
