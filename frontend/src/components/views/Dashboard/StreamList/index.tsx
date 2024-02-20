@@ -2,6 +2,7 @@ import {
   faHourglass,
   faPencil,
   faTrash,
+  faUpRightAndDownLeftFromCenter,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
@@ -170,6 +171,12 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
             })}
 
             <div className={styles.streamButtons}>
+              <Link to="/dashboard/compare-ticks">
+                <FontAwesomeIcon
+                  title="Expand stream"
+                  icon={faUpRightAndDownLeftFromCenter}
+                />
+              </Link>
               {stream.user_id === "guest" &&
               localStorage.getItem(local.expStreams) == "exporting" ? (
                 <FontAwesomeIcon
