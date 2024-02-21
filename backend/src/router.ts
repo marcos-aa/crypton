@@ -35,5 +35,6 @@ router.put("/user/validate", new UserHandler().updateValidation)
 //Stream microservices
 router.get("/pairs", new StreamHandler().readPairs)
 router.get("/tickers", new StreamHandler().readTickers)
+router.get("/tickers/window", new StreamHandler().readWeekly)
 
 export { router }

@@ -12,4 +12,13 @@ export default class StreamHandler {
     const result = await new StreamUtils().getTickers(symbols as string[])
     return res.json(result)
   }
+
+  async readWeekly(req: Request, res: Response) {
+    const { symbols, winsize } = req.query as {
+      symbols: string[]
+      winsize: string
+    }
+    const result = await new StreamUtils().getWindowTickers(symbols, winsize)
+    return res.json(result)
+  }
 }

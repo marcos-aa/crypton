@@ -9,28 +9,29 @@ import ModalContainer from "../../../ModalContainer";
 import styles from "./styles.module.scss";
 
 export const ticksLoader = (qc: QueryClient) => async () => {
-  const { data } = await api.get("/tickers/weekly", {
+  const { data } = await api.get("/tickers/window", {
     params: {
       symbols: ["ETHBTC", "BTCBUSD"],
+      winsize: "7d",
     },
   });
 
   const res = {
-    "7D": data,
+    "7d": data,
     current: qc.getQueryData<StreamData>(["streams"]).tickers,
   };
   return res;
 };
 
 interface WindowTickers {
-  [key: "7D" | "current" | string]: {
+  [key: "7d" | "current" | string]: {
     [key: string]: Prices;
   };
 }
 export default function CompareTicks() {
   const data = useLoaderData() as WindowTickers;
   const [values, setValues] = useState(data);
-  const [timeframes, setTimeframes] = useState(["7D", "current"]);
+  const [timeframes, setTimeframes] = useState(["7d", "current"]);
 
   return (
     <ModalContainer predecessor="/dashboard">

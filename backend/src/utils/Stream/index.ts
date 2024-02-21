@@ -80,4 +80,24 @@ export default class StreamUtils {
     const tickers = Object.assign(cached, cache.mget<FMTDTicker>(notCached))
     return tickers
   }
+
+  async getWindowTickers(symbols: string[], winsize: string) {
+    const { data } = await axios.get(baseURL + "/ticker", {
+      params: {
+        symbols: JSON.stringify(symbols),
+        windowSize: winsize,
+      },
+    })
+    const result: { [ticker: string]: FMTDTicker } = {}
+    data.forEach(
+      (tick: SpotTicker) =>
+        (result[tick.symbol] = {
+          last: tick.lastPrice,
+          average: tick.weightedAvgPrice,
+          pchange: tick.priceChangePercent,
+          change: tick.priceChange,
+        })
+    )
+    return result
+  }
 }
