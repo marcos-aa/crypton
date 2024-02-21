@@ -18,6 +18,8 @@ export interface Ticker {
   last: string;
 }
 
+export type Prices = Omit<Ticker, "symbol">;
+
 export interface User {
   id: string;
   name: string;
@@ -37,7 +39,7 @@ export interface UserData {
 }
 
 export type Tickers = {
-  [symbol: string]: Omit<Ticker, "symbol">;
+  [symbol: string]: Prices;
 };
 
 export interface SymTracker {

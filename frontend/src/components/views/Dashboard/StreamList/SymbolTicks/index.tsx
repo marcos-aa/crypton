@@ -1,9 +1,9 @@
-import { Ticker } from "../../../../../utils/datafetching";
+import { Prices } from "../../../../../utils/datafetching";
 import styles from "./styles.module.scss";
 
 type SymbolProps = {
   symbol: string;
-  prices: Omit<Ticker, "symbol">;
+  prices: Prices;
 };
 
 export default function SymbolTicks({ symbol, prices }: SymbolProps) {

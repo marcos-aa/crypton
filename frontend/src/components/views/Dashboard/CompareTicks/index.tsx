@@ -4,7 +4,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import api from "../../../../services/api";
-import { StreamData, Ticker } from "../../../../utils/datafetching";
+import { Prices, StreamData } from "../../../../utils/datafetching";
 import ModalContainer from "../../../ModalContainer";
 import styles from "./styles.module.scss";
 
@@ -22,10 +22,13 @@ export const ticksLoader = (qc: QueryClient) => async () => {
   return res;
 };
 
-export default function CompareTicks() {
-  const data = useLoaderData() as {
-    [key: string]: { [key: string]: Omit<Ticker, "symbol"> };
+interface WindowTickers {
+  [key: "7D" | "current" | string]: {
+    [key: string]: Prices;
   };
+}
+export default function CompareTicks() {
+  const data = useLoaderData() as WindowTickers;
   const [values, setValues] = useState(data);
   const [timeframes, setTimeframes] = useState(["7D", "current"]);
 
