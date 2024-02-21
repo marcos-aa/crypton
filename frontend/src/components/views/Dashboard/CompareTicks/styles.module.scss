@@ -1,0 +1,60 @@
+#compareTicks {
+  background-color: white;
+  width: var(--modal-width);
+  height: var(--modal-height);
+  padding: 5px 10px;
+
+  .timeOptions,
+  .symRow {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin: 10px;
+    padding: 5px;
+  }
+
+  .timeOptions .colTitle {
+    width: 100%;
+  }
+
+  .rowTitle,
+  .colTitle {
+    text-transform: uppercase;
+  }
+
+  .rowTitle {
+    width: 140px;
+    flex-shrink: 0;
+  }
+
+  .symRow {
+    width: calc(100% - 40px);
+    border-bottom: 1px solid gray;
+  }
+
+  .colTitle {
+    width: 180px;
+  }
+
+  .symValues {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .colTitle,
+  #addFrame {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  #addFrame {
+    border: none;
+    width: 40px;
+    text-align: center;
+    padding: 0;
+    flex-shrink: 0;
+  }
+}
