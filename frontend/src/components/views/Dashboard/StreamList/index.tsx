@@ -77,7 +77,6 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         if (trade.result === null) {
           return;
         }
-
         tmpTickers[trade.s] = {
           average: trade.w,
           change: trade.p,
@@ -151,11 +150,11 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         </ActionAnimation>
       </div>
 
-      {data.streams?.length < 1 ? (
+      {data.tstreams < 1 && (
         <div className={styles.streamList} id={styles.streamCta}>
           <h2>Create a new stream to get started</h2>
         </div>
-      ) : null}
+      )}
 
       {data.streams?.map((stream) => {
         return (
@@ -171,7 +170,10 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
             })}
 
             <div className={styles.streamButtons}>
-              <Link to="/dashboard/compare-ticks">
+              <Link
+                to={`/dashboard/streams/${stream.id}/compare`}
+                state={stream.symbols}
+              >
                 <FontAwesomeIcon
                   title="Expand stream"
                   icon={faUpRightAndDownLeftFromCenter}

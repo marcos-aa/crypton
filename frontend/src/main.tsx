@@ -6,6 +6,9 @@ import ErrorBoundary from "./components/ErrorPage";
 import ValidateUser from "./components/ValidateUser";
 
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
+import CompareTicks, {
+  ticksLoader,
+} from "./components/views/Dashboard/CompareTicks";
 import ImportUser from "./components/views/Dashboard/ImportUser";
 import Signwall from "./components/views/Dashboard/Signwall";
 import DeleteStream, {
@@ -94,7 +97,11 @@ const router = createBrowserRouter([
         path: "validate",
         element: <ValidationModal origin="/dashboard/export" />,
       },
-
+      {
+        path: "streams/:id/compare",
+        element: <CompareTicks />,
+        loader: ticksLoader(queryClient),
+      },
       {
         path: "streams/delete/:id",
         element: <DeleteStream />,
