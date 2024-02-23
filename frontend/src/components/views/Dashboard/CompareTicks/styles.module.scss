@@ -3,6 +3,7 @@
   width: var(--modal-width);
   height: var(--modal-height);
   padding: 5px 10px;
+  max-width: 100%;
 
   .timeOptions,
   .symRow {
@@ -13,6 +14,9 @@
     padding: 5px;
   }
 
+  .timeOptions {
+    position: relative;
+  }
   .timeOptions .colTitle {
     width: 100%;
   }
