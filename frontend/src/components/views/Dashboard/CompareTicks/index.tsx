@@ -3,22 +3,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import api from "../../../../services/api";
-import { Prices, StreamData } from "../../../../utils/datafetching";
+import {
+  Prices,
+  StreamData,
+  Tickers,
+  getWindowTicks,
+} from "../../../../utils/datafetching";
 import ModalContainer from "../../../ModalContainer";
 import TimeWindows from "./TimeWindows";
 import styles from "./styles.module.scss";
 
 export const ticksLoader = (qc: QueryClient) => async () => {
-  const { data } = await api.get("/tickers/window", {
-    params: {
-      symbols: ["ETHBTC", "BTCBUSD"],
-      winsize: "7d",
-    },
-  });
-
+  const weekTickers = await getWindowTicks(["ETHBTC", "BTCBUSD"], "7d");
   const res = {
-    "7d": data,
+    "7d": weekTickers,
     "1s": qc.getQueryData<StreamData>(["streams"]).tickers,
   };
   return res;
@@ -31,56 +29,64 @@ interface WindowTickers {
 }
 export default function CompareTicks() {
   const data = useLoaderData() as WindowTickers;
-  const [values, setValues] = useState(data);
-  const [windows, setWindows] = useState(["1s", "7d"]);
+  const [windows, setWindows] = useState({ intv: ["1s", "7d"], data });
   const [edit, setEdit] = useState(false);
 
   const editWindows = () => setEdit((prev) => !prev);
 
-  const addWindow = (e: MouseEvent<HTMLLIElement>) => {
-    const vtext = e.currentTarget.innerHTML;
-    const lastInd = vtext.length - 1;
-    const cUnit = vtext[lastInd];
+  const addWindow = async (e: MouseEvent<HTMLLIElement>) => {
+    const interval = e.currentTarget.innerHTML;
+    const lastInd = interval.length - 1;
+    const cUnit = interval[lastInd];
     const multip = {
       m: 1,
       h: 60,
       d: 1440,
     };
-    const value = Number(vtext.slice(0, lastInd)) * multip[cUnit];
+    const value = Number(interval.slice(0, lastInd)) * multip[cUnit];
 
     let start = 1,
-      end = windows.length - 1;
+      end = windows.intv.length - 1,
+      mid = start;
 
-    setWindows((curr) => {
-      const wins = [...curr];
-      let mid = end;
+    const wins = [...windows.intv];
 
-      while (start < end) {
-        mid = Math.floor((start + end) / 2);
-        const midtx = wins[mid];
+    while (start < end) {
+      mid = Math.floor((start + end) / 2);
+      const midtx = wins[mid];
 
-        if (midtx == vtext) {
-          end = 0;
-          break;
-        }
-
-        const midValue = midtx.slice(0, midtx.length - 1);
-        const midMult = Number(midValue) * multip[midtx[midtx.length - 1]];
-
-        if (value > midMult) start = mid + 1;
-        else end = mid;
+      if (midtx == interval) {
+        end = 0;
+        break;
       }
 
-      if (end != 0) wins.splice(start, 0, vtext);
-      return wins;
-    });
+      const midValue = midtx.slice(0, midtx.length - 1);
+      const midMult = Number(midValue) * multip[midtx[midtx.length - 1]];
+
+      if (value > midMult) start = mid + 1;
+      else end = mid;
+    }
+
+    let tickers: Tickers;
+    if (end != 0) {
+      const symbols = Object.keys(data["1s"]);
+      tickers = await getWindowTicks(symbols, interval);
+      wins.splice(start, 0, interval);
+    }
+
+    setEdit(false);
+    setWindows((prev) => ({
+      intv: wins,
+      data: { ...prev.data, [interval]: tickers },
+    }));
   };
+
   return (
     <ModalContainer predecessor="/dashboard">
       <div id={styles.compareTicks}>
         <div className={styles.timeOptions}>
           <h2 className={styles.rowTitle}> Symbols </h2>
-          {windows.map((frame) => {
+          {windows.intv.map((frame) => {
             return (
               <h2 className={styles.colTitle} key={frame}>
                 {frame}
@@ -98,13 +104,13 @@ export default function CompareTicks() {
           return (
             <div key={symbol} className={styles.symRow}>
               <h2 className={styles.rowTitle}> {symbol} </h2>
-              {windows.map((frame) => {
+              {windows.intv.map((frame) => {
                 return (
                   <div className={styles.symValues} key={`${frame}${symbol}`}>
-                    <span> Price: {values[frame][symbol].last}</span>
-                    <span> Average: {values[frame][symbol].average}</span>
-                    <span> Change: {values[frame][symbol].change}</span>
-                    <span> Change %: {values[frame][symbol].pchange}</span>
+                    <span> Price: {windows.data[frame][symbol].last}</span>
+                    <span> Average: {windows.data[frame][symbol].average}</span>
+                    <span> Change: {windows.data[frame][symbol].change}</span>
+                    <span>Change %: {windows.data[frame][symbol].pchange}</span>
                   </div>
                 );
               })}

@@ -105,4 +105,14 @@ const getPairs = async (): Promise<string[] | string> => {
   }
 };
 
-export { getGuestStreams, getPairs, getStreams, getUser };
+const getWindowTicks = async (symbols: string[], window: string) => {
+  const { data } = await api.get<Tickers>("/tickers/window", {
+    params: {
+      symbols,
+      winsize: window,
+    },
+  });
+  return data;
+};
+
+export { getGuestStreams, getPairs, getStreams, getUser, getWindowTicks };
