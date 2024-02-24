@@ -27,9 +27,17 @@ interface WindowTickers {
     [key: string]: Prices;
   };
 }
+
+interface WindowData {
+  intv: string[];
+  data: WindowTickers;
+}
 export default function CompareTicks() {
   const data = useLoaderData() as WindowTickers;
-  const [windows, setWindows] = useState({ intv: ["1s", "7d"], data });
+  const [windows, setWindows] = useState<WindowData>({
+    intv: ["1s", "7d"],
+    data,
+  });
   const [edit, setEdit] = useState(false);
 
   const editWindows = () => setEdit((prev) => !prev);
@@ -67,8 +75,8 @@ export default function CompareTicks() {
       else end = mid;
     }
 
-    let tickers: Tickers;
-    if (end != 0) {
+    let tickers: Tickers = windows.data[interval];
+    if (end !== 0) {
       const symbols = Object.keys(data["1s"]);
       tickers = await getWindowTicks(symbols, interval);
       wins.splice(start, 0, interval);
