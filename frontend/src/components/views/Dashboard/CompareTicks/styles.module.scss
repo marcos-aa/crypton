@@ -1,64 +1,125 @@
 #compareTicks {
+  --title-w: 90px;
   background-color: white;
   width: var(--modal-width);
   height: var(--modal-height);
-  padding: 5px 10px;
   max-width: 100%;
+  overflow-x: auto;
+  position: relative;
 
   .timeOptions,
   .symRow {
     display: flex;
-    width: 100%;
     align-items: center;
-    margin: 10px;
-    padding: 5px;
+    width: 100%;
   }
 
   .timeOptions {
-    position: relative;
-  }
-  .timeOptions .colTitle {
-    width: 100%;
+    .colTitle {
+      width: 100%;
+    }
+
+    .rowTitle {
+      border-top-left-radius: 5px;
+    }
   }
 
   .rowTitle,
   .colTitle {
+    font-size: 1.1rem;
     text-transform: uppercase;
   }
 
   .rowTitle {
-    width: 140px;
+    display: flex;
+    position: fixed;
+    left: 50%;
+    transform: translate(calc((var(--modal-width) * -1) / 2));
+    width: var(--title-w);
     flex-shrink: 0;
+    margin-top: 1px;
+    padding: 5px;
+    align-items: center;
+    background-color: white;
   }
 
-  .symRow {
-    width: calc(100% - 40px);
-    border-bottom: 1px solid gray;
+  .symValues,
+  .rowTitle,
+  .colTitle,
+  .symRow,
+  .timeOptions {
+    height: 90px;
   }
 
+  .symValues,
+  .colTitle,
+  .rowTitle {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .symValues:not(:last-of-type),
+  .colTitle:not(:last-of-type) {
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .symValues,
   .colTitle {
-    width: 180px;
+    margin-top: 1px;
+    padding: 0 10px;
+    min-width: 180px;
+  }
+
+  .symValues:first-of-type,
+  .colTitle:nth-child(2) {
+    margin-left: var(--title-w);
   }
 
   .symValues {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+  }
+
+  .symValues,
+  .symRow {
     width: 100%;
+    max-width: 100%;
   }
 
   .colTitle,
-  #addFrame {
+  #editWindows {
     display: flex;
     align-items: center;
-    height: 40px;
-    font-size: 1.2rem;
   }
 
-  #addFrame {
+  #editWindows {
+    position: fixed;
+    font-size: 1.2rem;
+    right: 50%;
+    transform: translate(calc((var(--modal-width) / 2) - 1px));
     border: none;
     width: 40px;
+    height: 89px;
     text-align: center;
     padding: 0;
     flex-shrink: 0;
+    background-color: white;
+    border-top-right-radius: 5px;
+  }
+
+  @media (max-width: 1200px) {
+    .rowTitle {
+      left: 0;
+    }
+
+    #editWindows {
+      right: 0;
+    }
+
+    #editWindows,
+    .rowTitle {
+      transform: translate(0);
+    }
   }
 }

@@ -94,7 +94,7 @@ export default function CompareTicks() {
             );
           })}
 
-          <button id={styles.addFrame} type="button" onClick={editWindows}>
+          <button id={styles.editWindows} type="button" onClick={editWindows}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
           {edit && <TimeWindows addWindow={addWindow} />}
