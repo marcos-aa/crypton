@@ -6,6 +6,7 @@
     "shared"
   ],
   "scripts": {
+    "setup": "prisma generate && prisma db push",
     "dev": "cd backend && yarn dev & cd frontend && yarn dev"
   }
 }
