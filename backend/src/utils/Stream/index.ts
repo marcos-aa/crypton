@@ -16,6 +16,20 @@ interface SpotTicker {
   lastPrice: string
 }
 
+type FMTWinTicker = FMTDTicker & {
+  volume: number
+  qvolume: number
+  trades: number
+}
+
+type WinTicker = SpotTicker & {
+  volume: number
+  quoteVolume: number
+  count: number
+}
+
+type WindowTickers = { [ticker: string]: FMTWinTicker }
+
 interface Params {
   symbols?: string
 }
@@ -81,21 +95,27 @@ export default class StreamUtils {
     return tickers
   }
 
-  async getWindowTickers(symbols: string[], winsize: string) {
+  async getWinTickers(
+    symbols: string[],
+    winsize: string
+  ): Promise<WindowTickers> {
     const { data } = await axios.get(baseURL + "/ticker", {
       params: {
         symbols: JSON.stringify(symbols),
         windowSize: winsize,
       },
     })
-    const result: { [ticker: string]: FMTDTicker } = {}
+    const result: WindowTickers = {}
     data.forEach(
-      (tick: SpotTicker) =>
+      (tick: WinTicker) =>
         (result[tick.symbol] = {
           last: tick.lastPrice,
           average: tick.weightedAvgPrice,
           pchange: tick.priceChangePercent,
           change: tick.priceChange,
+          qvolume: tick.quoteVolume,
+          volume: tick.volume,
+          trades: tick.count,
         })
     )
     return result
