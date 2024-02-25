@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "cd backend && yarn dev & cd frontend && yarn dev"
+  }
+}
