@@ -2,6 +2,7 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Outlet, redirect, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router-dom";
 import { Form, Link } from "react-router-dom";
+import { User } from "shared/usertypes";
 import api from "../../../../services/api";
 import { local, messages, validateField } from "../../../../utils/helpers";
 import InputWarning from "../../../AuthForm/InputField/InputWarning";
@@ -10,13 +11,13 @@ import ActionAnimation from "../StreamList/ActionAnimation";
 import SubmitAction from "../SubmitAction";
 import { userQuery } from "../UserInfo";
 import styles from "./styles.module.scss";
-import { User } from "shared/usertypes";
 
 export interface UserParams extends ActionFunctionArgs {
   params: {
     id: string;
   };
 }
+
 export const nameAction =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {

@@ -8,6 +8,10 @@ export type RawStream = Omit<Stream, "id"> & RawId;
 
 export type RawId = { _id: { $oid: string } };
 
+export interface NewIds {
+  [id: string]: string;
+}
+
 export interface SymTracker {
   [symbol: string]: number;
 }

@@ -10,22 +10,20 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
 import { useLogout, useNotification } from "../../../utils/customHooks";
-import {
-  ResMessage,
-  StreamData,
-  User,
-  saveUser,
-} from "../../../utils/datafetching";
+import { saveUser } from "../../../utils/datafetching";
 import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import Notification from "./Notification";
 import StreamList, { streamQuery } from "./StreamList";
 import UserInfo, { userQuery } from "./UserInfo";
 import styles from "./styles.module.scss";
+import { StreamData } from "shared/streamtypes";
+import { User } from "shared/usertypes";
+import { ResMessage } from "shared";
 
 export interface DashLoader {
   streamData: StreamData;
-  userData: User;
+  user: User;
 }
 
 export const dashLoader =
@@ -45,12 +43,12 @@ export const dashLoader =
     const { queryFn: userFn, queryKey: userKey } = userQuery(uid);
 
     try {
-      const [streamData, userData] = await Promise.all([
+      const [streamData, user] = await Promise.all([
         qc.ensureQueryData({ queryKey: streamKey, queryFn: streamFn }),
         qc.ensureQueryData({ queryKey: userKey, queryFn: userFn }),
       ]);
 
-      return { streamData, userData };
+      return { streamData, user };
     } catch (e) {
       const error = (e as AxiosError<ResMessage>).response;
 
@@ -66,9 +64,9 @@ export const dashLoader =
 
 export default function Dashboard() {
   const qc = useQueryClient();
-  const { userData, streamData } = useLoaderData() as DashLoader;
+  const { user, streamData } = useLoaderData() as DashLoader;
   const { notif, updateNotif, clearNotif } = useNotification();
-  const logout = useLogout(userData.id);
+  const logout = useLogout(user.id);
 
   const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"]);
 
@@ -80,7 +78,7 @@ export default function Dashboard() {
   const handleImport = () => {
     updateNotif("Your streams are being uploaded to the server", "loading");
 
-    importGStreams(qc, userData.id).then((res) =>
+    importGStreams(qc, user.id).then((res) =>
       updateNotif(res.message, res.type),
     );
   };
@@ -97,16 +95,12 @@ export default function Dashboard() {
           <div id={styles.dropList}>
             <Link
               className={styles.dropAction}
-              to={
-                userData.verified
-                  ? "/dashboard/settings"
-                  : "/dashboard/signwall"
-              }
+              to={user.verified ? "/dashboard/settings" : "/dashboard/signwall"}
             >
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
 
-            {userData.verified ? (
+            {user.verified ? (
               <button
                 type="button"
                 className={styles.dropAction}
@@ -140,7 +134,7 @@ export default function Dashboard() {
       </header>
 
       <UserInfo
-        initialData={userData}
+        initialData={user}
         tsyms={tsyms}
         usyms={usyms}
         tstreams={tstreams}
@@ -148,7 +142,7 @@ export default function Dashboard() {
 
       <StreamList
         initialData={streamData}
-        verified={userData.verified}
+        verified={user.verified}
         notify={updateNotif}
       />
     </div>

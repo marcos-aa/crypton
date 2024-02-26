@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorPage";
 import ValidateUser from "./components/ValidateUser";
-
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
 import CompareTicks, {
   ticksLoader,

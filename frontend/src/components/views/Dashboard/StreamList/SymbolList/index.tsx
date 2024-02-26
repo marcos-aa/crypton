@@ -1,12 +1,11 @@
 import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
 import ObjectID from "bson-objectid";
 import { ChangeEvent, MouseEvent, useMemo, useState } from "react";
 import { redirect, useLoaderData, useLocation } from "react-router";
 import { Form } from "react-router-dom";
-import { Stream } from "..";
+import { Stream, StreamData, SymTracker } from "shared/streamtypes";
 import api from "../../../../../services/api";
 import { getPairs } from "../../../../../utils/datafetching";
 import {
@@ -22,21 +21,11 @@ import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import ActionAnimation from "../ActionAnimation";
 import styles from "./styles.module.scss";
-import { StreamData, SymTracker } from "shared/streamtypes";
-
-export interface StreamProps {
-  stream?: Stream;
-  socket?: WebSocket;
-  verified: boolean;
-}
 
 interface TickSubs {
   newticks: string[];
   delticks: string[];
   redirect?: boolean;
-}
-export interface CatchError {
-  [response: string]: AxiosResponse;
 }
 
 const pairsQuery = () => ({

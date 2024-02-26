@@ -1,14 +1,16 @@
 import { Stream } from "@prisma/client"
 import ObjectID from "bson-objectid"
+import { ResMessage } from "shared"
+import {
+  NewIds,
+  RawId,
+  RawStream,
+  StreamData,
+  SymTracker,
+} from "shared/streamtypes"
 import prisma from "../../prisma/client"
 import StreamUtils from "../utils/Stream"
 import { streamSchema } from "../utils/schemas"
-import { RawId, RawStream, StreamData, SymTracker } from "shared/streamtypes"
-import { ResMessage } from "shared"
-
-interface NewIds {
-  [id: string]: string
-}
 
 type WriteErrors = Array<{
   code: number

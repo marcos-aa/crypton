@@ -5,15 +5,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SyntheticEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { ResMessage } from "shared";
+import { User, UserData } from "shared/usertypes";
 import api from "../../services/api";
 import { useLoadError } from "../../utils/customHooks";
+import { saveUser } from "../../utils/datafetching";
 import { importGStreams, local, stopPropagation } from "../../utils/helpers";
 import AuthButtons from "../AuthForm/AuthButtons";
 import ErrorResponse from "../LoadingError";
 import styles from "./styles.module.scss";
-import { ResMessage } from "shared";
-import { User, UserData } from "shared/usertypes";
-import { saveUser } from "../../utils/datafetching";
 
 interface ValidationState {
   newmail: string;

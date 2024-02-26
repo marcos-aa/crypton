@@ -1,7 +1,6 @@
 import { User, UserData } from "shared/usertypes";
-import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { TotalCount, genGStreamData, local } from "./helpers";
+import { genGStreamData, local } from "./helpers";
 import { StreamData, Tickers } from "shared/streamtypes";
 
 export const udata = {

@@ -23,12 +23,6 @@ import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
 import { StreamData, Tickers } from "shared/streamtypes";
 
-export interface Stream {
-  user_id: string;
-  id: string;
-  symbols: string[];
-}
-
 let tmpTickers: Tickers = {};
 
 const formatValue = Intl.NumberFormat("en-us", {

@@ -1,11 +1,11 @@
 import { User } from "@prisma/client"
 import { compareSync, hashSync } from "bcryptjs"
 import Joi from "joi"
+import { ResMessage } from "shared"
+import { UserData } from "shared/usertypes"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
 import { messages as m, userSchema } from "../utils/schemas"
-import { ResMessage } from "shared"
-import { UserData } from "shared/usertypes"
 
 type UserResponse = ResMessage | UserData
 

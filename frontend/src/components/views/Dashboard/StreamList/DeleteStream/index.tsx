@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
 
-import { Stream } from "..";
+import { Stream, StreamData, SymTracker } from "shared/streamtypes";
 import api from "../../../../../services/api";
 import {
   delTicks,
@@ -16,7 +16,6 @@ import CancellableAction from "../../CancellableAction";
 import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import styles from "./styles.module.scss";
-import { StreamData, SymTracker } from "shared/streamtypes";
 
 export const deleteStream =
   (qc: QueryClient) =>

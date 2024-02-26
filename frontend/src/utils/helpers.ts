@@ -1,11 +1,18 @@
 import { QueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { SyntheticEvent } from "react";
+import { ResMessage } from "shared";
+import {
+  NewIds,
+  RawStream,
+  Stream,
+  StreamData,
+  SymTracker,
+  Tickers,
+} from "shared/streamtypes";
 import * as yup from "yup";
 import { NotifType } from "../components/views/Dashboard/Notification";
-import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { StreamData, SymTracker, Tickers } from "shared/streamtypes";
 
 interface SymcountData {
   count: TotalCount;
@@ -29,20 +36,6 @@ export type TotalCount = {
   tstreams: number;
   symtracker: SymTracker;
 };
-
-type RawStream = Omit<Stream, "id"> & {
-  _id: {
-    $oid: string;
-  };
-};
-
-interface NewIds {
-  [id: string]: string;
-}
-
-interface ResMessage {
-  message: string;
-}
 
 export interface InputData {
   name: string | null;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
-import StreamServices from "../services/StreamServices"
 import { ResMessage } from "shared"
+import StreamServices from "../services/StreamServices"
 
 export class StreamController {
   async create(req: Request, res: Response) {
