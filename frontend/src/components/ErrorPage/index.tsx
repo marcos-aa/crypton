@@ -2,10 +2,10 @@ import { AxiosError } from "axios";
 import { useRouteError } from "react-router";
 import { Link } from "react-router-dom";
 import { useLogout } from "../../utils/customHooks";
-import { ResMessage } from "../../utils/datafetching";
 import { local } from "../../utils/helpers";
 import Logo from "../Logo";
 import styles from "./styles.module.scss";
+import { ResMessage } from "shared";
 
 export default function ErrorPage() {
   const logout = useLogout(localStorage.getItem(local.id));

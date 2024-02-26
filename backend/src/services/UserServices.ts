@@ -3,16 +3,14 @@ import { compareSync, hashSync } from "bcryptjs"
 import Joi from "joi"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
-import { EMessage, messages as m, userSchema } from "../utils/schemas"
+import { messages as m, userSchema } from "../utils/schemas"
+import { ResMessage } from "shared"
+import { UserData } from "shared/usertypes"
 
-export interface UserData {
-  user: Omit<User, "hashpass">
-  status: number
-  access_token: string
-}
+type UserResponse = ResMessage | UserData
 
 export default class UserServices {
-  async create(name: string, email: string, pass: string): Promise<EMessage> {
+  async create(name: string, email: string, pass: string): Promise<ResMessage> {
     const { error: e } = userSchema.validate({ name, email, pass })
     if (e) return { status: 422, message: e.details[0].message }
 
@@ -49,7 +47,7 @@ export default class UserServices {
     return { status: 202, message: m.validate }
   }
 
-  async read(id: string): Promise<EMessage | UserData> {
+  async read(id: string): Promise<UserResponse> {
     if (id == undefined || null) {
       return { status: 401, message: "Invalid id" }
     }
@@ -80,7 +78,7 @@ export default class UserServices {
     }
   }
 
-  async update(email: string, pass: string): Promise<EMessage | UserData> {
+  async update(email: string, pass: string): Promise<UserResponse> {
     const { error: e } = Joi.object({
       email: userSchema.extract("email"),
       pass: userSchema.extract("pass").messages({
@@ -128,7 +126,7 @@ export default class UserServices {
     return { status: 200, user, access_token }
   }
 
-  async delete(id: string, pass: string): Promise<EMessage> {
+  async delete(id: string, pass: string): Promise<ResMessage> {
     const res = await new UserUtils().isVerified("id", id, {
       hashpass: true,
       verified: true,

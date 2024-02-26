@@ -1,43 +1,21 @@
 import { Stream } from "@prisma/client"
 import ObjectID from "bson-objectid"
 import prisma from "../../prisma/client"
-import { Error } from "../controllers/UserController"
-import StreamUtils, { Tickers } from "../utils/Stream"
+import StreamUtils from "../utils/Stream"
 import { streamSchema } from "../utils/schemas"
-
-type RawStream = Omit<Stream, "id"> & {
-  _id: {
-    $oid: string
-  }
-}
-
-interface SymTracker {
-  [symbol: string]: number
-}
-
-type WriteErrors = Array<{
-  code: number
-  keyValue: {
-    _id: {
-      $oid: string
-    }
-  }
-}>
+import { RawId, RawStream, StreamData, SymTracker } from "shared/streamtypes"
+import { ResMessage } from "shared"
 
 interface NewIds {
   [id: string]: string
 }
 
-type StreamRes = Stream | Error
+type WriteErrors = Array<{
+  code: number
+  keyValue: RawId
+}>
 
-type StreamData = {
-  streams: Stream[]
-  symtracker: SymTracker
-  tickers: Tickers
-  tstreams: number
-  tsyms: number
-  usyms: number
-}
+type StreamRes = Stream | ResMessage
 
 export default class StreamServices {
   private streamData: StreamData = {

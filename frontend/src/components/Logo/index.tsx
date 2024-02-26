@@ -1,7 +1,9 @@
 import styles from "./styles.module.scss";
+
 interface LogoProps {
   isError?: boolean;
 }
+
 export default function Logo({ isError }: LogoProps) {
   return (
     <h1 className={styles.logo} id={`${isError ? styles.error : ""}`}>

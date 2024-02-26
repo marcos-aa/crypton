@@ -1,10 +1,5 @@
 import Joi from "joi"
 
-type EMessage = {
-  status: number
-  message: string
-}
-
 const messages = {
   success: "Success...",
   codeSent: "Verification code sent.",
@@ -72,11 +67,4 @@ const streamSchema = Joi.object({
     .messages(symMessages.arr),
 })
 
-export {
-  EMessage,
-  itemsSchema,
-  messages,
-  streamSchema,
-  symMessages,
-  userSchema,
-}
+export { itemsSchema, messages, streamSchema, symMessages, userSchema }

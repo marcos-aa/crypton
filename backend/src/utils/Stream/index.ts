@@ -1,40 +1,15 @@
 import axios from "axios"
 import NodeCache from "node-cache"
-
-interface FMTDTicker {
-  change: string
-  pchange: string
-  average: string
-  last: string
-}
-
-interface SpotTicker {
-  symbol: string
-  priceChange: string
-  priceChangePercent: string
-  weightedAvgPrice: string
-  lastPrice: string
-}
-
-type FMTWinTicker = FMTDTicker & {
-  volume: number
-  qvolume: number
-  trades: number
-}
-
-type WinTicker = SpotTicker & {
-  volume: number
-  quoteVolume: number
-  count: number
-}
-
-type WindowTickers = { [ticker: string]: FMTWinTicker }
+import {
+  RawTicker,
+  RawWindowTicker,
+  Ticker,
+  Tickers,
+  WindowTickers,
+} from "shared/streamtypes"
 
 interface Params {
   symbols?: string
-}
-export type Tickers = {
-  [key: string]: FMTDTicker
 }
 
 const formatter = Intl.NumberFormat("en-us", {
@@ -51,7 +26,7 @@ const cache = new NodeCache({
 const baseURL = "https://api.binance.com/api/v3"
 
 export default class StreamUtils {
-  formatTicker(ticker: SpotTicker): FMTDTicker {
+  formatTicker(ticker: RawTicker): Ticker {
     return {
       change: formatter.format(Number(ticker.priceChange)),
       pchange: formatter.format(Number(ticker.priceChangePercent)),
@@ -69,7 +44,7 @@ export default class StreamUtils {
   }
 
   async cacheTickers(params: Params = {}) {
-    const { data }: { data: SpotTicker[] } = await axios.get(
+    const { data }: { data: RawTicker[] } = await axios.get(
       baseURL + "/ticker/24hr",
       { params }
     )
@@ -84,14 +59,14 @@ export default class StreamUtils {
   }
 
   async getTickers(symbols: string[]): Promise<Tickers> {
-    const cached = cache.mget<FMTDTicker>(symbols)
+    const cached = cache.mget<Ticker>(symbols)
     const keys = Object.keys(cached)
     if (keys.length === symbols.length) return cached
 
     const notCached = symbols.filter((u) => !keys.includes(u))
 
     await this.cacheTickers({ symbols: JSON.stringify(notCached) })
-    const tickers = Object.assign(cached, cache.mget<FMTDTicker>(notCached))
+    const tickers = Object.assign(cached, cache.mget<Ticker>(notCached))
     return tickers
   }
 
@@ -107,7 +82,7 @@ export default class StreamUtils {
     })
     const result: WindowTickers = {}
     data.forEach(
-      (tick: WinTicker) =>
+      (tick: RawWindowTicker) =>
         (result[tick.symbol] = {
           last: tick.lastPrice,
           average: tick.weightedAvgPrice,

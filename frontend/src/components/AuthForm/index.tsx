@@ -5,12 +5,12 @@ import {
   useUserInput,
 } from "../../utils/customHooks";
 
-import { ResMessage } from "../../utils/datafetching";
 import { InputData } from "../../utils/helpers";
 import LoadingError from "../LoadingError";
 import CheckboxField from "./CheckboxField";
 import InputField from "./InputField";
 import styles from "./styles.module.scss";
+import { ResMessage } from "shared";
 
 interface FormProps {
   children: ReactNode;

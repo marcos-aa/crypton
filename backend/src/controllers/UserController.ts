@@ -1,11 +1,6 @@
 import { Request, Response } from "express"
 import UserServices from "../services/UserServices"
 
-export interface Error {
-  status: number
-  message: string
-}
-
 export class UserController {
   async create(req: Request, res: Response) {
     const { name, email, password } = req.body
@@ -16,12 +11,15 @@ export class UserController {
   async read(req: Request, res: Response) {
     const id = req.headers.id as string
     const result = await new UserServices().read(id)
+
     if ("user" in result)
-      res.cookie("r_token", result.user?.refresh_token, {
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
-      })
+      return res
+        .cookie("r_token", result.user?.refresh_token, {
+          httpOnly: true,
+          maxAge: Number(process.env.MAX_REFRESH),
+          secure: process.env.NODE_ENV === "production",
+        })
+        .json(result)
 
     return res.status(result.status).json(result)
   }
@@ -31,11 +29,14 @@ export class UserController {
 
     const result = await new UserServices().update(email, password)
     if ("user" in result)
-      res.cookie("r_token", result.user?.refresh_token, {
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
-      })
+      return res
+        .cookie("r_token", result.user?.refresh_token, {
+          httpOnly: true,
+          maxAge: Number(process.env.MAX_REFRESH),
+          secure: process.env.NODE_ENV === "production",
+        })
+        .json(result)
+
     return res.status(result.status).json(result)
   }
 

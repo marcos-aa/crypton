@@ -1,4 +1,4 @@
-import { Prisma, User } from "@prisma/client"
+import { Prisma, User, User as UserModel } from "@prisma/client"
 import { compareSync, hashSync } from "bcryptjs"
 import { google } from "googleapis"
 import Joi from "joi"
@@ -6,18 +6,12 @@ import { JwtPayload, sign, verify } from "jsonwebtoken"
 import crypto from "node:crypto"
 import nodemailer from "nodemailer"
 import prisma from "../../../prisma/client"
-import { UserData } from "../../services/UserServices"
-import {
-  EMessage,
-  messages as m,
-  messages,
-  userSchema,
-} from "../../utils/schemas"
+import { messages as m, messages, userSchema } from "../../utils/schemas"
+import { ResMessage } from "shared"
+import { UserData } from "shared/usertypes"
 
-interface Tokens {
-  access_token: string
-  refresh_token: string
-}
+type Tokens = Pick<UserData, "access_token"> &
+  Pick<UserData["user"], "refresh_token">
 
 interface MailMessages {
   [key: string]: {
@@ -64,10 +58,10 @@ export default class UserUtils {
     value: string,
     select: Prisma.UserSelect
   ) {
-    const user = (await prisma.user.findUnique({
-      where: { [key]: value },
+    const user = await prisma.user.findUnique({
+      where: { [key]: value } as { email: string; id: string },
       select,
-    })) as User | null
+    })
 
     if (!user) return { status: 404, message: m.noUser }
     const { status, message } = user?.verified
@@ -154,7 +148,7 @@ export default class UserUtils {
   async validateUser(
     code: string,
     newmail: string | undefined = undefined
-  ): Promise<UserData | EMessage> {
+  ): Promise<UserData | ResMessage> {
     const cleanCode = code.trim()
     const ucode = await prisma.ucodes.findUnique({
       where: {
@@ -187,7 +181,7 @@ export default class UserUtils {
         prisma.ucodes.delete({ where: { code: cleanCode } }),
       ])
 
-      delete (user as Partial<User>).hashpass
+      delete (user as Partial<UserModel>).hashpass
       return { status: 200, user, access_token }
     } catch (e) {
       return { status: 403, message: messages.duplicateEmail }
@@ -208,7 +202,7 @@ export default class UserUtils {
     return { status: 200, message: m.success }
   }
 
-  async updatePassword(email: string, password: string): Promise<EMessage> {
+  async updatePassword(email: string, password: string): Promise<ResMessage> {
     const { error: e } = userSchema.extract("pass").validate(password)
     if (e) return { status: 422, message: e.details[0].message }
 
@@ -230,7 +224,7 @@ export default class UserUtils {
     email: string,
     newmail: string,
     password: string
-  ): Promise<EMessage> {
+  ): Promise<ResMessage> {
     const { error: e } = userSchema.extract("email").validate(newmail)
     if (e) return { status: 422, message: e.details[0].message }
 
@@ -263,7 +257,7 @@ export default class UserUtils {
     return token
   }
 
-  async refreshToken(refToken: string): Promise<Tokens | EMessage> {
+  async refreshToken(refToken: string): Promise<Tokens | ResMessage> {
     const decoded = verify(refToken, JWT_SECRET_REF) as JwtPayload
     const email = decoded.sub
     if (!email) return { status: 401, message: m.noToken }
