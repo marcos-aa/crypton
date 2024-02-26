@@ -3,7 +3,6 @@ import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
 
 import { Stream } from "..";
 import api from "../../../../../services/api";
-import { StreamData, SymTracker } from "../../../../../utils/datafetching";
 import {
   delTicks,
   filterStreams,
@@ -17,6 +16,7 @@ import CancellableAction from "../../CancellableAction";
 import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import styles from "./styles.module.scss";
+import { StreamData, SymTracker } from "shared/streamtypes";
 
 export const deleteStream =
   (qc: QueryClient) =>

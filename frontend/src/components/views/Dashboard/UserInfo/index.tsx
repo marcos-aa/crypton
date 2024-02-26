@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
-import { User, getUser } from "../../../../utils/datafetching";
+import { getUser } from "../../../../utils/datafetching";
 import styles from "./styles.module.scss";
+import { User } from "shared/usertypes";
+import { StreamData } from "shared/streamtypes";
 
 export const userQuery = (id: string) => ({
   queryKey: ["user", id],
@@ -11,11 +13,8 @@ export const userQuery = (id: string) => ({
   },
 });
 
-interface InfoProps {
+interface InfoProps extends Pick<StreamData, "tstreams" | "tsyms" | "usyms"> {
   initialData: User;
-  usyms: number;
-  tsyms: number;
-  tstreams: number;
 }
 
 function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {

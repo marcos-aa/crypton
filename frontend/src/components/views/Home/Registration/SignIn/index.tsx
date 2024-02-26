@@ -3,13 +3,11 @@ import { Link } from "react-router-dom";
 import AuthForm from "../../../../AuthForm";
 
 import api from "../../../../../services/api";
-import {
-  ResMessage,
-  UserData,
-  saveUser,
-} from "../../../../../utils/datafetching";
+import { saveUser } from "../../../../../utils/datafetching";
 import { InputData, validateForm } from "../../../../../utils/helpers";
 import AuthButtons from "../../../../AuthForm/AuthButtons";
+import { ResMessage } from "shared";
+import { UserData } from "shared/usertypes";
 
 export default function SignIn() {
   const navigate = useNavigate();

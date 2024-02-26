@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import api from "../../../../../services/api";
-import { ResMessage } from "../../../../../utils/datafetching";
 import { InputData, local, validateForm } from "../../../../../utils/helpers";
 import AuthForm from "../../../../AuthForm";
 import AuthButtons from "../../../../AuthForm/AuthButtons";
 import CheckboxField from "../../../../AuthForm/CheckboxField";
+import { ResMessage } from "shared";
 const exfields = ["name", "email"];
 
 interface SignProps {

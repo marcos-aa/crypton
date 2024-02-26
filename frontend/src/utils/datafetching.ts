@@ -1,6 +1,8 @@
+import { User, UserData } from "shared/usertypes";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
 import { TotalCount, genGStreamData, local } from "./helpers";
+import { StreamData, Tickers } from "shared/streamtypes";
 
 export const udata = {
   id: "guest",
@@ -9,47 +11,6 @@ export const udata = {
   created_at: new Date(),
   verified: false,
 };
-
-export interface Ticker {
-  symbol: string;
-  change: string;
-  pchange: string;
-  average: string;
-  last: string;
-}
-
-export type Prices = Omit<Ticker, "symbol">;
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  created_at: Date;
-  verified: boolean;
-}
-
-export interface ResMessage {
-  message: string;
-  status: number;
-}
-
-export interface UserData {
-  user: User;
-  access_token: string;
-}
-
-export type Tickers = {
-  [symbol: string]: Prices;
-};
-
-export interface SymTracker {
-  [symbol: string]: number;
-}
-
-export interface StreamData extends TotalCount {
-  streams: Stream[];
-  tickers: Tickers;
-}
 
 export const saveUser = (id: string, token?: string) => {
   localStorage.setItem(local.id, id);
@@ -67,6 +28,7 @@ const guestData = (): User => {
     email: "No email",
     created_at: joinDate,
     verified: false,
+    refresh_token: "",
   };
 
   saveUser(udata.id);

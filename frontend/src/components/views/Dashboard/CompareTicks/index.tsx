@@ -3,15 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import {
-  Prices,
-  StreamData,
-  Tickers,
-  getWindowTicks,
-} from "../../../../utils/datafetching";
+import { getWindowTicks } from "../../../../utils/datafetching";
 import ModalContainer from "../../../ModalContainer";
 import TimeWindows from "./TimeWindows";
 import styles from "./styles.module.scss";
+import { StreamData, Tickers } from "shared/streamtypes";
+import { Prices } from "../StreamList/SymbolTicks";
 
 export const ticksLoader = (qc: QueryClient) => async () => {
   const weekTickers = await getWindowTicks(["ETHBTC", "BTCBUSD"], "7d");

@@ -3,7 +3,6 @@ import { Outlet, redirect, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router-dom";
 import { Form, Link } from "react-router-dom";
 import api from "../../../../services/api";
-import { User } from "../../../../utils/datafetching";
 import { local, messages, validateField } from "../../../../utils/helpers";
 import InputWarning from "../../../AuthForm/InputField/InputWarning";
 import ModalContainer from "../../../ModalContainer";
@@ -11,6 +10,7 @@ import ActionAnimation from "../StreamList/ActionAnimation";
 import SubmitAction from "../SubmitAction";
 import { userQuery } from "../UserInfo";
 import styles from "./styles.module.scss";
+import { User } from "shared/usertypes";
 
 export interface UserParams extends ActionFunctionArgs {
   params: {
@@ -29,7 +29,7 @@ export const nameAction =
         name,
       });
 
-      qc.setQueryData(["user", params.id], (cached: User) => {
+      qc.setQueryData<User>(["user", params.id], (cached) => {
         const newuser = { ...cached, name };
         return newuser;
       });

@@ -15,17 +15,13 @@ import {
   useLocation,
 } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
-import {
-  StreamData,
-  Tickers,
-  getGuestStreams,
-  getStreams,
-} from "../../../../utils/datafetching";
+import { getGuestStreams, getStreams } from "../../../../utils/datafetching";
 import { formatSymbols, local } from "../../../../utils/helpers";
 import { NotifType } from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
+import { StreamData, Tickers } from "shared/streamtypes";
 
 export interface Stream {
   user_id: string;

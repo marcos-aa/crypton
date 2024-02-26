@@ -1,13 +1,7 @@
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  refresh_token: string;
-  created_at: Date;
-  verified: boolean;
-}
+import * as streamtypes from "./streamtypes";
+import * as usertypes from "./usertypes";
 
-export interface UserData {
-  user: User;
-  access_token: string;
+export interface ResMessage {
+  message: string;
+  status: number;
 }

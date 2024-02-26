@@ -8,11 +8,7 @@ import { redirect, useLoaderData, useLocation } from "react-router";
 import { Form } from "react-router-dom";
 import { Stream } from "..";
 import api from "../../../../../services/api";
-import {
-  StreamData,
-  SymTracker,
-  getPairs,
-} from "../../../../../utils/datafetching";
+import { getPairs } from "../../../../../utils/datafetching";
 import {
   addTicks,
   delTicks,
@@ -26,6 +22,7 @@ import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import ActionAnimation from "../ActionAnimation";
 import styles from "./styles.module.scss";
+import { StreamData, SymTracker } from "shared/streamtypes";
 
 export interface StreamProps {
   stream?: Stream;

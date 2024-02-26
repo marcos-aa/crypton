@@ -1,10 +1,12 @@
-import { Prices } from "../../../../../utils/datafetching";
+import { Ticker } from "shared/streamtypes";
 import styles from "./styles.module.scss";
 
-type SymbolProps = {
+export type Prices = Omit<Ticker, "symbol">;
+
+interface SymbolProps {
   symbol: string;
   prices: Prices;
-};
+}
 
 export default function SymbolTicks({ symbol, prices }: SymbolProps) {
   return (

@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { NotifType } from "../components/views/Dashboard/Notification";
 import { Stream } from "../components/views/Dashboard/StreamList";
 import api from "../services/api";
-import { StreamData, SymTracker, Tickers } from "./datafetching";
+import { StreamData, SymTracker, Tickers } from "shared/streamtypes";
 
 interface SymcountData {
   count: TotalCount;
@@ -220,7 +220,6 @@ const importGStreams = async (
       data.tstreams += curr.tstreams;
       data.tsyms += curr.tsyms;
     }
-
     genTickUrl(subticks, "newticks");
     return {
       ...data,
