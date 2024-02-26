@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { StreamData, Tickers } from "shared/streamtypes";
+import { StreamData, WindowData, WindowTickers } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../utils/datafetching";
 import ModalContainer from "../../../ModalContainer";
-import { Prices } from "../StreamList/SymbolTicks";
 import TimeWindows from "./TimeWindows";
 import styles from "./styles.module.scss";
 
@@ -19,19 +18,14 @@ export const ticksLoader = (qc: QueryClient) => async () => {
   return res;
 };
 
-interface WindowTickers {
-  [key: "7d" | "1s" | string]: {
-    [key: string]: Prices;
-  };
+interface WindowOptions {
+  intv: string[];
+  data: WindowData;
 }
 
-interface WindowData {
-  intv: string[];
-  data: WindowTickers;
-}
 export default function CompareTicks() {
-  const data = useLoaderData() as WindowTickers;
-  const [windows, setWindows] = useState<WindowData>({
+  const data = useLoaderData() as WindowData;
+  const [windows, setWindows] = useState<WindowOptions>({
     intv: ["1s", "7d"],
     data,
   });
@@ -72,7 +66,7 @@ export default function CompareTicks() {
       else end = mid;
     }
 
-    let tickers: Tickers = windows.data[interval];
+    let tickers: WindowTickers = windows.data[interval];
     if (end !== 0) {
       const symbols = Object.keys(data["1s"]);
       tickers = await getWindowTicks(symbols, interval);
@@ -110,12 +104,22 @@ export default function CompareTicks() {
             <div key={symbol} className={styles.symRow}>
               <h2 className={styles.rowTitle}> {symbol} </h2>
               {windows.intv.map((frame) => {
+                const price = windows.data[frame][symbol];
+                const decreased = price.change[0] === "-";
                 return (
                   <div className={styles.symValues} key={`${frame}${symbol}`}>
-                    <span> Price: {windows.data[frame][symbol].last}</span>
-                    <span> Average: {windows.data[frame][symbol].average}</span>
-                    <span> Change: {windows.data[frame][symbol].change}</span>
-                    <span>Change %: {windows.data[frame][symbol].pchange}</span>
+                    <span> Price: {price.last}</span>
+                    <span> Average: {price.average}</span>
+                    <span
+                      className={`${decreased ? styles.priceFall : styles.priceRaise}`}
+                    >
+                      Change: {price.change}
+                    </span>
+                    <span
+                      className={`${decreased ? styles.priceFall : styles.priceRaise}`}
+                    >
+                      Change %: {price.pchange}
+                    </span>
                   </div>
                 );
               })}

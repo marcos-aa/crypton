@@ -59,3 +59,9 @@ export interface WindowTicker extends Ticker {
 export interface WindowTickers {
   [ticker: string]: WindowTicker;
 }
+
+export type WindowData = {
+  [window: string]: {
+    [ticker: string]: WindowTicker;
+  };
+};
