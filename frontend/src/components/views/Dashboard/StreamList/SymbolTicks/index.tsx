@@ -6,15 +6,24 @@ export type Prices = Omit<Ticker, "symbol">;
 interface SymbolProps {
   symbol: string;
   prices: Prices;
+  decreased: boolean;
 }
 
-export default function SymbolTicks({ symbol, prices }: SymbolProps) {
+export default function SymbolTicks({
+  symbol,
+  prices,
+  decreased,
+}: SymbolProps) {
   return (
     <article className={styles.streamItem}>
       <h2> {symbol} </h2>
       <p> Price: {prices?.last}</p>
-      <p> Change: {prices?.change}</p>
-      <p> Change %: {prices?.pchange}</p>
+      <p className={decreased ? "priceFall" : "priceRaise"}>
+        Change: {prices?.change}
+      </p>
+      <p className={decreased ? "priceFall" : "priceRaise"}>
+        Change %: {prices?.pchange}
+      </p>
       <p> Average: {prices?.average}</p>
     </article>
   );

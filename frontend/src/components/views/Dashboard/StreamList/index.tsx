@@ -15,13 +15,13 @@ import {
   useLocation,
 } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
+import { StreamData, Tickers } from "shared/streamtypes";
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching";
 import { formatSymbols, local } from "../../../../utils/helpers";
 import { NotifType } from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
-import { StreamData, Tickers } from "shared/streamtypes";
 
 let tmpTickers: Tickers = {};
 
@@ -154,6 +154,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
                 <SymbolTicks
                   key={symbol}
                   symbol={symbol}
+                  decreased={tickers?.[symbol].change[0] === "-"}
                   prices={tickers?.[symbol]}
                 />
               );
@@ -161,7 +162,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
             <div className={styles.streamButtons}>
               <Link
-                to={`/dashboard/streams/${stream.id}/compare`}
+                to={`/dashboard/streams/${stream.id}/window`}
                 state={stream.symbols}
               >
                 <FontAwesomeIcon

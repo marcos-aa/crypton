@@ -4,12 +4,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { StreamData, WindowData, WindowTickers } from "shared/streamtypes";
-import { getWindowTicks } from "../../../../utils/datafetching";
-import ModalContainer from "../../../ModalContainer";
-import TimeWindows from "./TimeWindows";
+import { getWindowTicks } from "../../../../../utils/datafetching";
+import ModalContainer from "../../../../ModalContainer";
+import TimeWindows from "./WindowOptions";
 import styles from "./styles.module.scss";
 
-export const ticksLoader = (qc: QueryClient) => async () => {
+export const windowLoader = (qc: QueryClient) => async () => {
   const weekTickers = await getWindowTicks(["ETHBTC", "BTCBUSD"], "7d");
   const res = {
     "7d": weekTickers,
@@ -18,14 +18,14 @@ export const ticksLoader = (qc: QueryClient) => async () => {
   return res;
 };
 
-interface WindowOptions {
+interface WindowState {
   intv: string[];
   data: WindowData;
 }
 
-export default function CompareTicks() {
+export default function WindowTicks() {
   const data = useLoaderData() as WindowData;
-  const [windows, setWindows] = useState<WindowOptions>({
+  const [windows, setWindows] = useState<WindowState>({
     intv: ["1s", "7d"],
     data,
   });
@@ -110,14 +110,10 @@ export default function CompareTicks() {
                   <div className={styles.symValues} key={`${frame}${symbol}`}>
                     <span> Price: {price.last}</span>
                     <span> Average: {price.average}</span>
-                    <span
-                      className={`${decreased ? styles.priceFall : styles.priceRaise}`}
-                    >
+                    <span className={decreased ? "priceFall" : "priceRaise"}>
                       Change: {price.change}
                     </span>
-                    <span
-                      className={`${decreased ? styles.priceFall : styles.priceRaise}`}
-                    >
+                    <span className={decreased ? "priceFall" : "priceRaise"}>
                       Change %: {price.pchange}
                     </span>
                   </div>

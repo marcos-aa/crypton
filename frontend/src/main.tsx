@@ -5,11 +5,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorPage";
 import ValidateUser from "./components/ValidateUser";
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
-import CompareTicks, {
-  ticksLoader,
-} from "./components/views/Dashboard/CompareTicks";
 import ImportUser from "./components/views/Dashboard/ImportUser";
 import Signwall from "./components/views/Dashboard/Signwall";
+
 import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
@@ -17,6 +15,9 @@ import SymbolList, {
   pairsLoader,
   upsertStream,
 } from "./components/views/Dashboard/StreamList/SymbolList";
+import WindowTicks, {
+  windowLoader,
+} from "./components/views/Dashboard/StreamList/WindowTicks";
 import UserSettings, {
   nameAction,
 } from "./components/views/Dashboard/UserSettings";
@@ -97,9 +98,9 @@ const router = createBrowserRouter([
         element: <ValidationModal origin="/dashboard/export" />,
       },
       {
-        path: "streams/:id/compare",
-        element: <CompareTicks />,
-        loader: ticksLoader(queryClient),
+        path: "streams/:id/window",
+        element: <WindowTicks />,
+        loader: windowLoader(queryClient),
       },
       {
         path: "streams/delete/:id",

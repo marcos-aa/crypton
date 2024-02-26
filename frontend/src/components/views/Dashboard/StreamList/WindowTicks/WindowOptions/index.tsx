@@ -5,7 +5,7 @@ interface TimeProps {
   addWindow(e: MouseEvent<HTMLLIElement>): void;
 }
 
-export default function TimeWindows({ addWindow }: TimeProps) {
+export default function WindowOptions({ addWindow }: TimeProps) {
   return (
     <div id={styles.timeWindow}>
       <span> Add a window to table of values </span>

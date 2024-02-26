@@ -67,6 +67,15 @@
   border: 1px solid var(--modal-border);
   border-radius: 5px;
 }
+
+.priceRaise {
+  color: green;
+}
+
+.priceFall {
+  color: red;
+}
+
 a,
 button,
 input,
