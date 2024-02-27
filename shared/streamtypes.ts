@@ -37,6 +37,8 @@ export interface RawWindowTicker extends RawTicker {
   volume: number;
   quoteVolume: number;
   count: number;
+  closeTime: number;
+  openTime: number;
 }
 
 export interface Ticker {
@@ -54,6 +56,8 @@ export interface WindowTicker extends Ticker {
   volume: number;
   qvolume: number;
   trades: number;
+  close: number;
+  open: number;
 }
 
 export interface WindowTickers {

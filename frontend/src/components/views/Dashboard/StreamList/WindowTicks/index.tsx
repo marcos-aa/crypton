@@ -6,6 +6,7 @@ import { useLoaderData } from "react-router-dom";
 import { StreamData, WindowData, WindowTickers } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
+import FullDate from "../../UserInfo/FullDate";
 import TimeWindows from "./WindowOptions";
 import styles from "./styles.module.scss";
 
@@ -30,6 +31,7 @@ export default function WindowTicks() {
     data,
   });
   const [edit, setEdit] = useState(false);
+  const [expanded, setExpanded] = useState<string>();
 
   const editWindows = () => setEdit((prev) => !prev);
 
@@ -101,27 +103,91 @@ export default function WindowTicks() {
 
         {Object.keys(data["1s"]).map((symbol) => {
           return (
-            <div key={symbol} className={styles.symRow}>
-              <h2 className={styles.rowTitle}> {symbol} </h2>
+            <div
+              key={symbol}
+              className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
+            >
+              <h2
+                className={styles.rowTitle}
+                onClick={() => setExpanded(symbol)}
+              >
+                {" "}
+                {symbol}{" "}
+              </h2>
               {windows.intv.map((frame) => {
                 const price = windows.data[frame][symbol];
                 const decreased = price.change[0] === "-";
                 return (
                   <div className={styles.symValues} key={`${frame}${symbol}`}>
-                    <span> Price: {price.last}</span>
-                    <span> Average: {price.average}</span>
+                    <span> Last price: {price.last}</span>
+                    <span> Weighted average: {price.average}</span>
                     <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Change: {price.change}
+                      Price change: {price.change}
                     </span>
                     <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Change %: {price.pchange}
+                      Price change %: {price.pchange}
                     </span>
+
+                    <div className={styles.extraValues}>
+                      <span>Quote volume: {price.qvolume}</span>
+                      <span> Asset volume: {price.volume}</span>
+                      <span> Total trades: {price.trades}</span>
+                      <FullDate
+                        style={styles.windowTime}
+                        hour={true}
+                        date={new Date(price?.open) || new Date()}
+                        title="Open date:"
+                      />
+                      <FullDate
+                        style={styles.windowTime}
+                        hour={true}
+                        date={new Date(price?.close) || new Date()}
+                        title="Close date:"
+                      />
+                    </div>
                   </div>
                 );
               })}
             </div>
           );
         })}
+
+        {/* <div className={styles.symRow}>
+          <h2 className={styles.rowTitle}> All </h2>
+          <div className={styles.symValues}>
+            <span> Price: last</span>
+            <span> Average: average</span>
+            <span>Change: change</span>
+            <span>Change %: pchange</span>
+          </div>
+        </div>
+        <div className={styles.symRow}>
+          <h2 className={styles.rowTitle}> All </h2>
+          <div className={styles.symValues}>
+            <span> Price: last</span>
+            <span> Average: average</span>
+            <span>Change: change</span>
+            <span>Change %: pchange</span>
+          </div>
+        </div>
+        <div className={styles.symRow}>
+          <h2 className={styles.rowTitle}> All </h2>
+          <div className={styles.symValues}>
+            <span> Price: last</span>
+            <span> Average: average</span>
+            <span>Change: change</span>
+            <span>Change %: pchange</span>
+          </div>
+        </div>
+        <div className={styles.symRow}>
+          <h2 className={styles.rowTitle}> All </h2>
+          <div className={styles.symValues}>
+            <span> Price: last</span>
+            <span> Average: average</span>
+            <span>Change: change</span>
+            <span>Change %: pchange</span>
+          </div>
+        </div> */}
       </div>
     </ModalContainer>
   );

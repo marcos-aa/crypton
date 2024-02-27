@@ -81,18 +81,20 @@ export default class StreamUtils {
       },
     })
     const result: WindowTickers = {}
-    data.forEach(
-      (tick: RawWindowTicker) =>
-        (result[tick.symbol] = {
-          last: tick.lastPrice,
-          average: tick.weightedAvgPrice,
-          pchange: tick.priceChangePercent,
-          change: tick.priceChange,
-          qvolume: tick.quoteVolume,
-          volume: tick.volume,
-          trades: tick.count,
-        })
-    )
+    data.forEach((tick: RawWindowTicker) => {
+      result[tick.symbol] = {
+        last: tick.lastPrice,
+        average: tick.weightedAvgPrice,
+        pchange: tick.priceChangePercent,
+        change: tick.priceChange,
+        qvolume: tick.quoteVolume,
+        volume: tick.volume,
+        trades: tick.count,
+        close: tick.closeTime,
+        open: tick.openTime,
+      }
+    })
+
     return result
   }
 }

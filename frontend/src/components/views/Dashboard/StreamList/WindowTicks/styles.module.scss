@@ -1,11 +1,12 @@
 #compareTicks {
-  --title-w: 90px;
+  --title-wh: 100px;
+  --ctitle-h: 40px;
   background-color: white;
   width: var(--modal-width);
   height: var(--modal-height);
-  max-width: 100%;
   overflow-x: auto;
   position: relative;
+  max-width: 100vw;
 
   .timeOptions,
   .symRow {
@@ -24,73 +25,23 @@
     }
   }
 
+  .colTitle,
+  #editWindows {
+    display: flex;
+    align-items: center;
+  }
+
   .rowTitle,
   .colTitle {
     font-size: 1.1rem;
     text-transform: uppercase;
   }
 
-  .rowTitle {
-    display: flex;
-    position: fixed;
-    left: 50%;
-    transform: translate(calc((var(--modal-width) * -1) / 2));
-    width: var(--title-w);
-    flex-shrink: 0;
-    margin-top: 1px;
-    padding: 5px;
-    align-items: center;
-    background-color: white;
-  }
-
-  .symValues,
-  .rowTitle,
+  .timeOptions,
   .colTitle,
-  .symRow,
-  .timeOptions {
-    height: 90px;
-  }
-
-  .symValues,
-  .colTitle,
-  .rowTitle {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    border-right: 1px solid rgba(0, 0, 0, 0.3);
-  }
-
-  .symValues:not(:last-of-type),
-  .colTitle:not(:last-of-type) {
-    border-right: 1px solid rgba(0, 0, 0, 0.3);
-  }
-
-  .symValues,
-  .colTitle {
-    margin-top: 1px;
-    padding: 0 10px;
-    min-width: 180px;
-  }
-
-  .symValues:first-of-type,
-  .colTitle:nth-child(2) {
-    margin-left: var(--title-w);
-  }
-
-  .symValues {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .symValues,
-  .symRow {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .colTitle,
-  #editWindows {
-    display: flex;
-    align-items: center;
+  #editWindows,
+  .timeOptions .rowTitle {
+    height: var(--ctitle-h);
   }
 
   #editWindows {
@@ -100,12 +51,134 @@
     transform: translate(calc((var(--modal-width) / 2) - 1px));
     border: none;
     width: 40px;
-    height: 89px;
     text-align: center;
     padding: 0;
     flex-shrink: 0;
     background-color: white;
     border-top-right-radius: 5px;
+  }
+
+  .rowTitle {
+    display: flex;
+    position: fixed;
+    left: 50%;
+    transform: translate(calc((var(--modal-width) * -1) / 2));
+    width: var(--title-wh);
+    flex-shrink: 0;
+    padding: 5px;
+    align-items: center;
+    background-color: white;
+  }
+
+  .colTitle,
+  .rowTitle,
+  .symValues,
+  #editWindows {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .rowTitle,
+  .symValues:not(:last-of-type),
+  .colTitle:not(:last-of-type) {
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .symRow,
+  .symRow .rowTitle,
+  .symValues {
+    height: var(--title-wh);
+  }
+
+  .colTitle,
+  .symValues {
+    padding: 10px;
+    min-width: 180px;
+  }
+
+  .symValues:first-of-type,
+  .colTitle:nth-child(2) {
+    margin-left: var(--title-wh);
+  }
+
+  .symRow {
+    display: flex !important;
+
+    .symValues {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: white;
+      width: 100%;
+      overflow-y: auto;
+
+      .extraValues {
+        display: none;
+
+        .windowTime {
+          display: flex;
+          span {
+            margin-left: 5px;
+          }
+        }
+      }
+    }
+  }
+
+  .fullSym {
+    position: absolute;
+    align-items: flex-start;
+    height: calc(100% - var(--ctitle-h));
+    z-index: 2;
+    top: var(--ctitle-h);
+
+    .symValues,
+    .rowTitle {
+      align-items: flex-start;
+      height: calc(var(--modal-height) - var(--ctitle-h));
+    }
+
+    .symValues {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      padding: 5px 10px;
+
+      .extraValues {
+        margin-top: 10px;
+        display: block;
+        height: 200px;
+        display: block;
+
+        span {
+          display: block;
+        }
+      }
+    }
+
+    .rowTitle {
+      justify-content: center;
+      border-bottom-left-radius: 5px;
+    }
+
+    .symValues:last-child {
+      border-bottom-right-radius: 5px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .symRow,
+    .symRow .rowTitle,
+    .symValues {
+      height: 150px;
+    }
+
+    .fullSym {
+      height: calc(100% - var(--ctitle-h));
+
+      .symValues,
+      .rowTitle {
+        height: calc(var(--modal-height) - var(--ctitle-h));
+      }
+    }
   }
 
   @media (max-width: 1200px) {
