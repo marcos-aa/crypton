@@ -33,6 +33,11 @@ export default function WindowTicks() {
   const [edit, setEdit] = useState(false);
   const [expanded, setExpanded] = useState<string>();
 
+  const expandSymbol = (e: MouseEvent<HTMLHeadingElement>) => {
+    const value = e.currentTarget.innerText;
+    setExpanded((prev) => (prev === value ? null : value));
+  };
+
   const editWindows = () => setEdit((prev) => !prev);
 
   const addWindow = async (e: MouseEvent<HTMLLIElement>) => {
@@ -107,12 +112,8 @@ export default function WindowTicks() {
               key={symbol}
               className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
             >
-              <h2
-                className={styles.rowTitle}
-                onClick={() => setExpanded(symbol)}
-              >
-                {" "}
-                {symbol}{" "}
+              <h2 className={styles.rowTitle} onClick={expandSymbol}>
+                {symbol}
               </h2>
               {windows.intv.map((frame) => {
                 const price = windows.data[frame][symbol];
