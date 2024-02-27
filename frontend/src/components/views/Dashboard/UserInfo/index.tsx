@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
-import { getUser } from "../../../../utils/datafetching";
-import styles from "./styles.module.scss";
-import { User } from "shared/usertypes";
 import { StreamData } from "shared/streamtypes";
+import { User } from "shared/usertypes";
+import { getUser } from "../../../../utils/datafetching";
+import FullDate from "./FullDate";
+import styles from "./styles.module.scss";
 
 export const userQuery = (id: string) => ({
   queryKey: ["user", id],
@@ -35,20 +36,20 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
         {user?.name}
       </h2>
       <div className={styles.userInfo} role="list">
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
-          Joined at
-          <span>
-            {createdAt.getUTCDate()}/{createdAt.getUTCMonth() + 1}/
-            {createdAt.getUTCFullYear()}
-          </span>
-        </p>
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+        <FullDate
+          hour={false}
+          title="Joined at"
+          style={styles.infoItem}
+          date={createdAt}
+        />
+
+        <p role="listitem" className={styles.infoItem}>
           Total streams: <span> {tstreams} </span>
         </p>
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+        <p role="listitem" className={styles.infoItem}>
           Total symbols: <span> {tsyms} </span>
         </p>
-        <p aria-label="created at" role="listitem" className={styles.infoItem}>
+        <p role="listitem" className={styles.infoItem}>
           Unique symbols: <span> {usyms} </span>
         </p>
       </div>
