@@ -35,7 +35,9 @@ export default function WindowTicks() {
 
   const expandSymbol = (e: MouseEvent<HTMLHeadingElement>) => {
     const value = e.currentTarget.innerText;
-    setExpanded((prev) => (prev === value ? null : value));
+    setExpanded((prev) => {
+      return prev === value ? null : value;
+    });
   };
 
   const editWindows = () => setEdit((prev) => !prev);
@@ -89,7 +91,7 @@ export default function WindowTicks() {
 
   return (
     <ModalContainer predecessor="/dashboard">
-      <div id={styles.compareTicks}>
+      <div id={expanded ? styles.expTick : styles.compareTicks}>
         <div className={styles.timeOptions}>
           <h2 className={styles.rowTitle}> Symbols </h2>
           {windows.intv.map((frame) => {
@@ -152,43 +154,6 @@ export default function WindowTicks() {
             </div>
           );
         })}
-
-        {/* <div className={styles.symRow}>
-          <h2 className={styles.rowTitle}> All </h2>
-          <div className={styles.symValues}>
-            <span> Price: last</span>
-            <span> Average: average</span>
-            <span>Change: change</span>
-            <span>Change %: pchange</span>
-          </div>
-        </div>
-        <div className={styles.symRow}>
-          <h2 className={styles.rowTitle}> All </h2>
-          <div className={styles.symValues}>
-            <span> Price: last</span>
-            <span> Average: average</span>
-            <span>Change: change</span>
-            <span>Change %: pchange</span>
-          </div>
-        </div>
-        <div className={styles.symRow}>
-          <h2 className={styles.rowTitle}> All </h2>
-          <div className={styles.symValues}>
-            <span> Price: last</span>
-            <span> Average: average</span>
-            <span>Change: change</span>
-            <span>Change %: pchange</span>
-          </div>
-        </div>
-        <div className={styles.symRow}>
-          <h2 className={styles.rowTitle}> All </h2>
-          <div className={styles.symValues}>
-            <span> Price: last</span>
-            <span> Average: average</span>
-            <span>Change: change</span>
-            <span>Change %: pchange</span>
-          </div>
-        </div> */}
       </div>
     </ModalContainer>
   );

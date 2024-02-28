@@ -1,4 +1,5 @@
-#compareTicks {
+#compareTicks,
+#expTick {
   --title-wh: 100px;
   --ctitle-h: 40px;
   background-color: white;
@@ -68,6 +69,7 @@
     padding: 5px;
     align-items: center;
     background-color: white;
+    z-index: 3;
   }
 
   .colTitle,
@@ -103,6 +105,9 @@
   .symRow {
     display: flex !important;
 
+    .rowTitle:hover {
+      cursor: pointer;
+    }
     .symValues {
       display: flex;
       flex-direction: column;
@@ -128,19 +133,14 @@
     position: absolute;
     align-items: flex-start;
     height: calc(100% - var(--ctitle-h));
-    z-index: 2;
     top: var(--ctitle-h);
-
-    .symValues,
-    .rowTitle {
-      align-items: flex-start;
-      height: calc(var(--modal-height) - var(--ctitle-h));
-    }
+    z-index: 2;
 
     .symValues {
       flex-wrap: wrap;
       justify-content: flex-start;
       padding: 5px 10px;
+      height: calc(var(--modal-height) - var(--ctitle-h));
 
       .extraValues {
         margin-top: 10px;
@@ -151,32 +151,6 @@
         span {
           display: block;
         }
-      }
-    }
-
-    .rowTitle {
-      justify-content: center;
-      border-bottom-left-radius: 5px;
-    }
-
-    .symValues:last-child {
-      border-bottom-right-radius: 5px;
-    }
-  }
-
-  @media (max-width: 500px) {
-    .symRow,
-    .symRow .rowTitle,
-    .symValues {
-      height: 150px;
-    }
-
-    .fullSym {
-      height: calc(100% - var(--ctitle-h));
-
-      .symValues,
-      .rowTitle {
-        height: calc(var(--modal-height) - var(--ctitle-h));
       }
     }
   }
@@ -193,6 +167,49 @@
     #editWindows,
     .rowTitle {
       transform: translate(0);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .symRow,
+    .symRow .rowTitle,
+    .symValues {
+      height: 150px;
+    }
+  }
+}
+
+#expTick {
+  .timeOptions {
+    margin-bottom: calc(var(--title-wh) + 1px);
+  }
+
+  .fullSym .symValues {
+    border-bottom: none;
+  }
+
+  .fullSym .rowTitle {
+    z-index: 1;
+    &::after {
+      content: "";
+      position: absolute;
+      display: block;
+      top: var(--title-wh);
+      left: 0;
+      width: 100%;
+      z-index: -1;
+      height: calc(var(--modal-height) - var(--ctitle-h) - var(--title-wh));
+      border-right: 1px solid rgba(0, 0, 0, 0.3);
+      background-color: white;
+    }
+    background-color: #ededed;
+  }
+
+  @media (max-width: 500px) {
+    .symRow,
+    .symRow .rowTitle,
+    .symValues {
+      height: var(--title-wh);
     }
   }
 }

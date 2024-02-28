@@ -6,7 +6,6 @@ interface DateProps {
 }
 
 export default function FullDate({ date, style, title, hour }: DateProps) {
-  console.log(date);
   return (
     <p aria-label="created at" role="listitem" className={style}>
       {title}
