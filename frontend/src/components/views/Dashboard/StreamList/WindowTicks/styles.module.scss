@@ -69,7 +69,7 @@
     padding: 5px;
     align-items: center;
     background-color: white;
-    z-index: 3;
+    z-index: 2;
   }
 
   .colTitle,
@@ -134,7 +134,7 @@
     align-items: flex-start;
     height: calc(100% - var(--ctitle-h));
     top: var(--ctitle-h);
-    z-index: 2;
+    z-index: 1;
 
     .symValues {
       flex-wrap: wrap;
@@ -185,11 +185,11 @@
   }
 
   .fullSym .symValues {
+    padding-top: 10px;
     border-bottom: none;
   }
 
   .fullSym .rowTitle {
-    z-index: 1;
     &::after {
       content: "";
       position: absolute;

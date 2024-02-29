@@ -1,16 +1,16 @@
 #timeWindow {
+  --y-translate: calc((var(--modal-height) / -2) + var(--ctitle-h));
   position: fixed;
   z-index: 3;
-  top: 150px;
+  top: 50%;
   right: 50%;
-  transform: translate(calc(var(--modal-width) / 2 - 1px));
-  min-height: 100px;
+  transform: translate(calc(var(--modal-width) / 2 - 1px), var(--y-translate));
+  min-height: 170px;
   padding: 5px 10px;
   background-color: white;
   box-shadow: 0 0 4px 0px black;
   border-radius: 2px;
   max-width: 100%;
-  justify-content: center;
 
   #commonWindows,
   #customWindow {
@@ -59,6 +59,6 @@
 
   @media (max-width: 1200px) {
     right: 0;
-    transform: translate(0);
+    transform: translate(0, var(--y-translate));
   }
 }
