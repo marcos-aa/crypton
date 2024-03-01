@@ -42,8 +42,7 @@ export default function WindowTicks() {
 
   const editWindows = () => setEdit((prev) => !prev);
 
-  const addWindow = async (e: MouseEvent<HTMLLIElement>) => {
-    const interval = e.currentTarget.innerHTML;
+  const sortWindows = (interval: string) => {
     const lastInd = interval.length - 1;
     const cUnit = interval[lastInd];
     const multip = {
@@ -57,14 +56,12 @@ export default function WindowTicks() {
       end = windows.intv.length - 1,
       mid = start;
 
-    const wins = [...windows.intv];
-
     while (start < end) {
       mid = Math.floor((start + end) / 2);
-      const midtx = wins[mid];
+      const midtx = windows.intv[mid];
 
       if (midtx == interval) {
-        end = 0;
+        end = -1;
         break;
       }
 
@@ -75,11 +72,19 @@ export default function WindowTicks() {
       else end = mid;
     }
 
+    return [start, end];
+  };
+
+  const addWindow = async (e: MouseEvent<HTMLLIElement> | string) => {
+    const interval = typeof e === "string" ? e : e.currentTarget.innerHTML;
+    const [inPos, end] = sortWindows(interval);
+    const wins = [...windows.intv];
+
     let tickers: WindowTickers = windows.data[interval];
-    if (end !== 0) {
+    if (end !== -1) {
       const symbols = Object.keys(data["1s"]);
       tickers = await getWindowTicks(symbols, interval);
-      wins.splice(start, 0, interval);
+      wins.splice(inPos, 0, interval);
     }
 
     setEdit(false);
