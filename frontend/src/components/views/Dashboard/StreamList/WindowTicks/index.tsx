@@ -24,6 +24,12 @@ interface WindowState {
   data: WindowData;
 }
 
+const multip = {
+  m: 1,
+  h: 60,
+  d: 1440,
+} as const;
+
 export default function WindowTicks() {
   const data = useLoaderData() as WindowData;
   const [windows, setWindows] = useState<WindowState>({
@@ -45,11 +51,7 @@ export default function WindowTicks() {
   const sortWindows = (interval: string) => {
     const lastInd = interval.length - 1;
     const cUnit = interval[lastInd];
-    const multip = {
-      m: 1,
-      h: 60,
-      d: 1440,
-    };
+
     const value = Number(interval.slice(0, lastInd)) * multip[cUnit];
 
     let start = 1,
@@ -75,8 +77,7 @@ export default function WindowTicks() {
     return [start, end];
   };
 
-  const addWindow = async (e: MouseEvent<HTMLLIElement> | string) => {
-    const interval = typeof e === "string" ? e : e.currentTarget.innerHTML;
+  const addWindow = async (interval: string) => {
     const [inPos, end] = sortWindows(interval);
     const wins = [...windows.intv];
 
