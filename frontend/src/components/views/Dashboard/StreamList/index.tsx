@@ -5,7 +5,7 @@ import {
   faUpRightAndDownLeftFromCenter,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import {
@@ -22,8 +22,6 @@ import { NotifType } from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
-
-let tmpTickers: Tickers = {};
 
 const formatValue = Intl.NumberFormat("en-us", {
   style: "decimal",
@@ -50,13 +48,14 @@ interface StreamsProps {
 }
 
 function StreamList({ initialData, verified, notify }: StreamsProps) {
+  const qc = useQueryClient();
   const fetcher = useFetcher();
   const { data } = useQuery({
     ...streamQuery(verified),
     initialData,
     refetchOnWindowFocus: false,
   });
-  const [tickers, setTickers] = useState<Tickers>(data.tickers);
+  const [temp, setTemp] = useState<Tickers>({});
   const location = useLocation();
 
   const { sendMessage } = useWebSocket(
@@ -67,7 +66,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         if (trade.result === null) {
           return;
         }
-        tmpTickers[trade.s] = {
+        temp[trade.s] = {
           average: trade.w,
           change: trade.p,
           pchange: trade.P,
@@ -85,11 +84,16 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
   };
 
   const updateValues = () => {
-    const store = formatSymbols(tmpTickers, formatValue);
-    setTickers((prev) => {
-      return { ...prev, ...store };
+    const store = formatSymbols(temp, formatValue);
+    const tickers = Object.assign(store, data.tickers);
+    qc.setQueryData<StreamData>(["streams"], (prev) => {
+      return {
+        ...prev,
+        tickers,
+      };
     });
-    tmpTickers = {};
+
+    setTemp({});
   };
 
   useEffect(() => {
@@ -154,8 +158,8 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
                 <SymbolTicks
                   key={symbol}
                   symbol={symbol}
-                  decreased={tickers?.[symbol].change[0] === "-"}
-                  prices={tickers?.[symbol]}
+                  decreased={data.tickers[symbol]?.change[0] === "-"}
+                  prices={data.tickers[symbol]}
                 />
               );
             })}
