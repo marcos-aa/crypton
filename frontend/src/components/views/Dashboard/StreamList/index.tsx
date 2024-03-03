@@ -17,7 +17,7 @@ import {
 import useWebSocket from "react-use-websocket";
 import { StreamData, Tickers } from "shared/streamtypes";
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching";
-import { formatSymbols, local } from "../../../../utils/helpers";
+import { formatSymbols, local, queryTicks } from "../../../../utils/helpers";
 import { NotifType } from "../Notification";
 import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
@@ -166,8 +166,10 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
             <div className={styles.streamButtons}>
               <Link
-                to={`/dashboard/streams/${stream.id}/window`}
-                state={stream.symbols}
+                to={
+                  `/dashboard/streams/window?` +
+                  queryTicks(stream.symbols, "symbols")
+                }
               >
                 <FontAwesomeIcon
                   title="Expand stream"

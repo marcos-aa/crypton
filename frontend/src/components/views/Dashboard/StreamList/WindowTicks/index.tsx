@@ -6,18 +6,29 @@ import { useLoaderData } from "react-router-dom";
 import { StreamData, WindowData, WindowTickers } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
-import FullDate from "../../UserInfo/FullDate";
 import TimeWindows from "./WindowOptions";
 import styles from "./styles.module.scss";
 
-export const windowLoader = (qc: QueryClient) => async () => {
-  const weekTickers = await getWindowTicks(["ETHBTC", "BTCBUSD"], "7d");
-  const res = {
-    "7d": weekTickers,
-    "1s": qc.getQueryData<StreamData>(["streams"]).tickers,
+interface WindowReq {
+  request: Request;
+}
+export const windowLoader =
+  (qc: QueryClient) =>
+  async ({ request }: WindowReq) => {
+    const url = new URL(request.url);
+    const syms = JSON.parse(url.searchParams.get("symbols"));
+    const weekTickers = await getWindowTicks(syms, "7d");
+    const qtickers = qc.getQueryData<StreamData>(["streams"]).tickers;
+    const tickers = {};
+    syms.forEach((sym) => (tickers[sym] = qtickers[sym]));
+
+    const res = {
+      "7d": weekTickers,
+      "1s": tickers,
+    };
+
+    return res;
   };
-  return res;
-};
 
 interface WindowState {
   intv: string[];
@@ -123,7 +134,7 @@ export default function WindowTicks() {
               <h2 className={styles.rowTitle} onClick={expandSymbol}>
                 {symbol}
               </h2>
-              {windows.intv.map((frame) => {
+              {/* {windows.intv.map((frame) => {
                 const price = windows.data[frame][symbol];
                 const decreased = price.change[0] === "-";
                 return (
@@ -156,7 +167,7 @@ export default function WindowTicks() {
                     </div>
                   </div>
                 );
-              })}
+              })} */}
             </div>
           );
         })}

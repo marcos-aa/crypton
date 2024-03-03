@@ -98,7 +98,7 @@ const router = createBrowserRouter([
         element: <ValidationModal origin="/dashboard/export" />,
       },
       {
-        path: "streams/:id/window",
+        path: "streams/window",
         element: <WindowTicks />,
         loader: windowLoader(queryClient),
       },
