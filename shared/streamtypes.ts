@@ -31,9 +31,6 @@ export interface RawTicker {
   priceChangePercent: string;
   weightedAvgPrice: string;
   lastPrice: string;
-}
-
-export interface RawWindowTicker extends RawTicker {
   volume: number;
   quoteVolume: number;
   count: number;
