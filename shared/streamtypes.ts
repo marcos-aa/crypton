@@ -43,6 +43,12 @@ export interface Ticker {
   pchange: string;
   average: string;
   last: string;
+  [key: symbol]: {
+    change: string;
+    pchange: string;
+    average: string;
+    last: string;
+  };
 }
 
 export interface Tickers {

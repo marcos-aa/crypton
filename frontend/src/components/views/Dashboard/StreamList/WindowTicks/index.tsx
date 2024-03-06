@@ -3,7 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { StreamData, WindowData, WindowTickers } from "shared/streamtypes";
+import {
+  StreamData,
+  Tickers,
+  WindowData,
+  WindowTickers,
+} from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
 import FullDate from "../../UserInfo/FullDate";
@@ -16,17 +21,42 @@ interface WindowReq {
 export const windowLoader =
   (qc: QueryClient) =>
   async ({ request }: WindowReq) => {
+    const { searchParams } = new URL(request.url);
+    const syms: string[] = JSON.parse(searchParams.get("symbols")),
+      uncached: string[] = [];
     const winsize = "7d";
-    const url = new URL(request.url);
-    const syms: string[] = JSON.parse(url.searchParams.get("symbols"));
-    const wintickers = await getWindowTicks(syms, winsize);
-    const qtickers = qc.getQueryData<StreamData>(["streams"]).tickers;
-    const tickers = {};
-    syms.forEach((sym) => (tickers[sym] = qtickers[sym]));
+
+    let { tickers } = qc.getQueryData<StreamData>(["streams"]),
+      currTickers: Tickers = {},
+      winTickers: Tickers = {};
+
+    syms.forEach((sym) => {
+      const { average, last, change, pchange } = tickers[sym];
+      const wticker = tickers[sym][winsize];
+      if (!wticker) uncached.push(sym);
+      currTickers[sym] = { average, last, change, pchange };
+      winTickers[sym] = wticker;
+    });
+
+    if (uncached.length > 0) {
+      const toCache = await getWindowTicks(uncached, winsize);
+      qc.setQueryData<StreamData>(["streams"], (cached) => {
+        const newtickers: Tickers = {
+          ...cached.tickers,
+        };
+
+        uncached.forEach((sym) => {
+          newtickers[sym][winsize] = winTickers[sym];
+          winTickers[sym] = toCache[sym];
+        });
+
+        return { ...cached, tickers: newtickers };
+      });
+    }
 
     const res = {
-      "7d": wintickers,
-      "1s": tickers,
+      "7d": winTickers,
+      "1s": currTickers,
     };
 
     return res;
