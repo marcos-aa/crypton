@@ -51,7 +51,7 @@ export const deleteStream =
     );
 
     const isGuest = localStorage.getItem(local.id) === "guest";
-    const delparams = queryTicks(delticks, "?delticks");
+    const delparams = queryTicks(delticks, "?delsyms");
 
     if (isGuest) {
       localStorage.setItem(local.streams, JSON.stringify(streams));
@@ -65,7 +65,7 @@ export const deleteStream =
         },
       })
       .catch(() => {
-        genTickUrl(delticks, "newticks");
+        genTickUrl(delticks, "newsyms");
         qc.setQueryData<StreamData>(["streams"], (curr) => {
           const streams = [...curr.streams];
           streams.unshift(delstream);

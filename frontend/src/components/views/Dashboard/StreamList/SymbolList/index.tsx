@@ -23,8 +23,8 @@ import ActionAnimation from "../ActionAnimation";
 import styles from "./styles.module.scss";
 
 interface TickSubs {
-  newticks: string[];
-  delticks: string[];
+  newsyms: string[];
+  delsyms: string[];
   redirect?: boolean;
 }
 
@@ -70,29 +70,31 @@ export const upsertStream =
         ? createGStream(config.symbols)
         : await api[method]<Stream>("/streams", config);
 
-    let { newticks, delticks }: TickSubs = { newticks: [], delticks: [] };
+    let { newsyms, delsyms }: TickSubs = { newsyms: [], delsyms: [] };
 
     qc.setQueryData<StreamData>(["streams"], (cached): StreamData => {
       const { streams, oldstream } = filterStreams(config.id, cached.streams);
       const symtracker: SymTracker = { ...cached.symtracker };
       const tstreams = streams.unshift(stream);
 
-      newticks = addTicks(stream.symbols, symtracker);
+      const newticks = addTicks(stream.symbols, symtracker, cached.tickers);
+      newsyms = newticks.syms;
 
       if (method === "put") {
-        delticks = delTicks(oldstream.symbols, symtracker);
+        delsyms = delTicks(oldstream.symbols, symtracker);
       }
 
-      const usyms = cached.usyms + newticks.length - delticks.length;
+      const usyms = cached.usyms + newsyms.length - delsyms.length;
       const tsyms =
         cached.tsyms -
         (oldstream?.symbols?.length || 0) +
         stream.symbols.length;
+      const tickers = Object.assign(cached.tickers, newticks.tickers);
 
       return {
         streams,
         symtracker,
-        tickers: cached.tickers,
+        tickers,
         tstreams,
         usyms,
         tsyms,
@@ -100,8 +102,8 @@ export const upsertStream =
     });
 
     const [sub, unsub] = [
-      queryTicks(newticks, "newticks"),
-      queryTicks(delticks, "delticks"),
+      queryTicks(newsyms, "newsyms"),
+      queryTicks(delsyms, "delsyms"),
     ];
 
     return redirect(`/dashboard?${sub}&${unsub}`);

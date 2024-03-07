@@ -92,7 +92,6 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         tickers,
       };
     });
-
     setTemp({});
   };
 
@@ -110,8 +109,8 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
   useEffect(() => {
     const qparams = createSearchParams(window.location.search);
     const [newticks, delticks] = [
-      JSON.parse(qparams.get("newticks")),
-      JSON.parse(qparams.get("delticks")),
+      JSON.parse(qparams.get("newsyms")),
+      JSON.parse(qparams.get("delsyms")),
     ];
 
     if (newticks?.length > 0) {
