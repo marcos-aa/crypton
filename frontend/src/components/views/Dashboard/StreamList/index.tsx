@@ -23,11 +23,6 @@ import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
 
-const formatValue = Intl.NumberFormat("en-us", {
-  style: "decimal",
-  maximumFractionDigits: 10,
-});
-
 export const streamQuery = (verified: boolean) => ({
   queryKey: ["streams"],
   queryFn: async () => {
@@ -41,10 +36,29 @@ export const generateURL = (symbols: string[]) => {
   return "wss:stream.binance.com:9443/ws/" + symurl + "@ticker";
 };
 
+const tformatter = Intl.NumberFormat("en-us", {
+  style: "decimal",
+  maximumFractionDigits: 2,
+});
+
 interface StreamsProps {
   initialData: StreamData;
   verified: boolean;
   notify(message: string, type: NotifType): void;
+}
+
+interface WSTIcker {
+  s: string;
+  p: string;
+  w: string;
+  P: string;
+  c: string;
+  q: string;
+  v: string;
+  n: number;
+  O: number;
+  C: number;
+  result?: string;
 }
 
 function StreamList({ initialData, verified, notify }: StreamsProps) {
@@ -56,22 +70,33 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     refetchOnWindowFocus: false,
   });
   const [temp, setTemp] = useState<Tickers>({});
-  const location = useLocation();
+  const { pathname } = useLocation();
 
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symtracker)),
     {
       onMessage: (item) => {
-        const trade = JSON.parse(item.data);
-        if (trade.result === null) {
+        const ticker: WSTIcker = JSON.parse(item.data);
+        if (ticker.result === null) {
           return;
         }
-        temp[trade.s] = {
-          average: trade.w,
-          change: trade.p,
-          pchange: trade.P,
-          last: trade.c,
-        };
+
+        setTemp((prev) => {
+          return {
+            ...prev,
+            [ticker.s]: {
+              average: ticker.w,
+              change: ticker.p,
+              pchange: ticker.P,
+              last: ticker.c,
+              volume: Number(ticker.v),
+              qvolume: Number(ticker.q),
+              trades: ticker.n,
+              close: ticker.C,
+              open: ticker.O,
+            },
+          };
+        });
       },
     },
   );
@@ -83,28 +108,33 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     sendMessage(JSON.stringify({ method, params: ticks, id: 1 }));
   };
 
-  const updateValues = () => {
-    const store = formatSymbols(temp, formatValue);
-    const tickers = Object.assign(store, data.tickers);
-    qc.setQueryData<StreamData>(["streams"], (prev) => {
-      return {
-        ...prev,
-        tickers,
-      };
+  const syncTickers = () => {
+    setTemp((prev) => {
+      const store = formatSymbols(prev, tformatter);
+      qc.setQueryData<StreamData>(["streams"], (cached) => {
+        const tickers = { ...cached.tickers, ...store };
+
+        return {
+          ...cached,
+          tickers,
+        };
+      });
+
+      return {};
     });
-    setTemp({});
   };
 
   useEffect(() => {
     let intervalId;
-    if (location.pathname == "/dashboard") {
-      intervalId = setInterval(updateValues, 1000);
+    if (pathname == "/dashboard") {
+      intervalId = setInterval(syncTickers, 3000);
     }
 
+    syncTickers();
     return () => {
       clearInterval(intervalId);
     };
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     const qparams = createSearchParams(window.location.search);
@@ -153,12 +183,18 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         return (
           <div className={styles.streamList} key={stream.id}>
             {stream.symbols.map((symbol) => {
+              const sym = data.tickers[symbol];
               return (
                 <SymbolTicks
                   key={symbol}
                   symbol={symbol}
-                  decreased={data.tickers[symbol]?.change[0] === "-"}
-                  prices={data.tickers[symbol]}
+                  decreased={sym?.change[0] === "-"}
+                  prices={{
+                    average: sym.average,
+                    last: sym.last,
+                    change: sym.change,
+                    pchange: sym.pchange,
+                  }}
                 />
               );
             })}

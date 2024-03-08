@@ -102,18 +102,23 @@ const formatTicker = (symbol: string): string => {
   return ticker;
 };
 
+const TICKER_KEYS = ["average", "change", "last", "pchange"];
+
 const formatSymbols = (
   store: Tickers,
   formatter: Intl.NumberFormat,
 ): Tickers => {
   const formatted: Tickers = {};
   for (const sym in store) {
-    const keys = Object.keys(store[sym]).sort();
-    const [average, change, last, pchange] = keys.map((k) =>
-      formatter.format(store[sym][k]),
-    );
-    formatted[sym] = { average, change, last, pchange };
+    const ticker = store[sym];
+
+    const [average, change, last, pchange] = TICKER_KEYS.map((key) => {
+      return formatter.format(ticker[key]);
+    });
+
+    formatted[sym] = { ...ticker, average, change, last, pchange };
   }
+
   return formatted;
 };
 

@@ -1,4 +1,4 @@
-import { StreamData, Tickers, WindowTickers } from "shared/streamtypes";
+import { StreamData, Tickers } from "shared/streamtypes";
 import { User, UserData } from "shared/usertypes";
 import api from "../services/api";
 import { genGStreamData, local } from "./helpers";
@@ -67,7 +67,7 @@ const getPairs = async (): Promise<string[] | string> => {
 };
 
 const getWindowTicks = async (symbols: string[], window: string) => {
-  const { data } = await api.get<WindowTickers>("/tickers/window", {
+  const { data } = await api.get<Tickers>("/tickers/window", {
     params: {
       symbols,
       winsize: window,

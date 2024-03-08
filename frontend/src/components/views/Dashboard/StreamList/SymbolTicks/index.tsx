@@ -1,12 +1,15 @@
-import { Ticker } from "shared/streamtypes";
+import { WindowTicker } from "shared/streamtypes";
 import styles from "./styles.module.scss";
 
-export type Prices = Omit<Ticker, "symbol">;
+export type Prices = Pick<
+  WindowTicker,
+  "change" | "pchange" | "average" | "last"
+>;
 
 interface SymbolProps {
   symbol: string;
   prices: Prices;
-  decreased: boolean;
+  decreased?: boolean;
 }
 
 export default function SymbolTicks({

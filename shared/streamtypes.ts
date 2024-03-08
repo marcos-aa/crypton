@@ -38,24 +38,11 @@ export interface RawTicker {
   openTime: number;
 }
 
-export interface Ticker {
+interface Ticker {
   change: string;
   pchange: string;
   average: string;
   last: string;
-  [key: symbol]: {
-    change: string;
-    pchange: string;
-    average: string;
-    last: string;
-  };
-}
-
-export interface Tickers {
-  [ticker: string]: Ticker;
-}
-
-export interface WindowTicker extends Ticker {
   volume: number;
   qvolume: number;
   trades: number;
@@ -63,7 +50,11 @@ export interface WindowTicker extends Ticker {
   open: number;
 }
 
-export interface WindowTickers {
+export type WindowTicker = Ticker & {
+  [key: symbol]: Ticker;
+};
+
+export interface Tickers {
   [ticker: string]: WindowTicker;
 }
 

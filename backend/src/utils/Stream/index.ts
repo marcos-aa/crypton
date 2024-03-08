@@ -1,22 +1,11 @@
 import axios from "axios"
 import NodeCache from "node-cache"
-import {
-  RawTicker,
-  Ticker,
-  Tickers,
-  WindowTicker,
-  WindowTickers,
-} from "shared/streamtypes"
+import { RawTicker, Tickers, WindowTicker } from "shared/streamtypes"
 
-interface CachedTickers<T> {
-  cached: T
+interface CachedTickers {
+  cached: Tickers
   uncsyms?: string[]
 }
-
-const formatter = Intl.NumberFormat("en-us", {
-  style: "decimal",
-  maximumFractionDigits: 2,
-})
 
 const cache = new NodeCache({
   stdTTL: 172800,
@@ -24,41 +13,36 @@ const cache = new NodeCache({
   deleteOnExpire: false,
 })
 
+const tformatter = Intl.NumberFormat("en-us", {
+  style: "decimal",
+  maximumFractionDigits: 2,
+})
+
 const baseURL = "https://api.binance.com/api/v3"
+
 export default class StreamUtils {
-  formatTicker(ticker: RawTicker, window: string) {
-    let fmticker: Ticker | WindowTicker = {
-      change: formatter.format(Number(ticker.priceChange)),
-      pchange: formatter.format(Number(ticker.priceChangePercent)),
-      average: formatter.format(Number(ticker.weightedAvgPrice)),
-      last: formatter.format(Number(ticker.lastPrice)),
-    }
-
-    if (window) {
-      fmticker = Object.assign(fmticker, {
-        volume: formatter.format(ticker.volume),
-        qvolume: formatter.format(ticker.quoteVolume),
-        trades: formatter.format(ticker.volume),
-        close: ticker.closeTime,
-        open: ticker.openTime,
-      })
-    }
-
-    return fmticker
-  }
-
   cacheTickers(tickers: RawTicker[], window: string = "") {
     const fmtickers = tickers.map((tick) => {
       return {
         key: tick.symbol + window,
-        val: this.formatTicker(tick, window),
+        val: {
+          change: tformatter.format(Number(tick.priceChange)),
+          pchange: tformatter.format(Number(tick.priceChangePercent)),
+          average: tformatter.format(Number(tick.weightedAvgPrice)),
+          last: tformatter.format(Number(tick.lastPrice)),
+          volume: tick.volume,
+          qvolume: tick.quoteVolume,
+          trades: tick.count,
+          close: tick.closeTime,
+          open: tick.openTime,
+        },
       }
     })
 
     cache.mset(fmtickers)
   }
 
-  getCachedTickers(symbols: string[]): CachedTickers<WindowTickers> {
+  getCachedTickers(symbols: string[]): CachedTickers {
     const cached = cache.mget<WindowTicker>(symbols)
     const keys = Object.keys(cached)
     if (keys.length == symbols.length) return { cached }
@@ -67,15 +51,12 @@ export default class StreamUtils {
     return { cached, uncsyms: notCached }
   }
 
-  genWindowTickers(wintickers: WindowTickers) {
-    const tickers = Object.keys(wintickers).reduce<WindowTickers>(
-      (store, symbol) => {
-        const nowindow = symbol.slice(0, symbol.length - 2)
-        store[nowindow] = wintickers[symbol]
-        return store
-      },
-      {}
-    )
+  genTickers(wintickers: Tickers) {
+    const tickers = Object.keys(wintickers).reduce<Tickers>((store, symbol) => {
+      const nowindow = symbol.slice(0, symbol.length - 2)
+      store[nowindow] = wintickers[symbol]
+      return store
+    }, {})
 
     return tickers
   }
@@ -99,17 +80,14 @@ export default class StreamUtils {
       },
     })
     this.cacheTickers(data)
-    const tickers = Object.assign(cached, cache.mget<Ticker>(uncsyms))
+    const tickers = Object.assign(cached, cache.mget<WindowTicker>(uncsyms))
     return tickers
   }
 
-  async getWinTickers(
-    symbols: string[],
-    winsize: string
-  ): Promise<WindowTickers> {
+  async getWinTickers(symbols: string[], winsize: string): Promise<Tickers> {
     const winsyms = symbols.map((sym) => sym + winsize)
     const { cached, uncsyms } = this.getCachedTickers(winsyms)
-    if (!uncsyms) return this.genWindowTickers(cached)
+    if (!uncsyms) return this.genTickers(cached)
 
     const { data } = await axios.get<RawTicker[]>(baseURL + "/ticker", {
       params: {
@@ -120,7 +98,7 @@ export default class StreamUtils {
 
     this.cacheTickers(data, winsize)
     const wintickers = Object.assign(cached, cache.mget(winsyms))
-    const tickers = this.genWindowTickers(wintickers)
+    const tickers = this.genTickers(wintickers)
     return tickers
   }
 }

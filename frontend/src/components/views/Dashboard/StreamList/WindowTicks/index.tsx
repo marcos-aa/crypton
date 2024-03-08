@@ -3,12 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import {
-  StreamData,
-  Tickers,
-  WindowData,
-  WindowTickers,
-} from "shared/streamtypes";
+import { StreamData, Tickers, WindowData } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
 import FullDate from "../../UserInfo/FullDate";
@@ -31,10 +26,10 @@ export const windowLoader =
       winTickers: Tickers = {};
 
     syms.forEach((sym) => {
-      const { average, last, change, pchange } = tickers[sym];
-      const wticker = tickers[sym][winsize];
+      const ticker = tickers[sym];
+      const wticker = ticker[winsize];
       if (!wticker) uncached.push(sym);
-      currTickers[sym] = { average, last, change, pchange };
+      currTickers[sym] = ticker;
       winTickers[sym] = wticker;
     });
 
@@ -46,7 +41,7 @@ export const windowLoader =
         };
 
         uncached.forEach((sym) => {
-          newtickers[sym][winsize] = winTickers[sym];
+          newtickers[sym][winsize] = toCache[sym];
           winTickers[sym] = toCache[sym];
         });
 
@@ -124,7 +119,7 @@ export default function WindowTicks() {
     const [inPos, end] = sortWindows(interval);
     const wins = [...windows.intv];
 
-    let tickers: WindowTickers = windows.data[interval];
+    let tickers: Tickers = windows.data[interval];
     if (end !== -1) {
       const symbols = Object.keys(data["1s"]);
       tickers = await getWindowTicks(symbols, interval);
@@ -167,33 +162,33 @@ export default function WindowTicks() {
                 {symbol}
               </h2>
               {windows.intv.map((frame) => {
-                const price = windows.data[frame][symbol];
-                const decreased = price.change[0] === "-";
+                const trade = windows.data[frame][symbol];
+                const decreased = trade.change[0] === "-";
                 return (
                   <div className={styles.symValues} key={`${frame}${symbol}`}>
-                    <span> Last price: {price.last}</span>
-                    <span> Weighted average: {price.average}</span>
+                    <span> Last price: {trade.last}</span>
+                    <span> Weighted average: {trade.average}</span>
                     <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Price change: {price.change}
+                      Price change: {trade.change}
                     </span>
                     <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Price change %: {price.pchange}
+                      Price change %: {trade.pchange}
                     </span>
 
                     <div className={styles.extraValues}>
-                      <span>Quote volume: {price.qvolume}</span>
-                      <span> Asset volume: {price.volume}</span>
-                      <span> Total trades: {price.trades}</span>
+                      <span>Quote volume: {trade.qvolume}</span>
+                      <span> Asset volume: {trade.volume}</span>
+                      <span> Total trades: {trade.trades}</span>
                       <FullDate
                         style={styles.windowTime}
                         hour={true}
-                        date={new Date(price?.open) || new Date()}
+                        date={new Date(trade?.open)}
                         title="Open date:"
                       />
                       <FullDate
                         style={styles.windowTime}
                         hour={true}
-                        date={new Date(price?.close) || new Date()}
+                        date={new Date(trade?.close)}
                         title="Close date:"
                       />
                     </div>
