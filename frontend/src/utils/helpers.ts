@@ -321,16 +321,22 @@ const addTicks = (
   symtracker: SymTracker,
   tickers?: Tickers,
 ): Newticks => {
-  const newticks = symbols.reduce(
+  const newticks = symbols.reduce<Newticks>(
     (store, sym) => {
       symtracker[sym] = symtracker[sym] + 1 || 1;
       if (symtracker[sym] == 1) {
         store.syms.push(formatTicker(sym));
+        const tickstamp = new Date().getTime();
         store.tickers[sym] = tickers[sym] ?? {
           average: "0",
           last: "0",
           pchange: "0",
           change: "0",
+          volume: 0,
+          open: tickstamp,
+          close: tickstamp,
+          qvolume: 0,
+          trades: 0,
         };
       }
       return store;
