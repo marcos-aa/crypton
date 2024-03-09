@@ -1,14 +1,14 @@
-import { Prisma, User, User as UserModel } from "@prisma/client"
+import { Prisma, User as UserModel } from "@prisma/client"
 import { compareSync, hashSync } from "bcryptjs"
 import { google } from "googleapis"
 import Joi from "joi"
 import { JwtPayload, sign, verify } from "jsonwebtoken"
 import crypto from "node:crypto"
 import nodemailer from "nodemailer"
-import prisma from "../../../prisma/client"
-import { messages as m, messages, userSchema } from "../../utils/schemas"
 import { ResMessage } from "shared"
 import { UserData } from "shared/usertypes"
+import prisma from "../../../prisma/client"
+import { messages as m, messages, userSchema } from "../../utils/schemas"
 
 type Tokens = Pick<UserData, "access_token"> &
   Pick<UserData["user"], "refresh_token">
@@ -101,7 +101,8 @@ export default class UserUtils {
 
     const accessToken = await oauth2Client.getAccessToken()
     code = crypto.randomBytes(3).toString("hex")
-    const expires_at = new Date().getTime() + 60 * 60 * 1000
+    let expires_at = new Date()
+    expires_at.setHours(expires_at.getHours() + 1)
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -126,7 +127,7 @@ export default class UserUtils {
       html: mailTypes[type].html.replace("CODE_VARIABLE", code),
     }
 
-    await prisma.ucodes.upsert({
+    const user = await prisma.ucodes.upsert({
       where: { email },
       update: {
         code,
@@ -140,6 +141,7 @@ export default class UserUtils {
         hash,
       },
     })
+    console.log(expires_at, user.expires_at)
 
     transporter.sendMail(mailOptions)
     return { status: 200, message: m.codeSent }
@@ -157,8 +159,7 @@ export default class UserUtils {
     })
 
     if (!ucode) return { status: 401, message: m.invalidCode }
-
-    if (new Date().getTime() > ucode.expires_at)
+    if (new Date().getTime() > ucode.expires_at.getTime())
       return { status: 403, message: m.expiredCode }
 
     const tokenMail = newmail || ucode.email

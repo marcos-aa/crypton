@@ -22,7 +22,7 @@ model Ucodes {
   email      String  @unique
   code       String  @unique
   hash       String?
-  expires_at Int
+  expires_at DateTime
 }
 
 model Stream {
