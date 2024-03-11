@@ -327,7 +327,7 @@ const addTicks = (
       if (symtracker[sym] == 1) {
         store.syms.push(formatTicker(sym));
         const tickstamp = new Date().getTime();
-        store.tickers[sym] = tickers[sym] ?? {
+        store.tickers[sym] = tickers?.[sym] ?? {
           average: "0",
           last: "0",
           pchange: "0",
