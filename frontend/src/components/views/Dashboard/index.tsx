@@ -9,17 +9,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
+import { ResMessage } from "shared";
+import { StreamData } from "shared/streamtypes";
+import { User } from "shared/usertypes";
 import { useLogout, useNotification } from "../../../utils/customHooks";
-import { saveUser } from "../../../utils/datafetching";
 import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import Notification from "./Notification";
 import StreamList, { streamQuery } from "./StreamList";
 import UserInfo, { userQuery } from "./UserInfo";
 import styles from "./styles.module.scss";
-import { StreamData } from "shared/streamtypes";
-import { User } from "shared/usertypes";
-import { ResMessage } from "shared";
 
 export interface DashLoader {
   streamData: StreamData;
@@ -28,27 +27,20 @@ export interface DashLoader {
 
 export const dashLoader =
   (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
-    const [uid, token] = [
-      localStorage.getItem(local.id),
-      localStorage.getItem(local.token),
-    ];
-
+    const uid = localStorage.getItem(local.id);
     if (!uid) return redirect("/register/signin");
 
-    saveUser(uid, token);
-
-    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(
-      uid !== "guest",
-    );
+    const isGuest = uid !== "guest";
     const { queryFn: userFn, queryKey: userKey } = userQuery(uid);
+    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(isGuest);
 
     try {
-      const [streamData, user] = await Promise.all([
-        qc.ensureQueryData({ queryKey: streamKey, queryFn: streamFn }),
+      const [user, streamData] = await Promise.all([
         qc.ensureQueryData({ queryKey: userKey, queryFn: userFn }),
+        qc.ensureQueryData({ queryKey: streamKey, queryFn: streamFn }),
       ]);
 
-      return { streamData, user };
+      return { user, streamData };
     } catch (e) {
       const error = (e as AxiosError<ResMessage>).response;
 

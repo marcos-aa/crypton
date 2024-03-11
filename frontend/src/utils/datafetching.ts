@@ -19,7 +19,7 @@ export const saveUser = (id: string, token?: string) => {
 };
 
 const guestData = (): User => {
-  const joinDate = new Date(localStorage.getItem(local.joined)) ?? new Date();
+  const joinDate = new Date(JSON.parse(localStorage.getItem(local.joined)));
 
   const udata: User = {
     id: "guest",
@@ -30,7 +30,6 @@ const guestData = (): User => {
     refresh_token: "",
   };
 
-  saveUser(udata.id);
   return udata;
 };
 
@@ -48,22 +47,22 @@ const getStreams = async (): Promise<StreamData> => {
 
 const getGuestStreams = async (): Promise<StreamData> => {
   const { data, symbols } = genGStreamData("guest");
-  const { data: tickers } = await api.get<Tickers>("/tickers", {
-    params: {
-      symbols: symbols,
-    },
-  });
+  let tickers: Tickers = {};
+  if (data.streams.length > 0) {
+    const { data } = await api.get<Tickers>("/tickers", {
+      params: {
+        symbols: symbols,
+      },
+    });
+    tickers = data;
+  }
   const streamData = Object.assign(data, { tickers });
   return streamData;
 };
 
-const getPairs = async (): Promise<string[] | string> => {
-  try {
-    const { data: pairs } = await api.get<string[]>("/pairs");
-    return pairs;
-  } catch (e) {
-    return "Something went wrong. Verify your connection and try again.";
-  }
+const getPairs = async (): Promise<string[]> => {
+  const { data: pairs } = await api.get<string[]>("/pairs");
+  return pairs;
 };
 
 const getWindowTicks = async (symbols: string[], window: string) => {
