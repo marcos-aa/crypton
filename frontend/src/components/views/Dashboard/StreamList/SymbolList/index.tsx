@@ -2,8 +2,14 @@ import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
 import ObjectID from "bson-objectid";
-import { ChangeEvent, MouseEvent, useMemo, useState } from "react";
-import { redirect, useLoaderData, useLocation } from "react-router";
+import { ChangeEvent, MouseEvent, Suspense, useState } from "react";
+import {
+  Await,
+  defer,
+  redirect,
+  useLoaderData,
+  useLocation,
+} from "react-router";
 import { Form } from "react-router-dom";
 import { Stream, StreamData, SymTracker } from "shared/streamtypes";
 import api from "../../../../../services/api";
@@ -20,6 +26,7 @@ import CancellableAction from "../../CancellableAction";
 import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import ActionAnimation from "../ActionAnimation";
+import Pairs from "./Pairs";
 import styles from "./styles.module.scss";
 
 interface TickSubs {
@@ -28,15 +35,19 @@ interface TickSubs {
   redirect?: boolean;
 }
 
+interface DeferredPairs {
+  pairs: Promise<string[]>;
+}
+
 const pairsQuery = () => ({
   queryKey: ["currencies"],
   queryFn: async () => getPairs(),
 });
 
-export const pairsLoader = (qc) => async () => {
+export const pairsLoader = (qc) => () => {
   const query = pairsQuery();
-  const currencies: string[] = await qc.ensureQueryData(query);
-  return currencies;
+  const pairs = qc.ensureQueryData(query);
+  return defer({ pairs });
 };
 
 const createGStream = (symbols: string[]): { data: Stream } => {
@@ -115,7 +126,7 @@ export interface PageState {
 }
 
 export default function SymbolList() {
-  const pairs = useLoaderData() as string[];
+  const { pairs } = useLoaderData() as DeferredPairs;
   const { state: pagestate, pathname }: PageState = useLocation();
   const [selected, setSelected] = useState<string[]>(pagestate?.symbols || []);
   const [search, setSearch] = useState<string>("");
@@ -136,12 +147,6 @@ export default function SymbolList() {
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
-
-  const matchingPairs = useMemo(() => {
-    return (pairs as string[]).filter((symbol: string) =>
-      symbol.includes(search.trim().toLocaleUpperCase()),
-    );
-  }, [search]);
 
   return (
     <ModalContainer id={styles.symbolModal} predecessor="/dashboard">
@@ -197,18 +202,13 @@ export default function SymbolList() {
       </Form>
 
       <ul id={styles.symbolList}>
-        {matchingPairs.map((pair: string) => {
-          return (
-            <li
-              role="listitem"
-              className={styles.symbol}
-              onClick={handlePush}
-              key={pair}
-            >
-              {pair}
-            </li>
-          );
-        })}
+        <Suspense fallback={<p> Loading </p>}>
+          <Await resolve={pairs} errorElement={<p>Error!</p>}>
+            {(pairs: string[]) => (
+              <Pairs pairs={pairs} search={search} handlePush={handlePush} />
+            )}
+          </Await>
+        </Suspense>
       </ul>
     </ModalContainer>
   );

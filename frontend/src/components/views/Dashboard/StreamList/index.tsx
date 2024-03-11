@@ -19,7 +19,6 @@ import { StreamData, Tickers } from "shared/streamtypes";
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching";
 import { formatSymbols, local, queryTicks } from "../../../../utils/helpers";
 import { NotifType } from "../Notification";
-import { default as ActionAnimation } from "./ActionAnimation";
 import SymbolTicks from "./SymbolTicks";
 import styles from "./styles.module.scss";
 
@@ -166,11 +165,9 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
       <div className={styles.streamSettings}>
         <h1> Your streams </h1>
-        <ActionAnimation actpath="/dashboard/streams">
-          <Link className="action" to="streams">
-            Create
-          </Link>
-        </ActionAnimation>
+        <Link className="action" to="streams">
+          Create
+        </Link>
       </div>
 
       {data.tstreams < 1 && (
@@ -219,25 +216,20 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
                 />
               ) : (
                 <>
-                  <ActionAnimation
-                    small={true}
-                    actpath={`/dashboard/streams/${stream.id}`}
+                  <Link
+                    replace
+                    to={
+                      verified
+                        ? `/dashboard/streams/${stream.id}`
+                        : "/dashboard/signwall"
+                    }
+                    state={{
+                      symbols: stream.symbols,
+                      verified,
+                    }}
                   >
-                    <Link
-                      replace
-                      to={
-                        verified
-                          ? `/dashboard/streams/${stream.id}`
-                          : "/dashboard/signwall"
-                      }
-                      state={{
-                        symbols: stream.symbols,
-                        verified,
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faPencil} />
-                    </Link>
-                  </ActionAnimation>
+                    <FontAwesomeIcon icon={faPencil} />
+                  </Link>
                   {localStorage.getItem(local.delPrompt) ? (
                     <fetcher.Form
                       method="delete"

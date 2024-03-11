@@ -1,0 +1,13 @@
+.symbol {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  font-size: 1.01rem;
+  height: 40px;
+  border: 2px solid whitesmoke;
+  background-color: white;
+
+  &:hover {
+    background-color: #009c1a;
+  }
+}
