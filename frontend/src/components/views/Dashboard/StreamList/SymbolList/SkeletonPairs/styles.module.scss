@@ -1,0 +1,55 @@
+.skeleton {
+  --item-height: 35px;
+  position: relative;
+  margin-left: 0;
+  width: 100%;
+  height: 90px;
+
+  &,
+  &::after,
+  &::before {
+    animation: pulse 1.5s infinite linear;
+    border-top: var(--item-height) dashed #e3e3e3;
+    border-bottom: var(--item-height) dashed #e3e3e3;
+  }
+
+  &::after,
+  &::before {
+    position: absolute;
+    content: "";
+    display: block;
+    height: 90px;
+    width: 100%;
+
+    box-sizing: border-box;
+  }
+
+  &::before {
+    animation-delay: 0.5s;
+    top: 72px;
+  }
+
+  &::after {
+    animation-delay: 1s;
+    top: 180px;
+  }
+
+  @keyframes pulse {
+    0% {
+      border-color: #e3e3e3;
+    }
+    25% {
+      border-color: #e3e3e34a;
+    }
+    50% {
+      border-color: white;
+    }
+    75% {
+      border-color: #e3e3e34a;
+    }
+
+    100% {
+      border-color: #e3e3e3;
+    }
+  }
+}

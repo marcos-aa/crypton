@@ -27,6 +27,7 @@ import SubmitAction from "../../SubmitAction";
 import { UserParams } from "../../UserSettings";
 import ActionAnimation from "../ActionAnimation";
 import Pairs from "./Pairs";
+import SkeletonPairs from "./SkeletonPairs";
 import styles from "./styles.module.scss";
 
 interface TickSubs {
@@ -202,7 +203,7 @@ export default function SymbolList() {
       </Form>
 
       <ul id={styles.symbolList}>
-        <Suspense fallback={<p> Loading </p>}>
+        <Suspense fallback={<SkeletonPairs />}>
           <Await resolve={pairs} errorElement={<p>Error!</p>}>
             {(pairs: string[]) => (
               <Pairs pairs={pairs} search={search} handlePush={handlePush} />
