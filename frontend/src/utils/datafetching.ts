@@ -36,7 +36,6 @@ const guestData = (): User => {
 const getUser = async (id: string): Promise<User> => {
   if (id === "guest") return guestData();
   const { data } = await api.get<UserData>("/user");
-  saveUser(id, data.access_token);
   return data.user;
 };
 

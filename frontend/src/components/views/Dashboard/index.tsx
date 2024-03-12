@@ -13,6 +13,7 @@ import { ResMessage } from "shared";
 import { StreamData } from "shared/streamtypes";
 import { User } from "shared/usertypes";
 import { useLogout, useNotification } from "../../../utils/customHooks";
+import { saveUser } from "../../../utils/datafetching";
 import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import Notification from "./Notification";
@@ -27,12 +28,17 @@ export interface DashLoader {
 
 export const dashLoader =
   (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
-    const uid = localStorage.getItem(local.id);
+    const [uid, token] = [
+      localStorage.getItem(local.id),
+      localStorage.getItem(local.token),
+    ];
     if (!uid) return redirect("/register/signin");
 
-    const isGuest = uid !== "guest";
+    const isVerified = uid !== "guest";
+    if (isVerified) saveUser(uid, token);
+
     const { queryFn: userFn, queryKey: userKey } = userQuery(uid);
-    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(isGuest);
+    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(isVerified);
 
     try {
       const [user, streamData] = await Promise.all([
