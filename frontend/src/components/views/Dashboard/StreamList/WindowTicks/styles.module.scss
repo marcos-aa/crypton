@@ -180,16 +180,14 @@
 }
 
 #expTick {
-  .timeOptions {
-    margin-bottom: calc(var(--title-wh) + 1px);
-  }
-
   .fullSym .symValues {
     padding-top: 10px;
     border-bottom: none;
   }
 
   .fullSym .rowTitle {
+    margin-top: calc(var(--title-wh) * var(--elindex));
+
     &::after {
       content: "";
       position: absolute;
@@ -198,11 +196,17 @@
       left: 0;
       width: 100%;
       z-index: -1;
-      height: calc(var(--modal-height) - var(--ctitle-h) - var(--title-wh));
+      height: calc(
+        var(--modal-height) - var(--ctitle-h) -
+          (var(--title-wh) * (var(--elindex) + 1))
+      );
       border-right: 1px solid rgba(0, 0, 0, 0.3);
       background-color: white;
     }
     background-color: #ededed;
+  }
+  .fullSym + .symRow {
+    margin-top: var(--title-wh);
   }
 
   @media (max-width: 500px) {

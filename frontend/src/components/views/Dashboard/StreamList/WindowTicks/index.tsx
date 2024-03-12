@@ -1,7 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient } from "@tanstack/react-query";
-import { MouseEvent, useState } from "react";
+import { CSSProperties, MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { StreamData, Tickers, WindowData } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
@@ -152,13 +152,20 @@ export default function WindowTicks() {
           {edit && <TimeWindows addWindow={addWindow} />}
         </div>
 
-        {Object.keys(data["1s"]).map((symbol) => {
+        {Object.keys(data["1s"]).map((symbol, i) => {
+          const style = {
+            "--elindex": i,
+          } as CSSProperties;
           return (
             <div
               key={symbol}
               className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
             >
-              <h2 className={styles.rowTitle} onClick={expandSymbol}>
+              <h2
+                style={style}
+                className={styles.rowTitle}
+                onClick={expandSymbol}
+              >
                 {symbol}
               </h2>
               {windows.intv.map((frame) => {
