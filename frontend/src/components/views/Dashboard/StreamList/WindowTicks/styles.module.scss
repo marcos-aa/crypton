@@ -17,6 +17,10 @@
   }
 
   .timeOptions {
+    > button {
+      width: 40px;
+      height: 40px;
+    }
     .colTitle {
       width: 100%;
     }
@@ -49,7 +53,7 @@
     position: fixed;
     font-size: 1.2rem;
     right: 50%;
-    transform: translate(calc((var(--modal-width) / 2) - 1px));
+    transform: translate(calc((var(--modal-width) / 2) - 41px));
     border: none;
     width: 40px;
     text-align: center;

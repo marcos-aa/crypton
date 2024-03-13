@@ -67,6 +67,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     ...streamQuery(verified),
     initialData,
     refetchOnWindowFocus: false,
+    staleTime: 3600000,
   });
   const [temp, setTemp] = useState<Tickers>({});
   const { pathname } = useLocation();

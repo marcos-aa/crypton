@@ -23,6 +23,7 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
     ...userQuery(initialData.id),
     initialData,
     refetchOnWindowFocus: false,
+    staleTime: 3600000,
   });
   const createdAt = new Date(`${user?.created_at}`);
 

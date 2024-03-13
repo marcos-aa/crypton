@@ -6,6 +6,7 @@ import { useLoaderData } from "react-router-dom";
 import { StreamData, Tickers, WindowData } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
+import CloseModal from "../../../../ModalContainer/CloseModal";
 import FullDate from "../../UserInfo/FullDate";
 import TimeWindows from "./WindowOptions";
 import styles from "./styles.module.scss";
@@ -20,8 +21,9 @@ export const windowLoader =
     const syms: string[] = JSON.parse(searchParams.get("symbols")),
       uncached: string[] = [];
     const winsize = "7d";
+    console.log(qc.getQueryData(["streams"]));
 
-    let { tickers } = qc.getQueryData<StreamData>(["streams"]),
+    let { tickers } = await qc.ensureQueryData<StreamData>(["streams"]),
       currTickers: Tickers = {},
       winTickers: Tickers = {};
 
@@ -149,6 +151,7 @@ export default function WindowTicks() {
           <button id={styles.editWindows} type="button" onClick={editWindows}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
+          <CloseModal predecessor="/dashboard" />
           {edit && <TimeWindows addWindow={addWindow} />}
         </div>
 
