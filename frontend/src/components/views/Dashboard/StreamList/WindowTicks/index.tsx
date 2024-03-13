@@ -148,10 +148,12 @@ export default function WindowTicks() {
             );
           })}
 
-          <button id={styles.editWindows} type="button" onClick={editWindows}>
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-          <CloseModal predecessor="/dashboard" />
+          <div id={styles.timeActions}>
+            <button id={styles.editWindows} type="button" onClick={editWindows}>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <CloseModal predecessor="/dashboard" />
+          </div>
           {edit && <TimeWindows addWindow={addWindow} />}
         </div>
 

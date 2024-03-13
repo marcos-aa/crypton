@@ -17,10 +17,33 @@
   }
 
   .timeOptions {
-    > button {
-      width: 40px;
-      height: 40px;
+    #timeActions {
+      display: flex;
+      position: fixed;
+      right: 50%;
+      width: 80px;
+      transform: translate(calc(var(--modal-width) / 2));
+      flex-shrink: 0;
+      height: var(--ctitle-h);
+      background-color: white;
+
+      button {
+        padding: 0;
+        width: 40px;
+        height: 100%;
+        svg {
+          font-size: 1.2rem;
+        }
+      }
+
+      #editWindows {
+        border: none;
+        text-align: center;
+        padding: 0;
+        border-top-right-radius: 5px;
+      }
     }
+
     .colTitle {
       width: 100%;
     }
@@ -44,23 +67,8 @@
 
   .timeOptions,
   .colTitle,
-  #editWindows,
   .timeOptions .rowTitle {
     height: var(--ctitle-h);
-  }
-
-  #editWindows {
-    position: fixed;
-    font-size: 1.2rem;
-    right: 50%;
-    transform: translate(calc((var(--modal-width) / 2) - 41px));
-    border: none;
-    width: 40px;
-    text-align: center;
-    padding: 0;
-    flex-shrink: 0;
-    background-color: white;
-    border-top-right-radius: 5px;
   }
 
   .rowTitle {
@@ -79,7 +87,7 @@
   .colTitle,
   .rowTitle,
   .symValues,
-  #editWindows {
+  #timeActions {
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   }
 
@@ -164,11 +172,10 @@
       left: 0;
     }
 
-    #editWindows {
+    .timeOptions #timeActions {
       right: 0;
     }
-
-    #editWindows,
+    .timeOptions #timeActions,
     .rowTitle {
       transform: translate(0);
     }
