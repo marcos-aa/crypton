@@ -163,14 +163,11 @@ export default function WindowTicks() {
           } as CSSProperties;
           return (
             <div
+              style={style}
               key={symbol}
               className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
             >
-              <h2
-                style={style}
-                className={styles.rowTitle}
-                onClick={expandSymbol}
-              >
+              <h2 className={styles.rowTitle} onClick={expandSymbol}>
                 {symbol}
               </h2>
               {windows.intv.map((frame) => {

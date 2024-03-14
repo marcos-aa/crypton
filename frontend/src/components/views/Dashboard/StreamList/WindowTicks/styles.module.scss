@@ -141,6 +141,22 @@
     }
   }
 
+  @media (max-width: 1200px) {
+    .rowTitle {
+      left: 0;
+    }
+
+    .timeOptions #timeActions {
+      right: 0;
+    }
+    .timeOptions #timeActions,
+    .rowTitle {
+      transform: translate(0);
+    }
+  }
+}
+
+#expTick {
   .fullSym {
     position: absolute;
     align-items: flex-start;
@@ -167,30 +183,6 @@
     }
   }
 
-  @media (max-width: 1200px) {
-    .rowTitle {
-      left: 0;
-    }
-
-    .timeOptions #timeActions {
-      right: 0;
-    }
-    .timeOptions #timeActions,
-    .rowTitle {
-      transform: translate(0);
-    }
-  }
-
-  @media (max-width: 500px) {
-    .symRow,
-    .symRow .rowTitle,
-    .symValues {
-      height: 150px;
-    }
-  }
-}
-
-#expTick {
   .fullSym .symValues {
     padding-top: 10px;
     border-bottom: none;
@@ -225,6 +217,47 @@
     .symRow .rowTitle,
     .symValues {
       height: var(--title-wh);
+    }
+  }
+}
+
+#expTick,
+#compareTicks {
+  @media (max-width: 500px) {
+    --sym-h: 20vh;
+    height: 100%;
+
+    .symRow.fullSym {
+      height: calc(100% - var(--ctitle-h));
+    }
+
+    .fullSym .symValues,
+    .symValues {
+      height: 100%;
+    }
+
+    .symRow,
+    .symRow .rowTitle {
+      height: calc(20vh - 8px);
+    }
+
+    .fullSym .rowTitle::after {
+      top: calc(var(--sym-h) - 8px);
+    }
+
+    .symRow.fullSym:nth-child(2) .rowTitle {
+      top: var(--ctitle-h);
+    }
+    .fullSym .rowTitle {
+      top: calc(
+        var(--ctitle-h) + (var(--sym-h) * var(--elindex)) -
+          (8px * var(--elindex))
+      );
+      margin-top: 0;
+    }
+
+    .fullSym + .symRow {
+      margin-top: calc(var(--sym-h) - 8px);
     }
   }
 }
