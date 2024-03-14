@@ -5,9 +5,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorPage";
 import ValidateUser from "./components/ValidateUser";
 import Dashboard, { dashLoader } from "./components/views/Dashboard";
-import ImportUser from "./components/views/Dashboard/ImportUser";
 import Signwall from "./components/views/Dashboard/Signwall";
 
+import ExportUser from "./components/views/Dashboard/ExportUser";
 import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream";
@@ -87,7 +87,7 @@ const router = createBrowserRouter([
       },
       {
         path: "export",
-        element: <ImportUser />,
+        element: <ExportUser />,
       },
       {
         path: "signwall",

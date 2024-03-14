@@ -1,4 +1,5 @@
 import { useNavigate, useRouteLoaderData } from "react-router";
+import { ResMessage } from "shared";
 import { DashLoader } from "../..";
 import api from "../../../../../services/api";
 import { useLogout } from "../../../../../utils/customHooks";
@@ -8,7 +9,6 @@ import AuthButtons from "../../../../AuthForm/AuthButtons";
 import ModalContainer from "../../../../ModalContainer";
 import CloseModal from "../../../../ModalContainer/CloseModal";
 import styles from "./styles.module.scss";
-import { ResMessage } from "shared";
 
 interface CredProps {
   type: string;
@@ -73,7 +73,7 @@ export default function UpdateCredentials({ type }: CredProps) {
       <div id="credModalForm">
         <header id={styles.credHeader}>
           <h3 id={styles.credTitle}> {formMessages[type]} </h3>
-          <CloseModal predecessor={`/dashboard/settings/${type}`} />
+          <CloseModal predecessor={`/dashboard/settings`} />
         </header>
         <AuthForm
           exfields={type === "email" ? ["email"] : []}

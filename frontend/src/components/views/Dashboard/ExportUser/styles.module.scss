@@ -1,18 +1,22 @@
-#importUser {
+#exportUser {
   form,
-  h1 {
+  header {
     margin: 0 auto;
     width: 600px;
+    max-width: 100%;
     background-color: white;
     padding: 10px;
   }
 
-  h1 {
+  header {
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
   }
   form {
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
+    @media (max-width: 500px) {
+      height: 100%;
+    }
   }
 }

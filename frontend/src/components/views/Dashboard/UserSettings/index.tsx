@@ -7,6 +7,7 @@ import api from "../../../../services/api";
 import { local, messages, validateField } from "../../../../utils/helpers";
 import InputWarning from "../../../AuthForm/InputField/InputWarning";
 import ModalContainer from "../../../ModalContainer";
+import CloseModal from "../../../ModalContainer/CloseModal";
 import ActionAnimation from "../StreamList/ActionAnimation";
 import SubmitAction from "../SubmitAction";
 import { userQuery } from "../UserInfo";
@@ -48,10 +49,13 @@ export default function UserSettings() {
   return (
     <ModalContainer predecessor="/dashboard">
       <Outlet />
+      <header id={styles.settingsHeader}>
+        <h1 id={styles.settingsTitle} className={styles.title}>
+          Settings
+        </h1>
+        <CloseModal predecessor="/dashboard" />{" "}
+      </header>
 
-      <h1 id={styles.settingsTitle} className={styles.title}>
-        Settings
-      </h1>
       <section className={styles.settingsList}>
         <h2 className={`${styles.minorTitle} ${styles.title}`}>
           Account Settings
