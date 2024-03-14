@@ -61,4 +61,9 @@
     right: 0;
     transform: translate(0, var(--y-translate));
   }
+
+  @media (max-width: 500px) {
+    top: 40px;
+    transform: translate(0);
+  }
 }

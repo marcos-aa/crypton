@@ -243,6 +243,7 @@
 
     .fullSym .rowTitle::after {
       top: calc(var(--sym-h) - 8px);
+      height: 80vh;
     }
 
     .symRow.fullSym:nth-child(2) .rowTitle {
