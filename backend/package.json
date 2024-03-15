@@ -25,8 +25,7 @@
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "node-cache": "^5.1.2",
-    "nodemailer": "^6.7.5",
-    "shared": "link:../shared"
+    "nodemailer": "^6.7.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
