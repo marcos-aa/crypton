@@ -1,4 +1,8 @@
 import styles from "./styles.module.scss";
-export default function Loading({ small }: { small?: boolean }) {
-  return <span className={`${styles.load} ${small ? styles.small : ""}`} />;
+export default function Loading() {
+  return (
+    <div className={styles.loading}>
+      <span />
+    </div>
+  );
 }

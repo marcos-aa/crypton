@@ -1,24 +1,57 @@
-.load {
-  width: 30px;
+.loading {
+  display: flex;
+  width: 80px;
   height: 30px;
-  border-radius: 50%;
-  border: 5px solid transparent;
-  border-color: rgba(0, 0, 0, 0.1);
-  border-top-color: var(--button-color);
-  animation: load linear 1s infinite;
-}
+  background: none;
+  justify-content: center;
+  align-items: center;
 
-.load.small {
-  width: 15px;
-  height: 15px;
-  border-width: 2px;
-}
-
-@keyframes load {
-  from {
-    transform: rotate(0deg);
+  span {
+    display: flex;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
   }
-  to {
-    transform: rotate(360deg);
+
+  span:after,
+  span:before {
+    content: "";
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    margin: 0 15px;
+  }
+
+  span,
+  span::before,
+  span::after {
+    background-color: var(--button-color);
+    animation: load 1s ease-in-out infinite;
+  }
+
+  span {
+    animation-delay: 300ms;
+  }
+
+  span:after {
+    animation-delay: 600ms;
+  }
+
+  @keyframes load {
+    0% {
+      background-color: var(--button-color);
+    }
+    33% {
+      background-color: black;
+    }
+    66% {
+      background-color: var(--button-color);
+    }
+    100% {
+      background-color: var(--button-color);
+    }
   }
 }

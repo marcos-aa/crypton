@@ -8,17 +8,12 @@ interface LoadingProps {
   actpath: string;
 }
 
-export default function ActionAnimation({
-  children,
-  actpath,
-  small,
-}: LoadingProps) {
-  const navigation = useNavigation();
+export default function ActionAnimation({ children, actpath }: LoadingProps) {
+  const { state, location } = useNavigation();
   return (
     <>
-      {navigation.state !== "idle" &&
-      navigation.location.pathname === actpath ? (
-        <Loading small={small} />
+      {state !== "idle" && location.pathname === actpath ? (
+        <Loading />
       ) : (
         children
       )}
