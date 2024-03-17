@@ -144,10 +144,12 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     ];
 
     if (newticks?.length > 0) {
+      qparams.delete("newsyms");
       subscribeTickers(newticks, "SUBSCRIBE");
     }
 
     if (delticks?.length > 0) {
+      qparams.delete("delsyms");
       subscribeTickers(delticks, "UNSUBSCRIBE");
     }
 
@@ -156,7 +158,10 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
       localStorage.removeItem(local.expStreams);
     }
 
-    const cleanURL = new URL(window.location.origin + window.location.pathname);
+    const strparams = qparams.size > 0 ? "?" + qparams.toString() : "";
+    const cleanURL = new URL(
+      window.location.origin + window.location.pathname + strparams,
+    );
     history.replaceState(history.state, "", cleanURL);
   }, [data.streams]);
 
