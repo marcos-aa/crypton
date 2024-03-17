@@ -69,7 +69,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     refetchOnWindowFocus: false,
     staleTime: 3600000,
   });
-  const [temp, setTemp] = useState<Tickers>({});
+  const [, setTemp] = useState<Tickers>({});
   const { pathname } = useLocation();
 
   const { sendMessage } = useWebSocket(
@@ -77,9 +77,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     {
       onMessage: (item) => {
         const ticker: WSTIcker = JSON.parse(item.data);
-        if (ticker.result === null) {
-          return;
-        }
+        if (ticker.result === null) return;
 
         setTemp((prev) => {
           return {
@@ -126,15 +124,15 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
   useEffect(() => {
     let intervalId;
-    if (pathname == "/dashboard") {
-      intervalId = setInterval(syncTickers, 3000);
+    if (pathname == "/dashboard" && data.usyms > 0) {
+      intervalId = setInterval(syncTickers, 1000);
     }
 
     syncTickers();
     return () => {
       clearInterval(intervalId);
     };
-  }, [pathname]);
+  }, [pathname, data.usyms]);
 
   useEffect(() => {
     const qparams = createSearchParams(window.location.search);
