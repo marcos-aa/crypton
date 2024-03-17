@@ -39,6 +39,7 @@ export default class StreamUtils {
       }
     })
 
+    console.log(fmtickers)
     cache.mset(fmtickers)
   }
 
@@ -51,10 +52,11 @@ export default class StreamUtils {
     return { cached, uncsyms: notCached }
   }
 
-  genTickers(wintickers: Tickers) {
-    const tickers = Object.keys(wintickers).reduce<Tickers>((store, symbol) => {
-      const nowindow = symbol.slice(0, symbol.length - 2)
-      store[nowindow] = wintickers[symbol]
+  remTickerWindow(wtickers: Tickers) {
+    const symbols = Object.keys(wtickers)
+    const tickers = symbols.reduce<Tickers>((store, symbol) => {
+      const sym = symbol.slice(0, symbol.length - 3)
+      store[sym] = wtickers[symbol]
       return store
     }, {})
 
@@ -62,8 +64,13 @@ export default class StreamUtils {
   }
 
   async getPairs(): Promise<string[]> {
-    const prices = cache.keys()
-    if (prices.length >= 1000) return prices.sort()
+    const keys = cache.keys()
+    let prices: string[] = []
+    for (let i = 0; i < keys.length; i++) {
+      const sym = keys[i]
+      if (sym.charCodeAt(sym.length - 1) < 97) prices.push(sym)
+    }
+    if (prices.length >= 2000) return prices.sort()
 
     const { data } = await axios.get<RawTicker[]>(baseURL + "/ticker/24hr")
     this.cacheTickers(data)
@@ -85,9 +92,12 @@ export default class StreamUtils {
   }
 
   async getWinTickers(symbols: string[], winsize: string): Promise<Tickers> {
+    let winnumber = Number(winsize.slice(0, winsize.length - 1))
+    if (winnumber < 10) winsize = "0" + winsize // Ensure winsize has at least 3 digits
+
     const winsyms = symbols.map((sym) => sym + winsize)
     const { cached, uncsyms } = this.getCachedTickers(winsyms)
-    if (!uncsyms) return this.genTickers(cached)
+    if (!uncsyms) return this.remTickerWindow(cached)
 
     const { data } = await axios.get<RawTicker[]>(baseURL + "/ticker", {
       params: {
@@ -98,7 +108,7 @@ export default class StreamUtils {
 
     this.cacheTickers(data, winsize)
     const wintickers = Object.assign(cached, cache.mget(winsyms))
-    const tickers = this.genTickers(wintickers)
+    const tickers = this.remTickerWindow(wintickers)
     return tickers
   }
 }

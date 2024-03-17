@@ -21,7 +21,6 @@ export const windowLoader =
     const syms: string[] = JSON.parse(searchParams.get("symbols")),
       uncached: string[] = [];
     const winsize = "7d";
-    console.log(qc.getQueryData(["streams"]));
 
     let { tickers } = await qc.ensureQueryData<StreamData>(["streams"]),
       currTickers: Tickers = {},
