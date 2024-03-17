@@ -74,6 +74,9 @@ export default function Dashboard() {
   };
 
   const handleImport = () => {
+    if (!localStorage.getItem(local.streams))
+      return updateNotif("No guest streams found", "loading");
+
     updateNotif("Your streams are being uploaded to the server", "loading");
 
     importGStreams(qc, user.id).then((res) =>

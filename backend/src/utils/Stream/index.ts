@@ -39,7 +39,6 @@ export default class StreamUtils {
       }
     })
 
-    console.log(fmtickers)
     cache.mset(fmtickers)
   }
 
