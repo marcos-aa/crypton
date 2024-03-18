@@ -5,18 +5,19 @@ import {
   useUserInput,
 } from "../../utils/customHooks";
 
+import { ResMessage } from "shared";
 import { InputData } from "../../utils/helpers";
 import LoadingError from "../LoadingError";
+import AuthButtons from "./AuthButtons";
 import CheckboxField from "./CheckboxField";
 import InputField from "./InputField";
 import styles from "./styles.module.scss";
-import { ResMessage } from "shared";
 
 interface FormProps {
-  children: ReactNode;
-  exfields?: string[];
-  validate?: boolean;
+  action: string;
   submit(input: InputData): Promise<ResMessage | void>;
+  children?: ReactNode;
+  exfields?: string[];
 }
 
 type PassTypes = "text" | "password";
@@ -24,6 +25,7 @@ type PassTypes = "text" | "password";
 export default function AuthForm({
   children,
   exfields = ["email"],
+  action,
   submit,
 }: FormProps) {
   const { input, handleChange } = useUserInput();
@@ -31,11 +33,11 @@ export default function AuthForm({
   const { error, isLoading } = useLoadError();
   const [reveal, setReveal] = useState<PassTypes>("password");
 
-  const toggle_pass = () => {
+  const togglePass = () => {
     setReveal((prev) => (prev === "text" ? "password" : "text"));
   };
 
-  const handle_submit = async (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     isLoading(true);
 
@@ -59,7 +61,7 @@ export default function AuthForm({
   }, [input]);
 
   return (
-    <form onSubmit={handle_submit} id={styles.authForm}>
+    <form onSubmit={handleSubmit} id={styles.authForm}>
       {exfields.map((field) => {
         return (
           <InputField
@@ -69,8 +71,8 @@ export default function AuthForm({
             name={field}
             value={input[field]}
             type={field}
-            warning={warnings?.[field]}
             required
+            warning={warnings?.[field]}
           />
         );
       })}
@@ -85,10 +87,17 @@ export default function AuthForm({
         required
       />
 
-      <CheckboxField label="Show password" handleChange={toggle_pass} />
+      <CheckboxField label="Show password" handleChange={togglePass} />
       <LoadingError loading={error.loading} message={error.message} />
 
-      {children}
+      <AuthButtons
+        invalid={Boolean(
+          warnings?.email || warnings?.password || warnings?.name,
+        )}
+        action={action}
+      >
+        {children}
+      </AuthButtons>
     </form>
   );
 }

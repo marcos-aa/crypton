@@ -31,9 +31,9 @@ interface FilteredStreams {
 }
 
 export interface InputData {
-  name: string | null;
-  email: string | null;
-  password: string | null;
+  name: string;
+  email: string;
+  password: string;
 }
 
 interface NotifReturn {

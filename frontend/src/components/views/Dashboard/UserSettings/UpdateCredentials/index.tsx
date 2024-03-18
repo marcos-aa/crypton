@@ -3,9 +3,8 @@ import { ResMessage } from "shared";
 import { DashLoader } from "../..";
 import api from "../../../../../services/api";
 import { useLogout } from "../../../../../utils/customHooks";
-import { InputData, validateForm } from "../../../../../utils/helpers";
+import { InputData } from "../../../../../utils/helpers";
 import AuthForm from "../../../../AuthForm";
-import AuthButtons from "../../../../AuthForm/AuthButtons";
 import ModalContainer from "../../../../ModalContainer";
 import CloseModal from "../../../../ModalContainer/CloseModal";
 import styles from "./styles.module.scss";
@@ -41,7 +40,6 @@ export default function UpdateCredentials({ type }: CredProps) {
 
   const requests = {
     email: async (input: InputData) => {
-      validateForm(input);
       await api.put<ResMessage>("/user/email", {
         email: user?.email,
         newmail: input.email,
@@ -50,7 +48,6 @@ export default function UpdateCredentials({ type }: CredProps) {
       toValidation(input.email);
     },
     password: async (input: InputData) => {
-      validateForm(input, "password");
       await api.put<ResMessage>("/user/password", {
         email: user?.email,
         password: input.password,
@@ -58,7 +55,6 @@ export default function UpdateCredentials({ type }: CredProps) {
       toValidation(input.email);
     },
     delete: async (input: InputData) => {
-      validateForm(input, "password");
       await api.delete<ResMessage>("/user", {
         data: {
           password: input.password,
@@ -78,11 +74,8 @@ export default function UpdateCredentials({ type }: CredProps) {
         <AuthForm
           exfields={type === "email" ? ["email"] : []}
           submit={requests[type]}
-        >
-          <AuthButtons
-            action={type === "delete" ? "Delete user" : `Update ${type}`}
-          />
-        </AuthForm>
+          action={type === "delete" ? "Delete user" : `Update ${type}`}
+        />
       </div>
     </ModalContainer>
   );

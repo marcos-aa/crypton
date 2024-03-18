@@ -141,7 +141,6 @@ export default class UserUtils {
         hash,
       },
     })
-    console.log(expires_at, user.expires_at)
 
     transporter.sendMail(mailOptions)
     return { status: 200, message: m.codeSent }

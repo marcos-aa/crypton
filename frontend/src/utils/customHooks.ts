@@ -97,10 +97,11 @@ const useLogout = (uid: string) => {
 };
 
 const useInputErrors = () => {
-  const [warnings, setWarnings] = useState<InputData | null>(null);
+  const [warnings, setWarnings] = useState<InputData>(null);
 
   const updateWarnings = (input: InputValidation) => {
-    let warning: string;
+    let warning: string = null;
+
     try {
       validateField(input.path, input);
     } catch (e) {

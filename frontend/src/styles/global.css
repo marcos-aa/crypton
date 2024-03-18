@@ -156,6 +156,9 @@ form #actions button {
 .redirLink {
   color: var(--button-color);
   background: none;
+  width: 200px;
+  max-width: 100%;
+  text-align: start;
 }
 
 .redirLink:hover {

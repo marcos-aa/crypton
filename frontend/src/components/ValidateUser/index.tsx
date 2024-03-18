@@ -82,8 +82,8 @@ export default function ValidateUser({ style }: ValidationProps) {
         onChange={(event) => setCode(event.target.value)}
       />
       <ErrorResponse loading={error.loading} message={error.message} />
-      <AuthButtons action="Validate">
-        <button type="button" onClick={handleResend}>
+      <AuthButtons action="Validate" invalid={code.length < 4}>
+        <button className="redirLink" type="button" onClick={handleResend}>
           Resend code
         </button>
       </AuthButtons>

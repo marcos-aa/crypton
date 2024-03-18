@@ -2,18 +2,16 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import AuthForm from "../../../../AuthForm";
 
-import api from "../../../../../services/api";
-import { saveUser } from "../../../../../utils/datafetching";
-import { InputData, validateForm } from "../../../../../utils/helpers";
-import AuthButtons from "../../../../AuthForm/AuthButtons";
 import { ResMessage } from "shared";
 import { UserData } from "shared/usertypes";
+import api from "../../../../../services/api";
+import { saveUser } from "../../../../../utils/datafetching";
+import { InputData } from "../../../../../utils/helpers";
 
 export default function SignIn() {
   const navigate = useNavigate();
 
   const sign_in = async (input: InputData): Promise<ResMessage | void> => {
-    validateForm(input);
     const { data, status } = await api.put<UserData>("/user", {
       email: input.email,
       password: input.password,
@@ -31,12 +29,10 @@ export default function SignIn() {
   };
 
   return (
-    <AuthForm validate={false} submit={sign_in}>
-      <AuthButtons action="Sign in">
-        <Link to="/register/reset_password" className="redirLink">
-          Forgot password?
-        </Link>
-      </AuthButtons>
+    <AuthForm submit={sign_in} action="Sign in">
+      <Link to="/register/reset_password" className="redirLink">
+        Forgot password?
+      </Link>
       <Link to="/register/signup" className="redirLink">
         Dont have an account?
       </Link>

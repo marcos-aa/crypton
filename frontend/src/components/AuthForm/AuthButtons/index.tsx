@@ -3,15 +3,21 @@ import { ReactNode } from "react";
 interface ActionProps {
   children?: ReactNode;
   action: string;
+  invalid: boolean;
 }
 
-export default function AuthButtons({ children, action }: ActionProps) {
+export default function AuthButtons({
+  children,
+  action,
+  invalid,
+}: ActionProps) {
   return (
     <div id="actions">
-      {children}
-      <button type="submit" className="action fullwd">
+      {children?.[0]}
+      <button disabled={invalid} type="submit" className="action fullwd">
         {action}
       </button>
+      {children?.[1] || children}
     </div>
   );
 }
