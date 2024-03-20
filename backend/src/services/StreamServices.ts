@@ -1,23 +1,20 @@
-import { Stream } from "@prisma/client"
 import ObjectID from "bson-objectid"
-import { ResMessage } from "shared"
 import {
   NewIds,
   RawId,
   RawStream,
+  Stream,
   StreamData,
   SymTracker,
 } from "shared/streamtypes"
 import prisma from "../../prisma/client"
 import StreamUtils from "../utils/Stream"
-import { streamSchema } from "../utils/schemas"
+import { oidSchema, rawSchema, streamSchema } from "../utils/schemas"
 
 type WriteErrors = Array<{
   code: number
   keyValue: RawId
 }>
-
-type StreamRes = Stream | ResMessage
 
 export default class StreamServices {
   private streamData: StreamData = {
@@ -29,10 +26,8 @@ export default class StreamServices {
     usyms: 0,
   }
 
-  async create(user_id: string, symbols: string[]): Promise<StreamRes> {
-    const { error: e } = streamSchema.validate({ id: user_id, symbols })
-    if (e) return { status: 422, message: e.details[0].message }
-
+  async create(user_id: string, symbols: string[]): Promise<Stream> {
+    await streamSchema.validateAsync({ user_id, symbols })
     const stream = await prisma.stream.create({
       data: {
         user_id,
@@ -47,6 +42,7 @@ export default class StreamServices {
     allstreams: RawStream[],
     newids: NewIds = {}
   ): Promise<NewIds> {
+    await rawSchema.validate(allstreams)
     const res = await prisma.$runCommandRaw({
       insert: "Stream",
       ordered: false,
@@ -78,6 +74,7 @@ export default class StreamServices {
   }
 
   async read(user_id: string): Promise<StreamData> {
+    await oidSchema.validateAsync(user_id)
     const streams = await prisma.stream.findMany({
       where: {
         user_id,
@@ -107,10 +104,8 @@ export default class StreamServices {
     }
   }
 
-  async update(id: string, symbols: string[]): Promise<StreamRes> {
-    const { error: e } = streamSchema.validate({ id, symbols })
-    if (e) return { status: 422, message: e.details[0].message }
-
+  async update(id: string, symbols: string[]): Promise<Stream> {
+    await streamSchema.validateAsync({ id, symbols })
     const stream = await prisma.stream.update({
       where: {
         id,
@@ -123,17 +118,14 @@ export default class StreamServices {
     return stream
   }
 
-  async delete(stream_id: string): Promise<StreamRes> {
-    try {
-      const stream = await prisma.stream.delete({
-        where: {
-          id: stream_id,
-        },
-      })
+  async delete(stream_id: string): Promise<Stream> {
+    await oidSchema.validateAsync(stream_id)
+    const stream = await prisma.stream.delete({
+      where: {
+        id: stream_id,
+      },
+    })
 
-      return stream
-    } catch (e) {
-      return { status: 404, message: "Stream does not exist" }
-    }
+    return stream
   }
 }

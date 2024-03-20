@@ -14,7 +14,9 @@ const messages = {
   invalidCredentials: "Invalid email or password.",
   invalidToken: "Invalid token.",
   invalidCode: "Invalid code.",
-}
+} as const
+
+const oidSchema = Joi.string().hex().length(24)
 
 const userSchema = Joi.object({
   name: Joi.string().pattern(/\w/).messages({
@@ -51,20 +53,33 @@ const symMessages = {
   },
 }
 
-const itemsSchema = Joi.string()
-  .min(5)
-  .max(13)
-  .pattern(/^[0-9A-Z]{5,13}$/)
-  .messages(symMessages.string)
+const symbolsSchema = Joi.array()
+  .items(
+    Joi.string()
+      .min(5)
+      .max(13)
+      .pattern(/^[0-9A-Z]{5,13}$/)
+      .messages(symMessages.string)
+  )
+  .min(1)
+  .max(5)
+  .required()
+  .messages(symMessages.arr)
 
 const streamSchema = Joi.object({
-  id: Joi.string().hex().length(24),
-  symbols: Joi.array()
-    .items(itemsSchema)
-    .min(1)
-    .max(5)
-    .required()
-    .messages(symMessages.arr),
+  user_id: oidSchema,
+  id: oidSchema,
+  symbols: symbolsSchema,
 })
 
-export { itemsSchema, messages, streamSchema, symMessages, userSchema }
+const rawSchema = Joi.array()
+  .items({
+    _id: {
+      $oid: oidSchema,
+    },
+    symbols: symbolsSchema,
+    user_id: oidSchema,
+  })
+  .min(1)
+
+export { messages, oidSchema, rawSchema, streamSchema, symMessages, userSchema }
