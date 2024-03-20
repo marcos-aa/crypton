@@ -14,8 +14,10 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleGuest = () => {
+    const prevJoin = localStorage.getItem(local.joined);
     localStorage.setItem(local.id, "guest");
-    localStorage.setItem(local.joined, JSON.stringify(new Date()));
+    if (!prevJoin)
+      localStorage.setItem(local.joined, JSON.stringify(new Date()));
     navigate("/dashboard");
   };
 

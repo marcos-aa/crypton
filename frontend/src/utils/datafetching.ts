@@ -3,14 +3,6 @@ import { User, UserData } from "shared/usertypes";
 import api from "../services/api";
 import { genGStreamData, local } from "./helpers";
 
-export const udata = {
-  id: "guest",
-  name: "Guest",
-  email: "No email",
-  created_at: new Date(),
-  verified: false,
-};
-
 export const saveUser = (id: string, token?: string) => {
   localStorage.setItem(local.id, id);
   localStorage.setItem(local.token, token);
@@ -19,7 +11,7 @@ export const saveUser = (id: string, token?: string) => {
 };
 
 const guestData = (): User => {
-  const joinDate = new Date(JSON.parse(localStorage.getItem(local.joined)));
+  const joinDate = JSON.parse(localStorage.getItem(local.joined));
 
   const udata: User = {
     id: "guest",
@@ -36,6 +28,7 @@ const guestData = (): User => {
 const getUser = async (id: string): Promise<User> => {
   if (id === "guest") return guestData();
   const { data } = await api.get<UserData>("/user");
+  console.log(data.user.created_at);
   return data.user;
 };
 

@@ -25,7 +25,6 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
     refetchOnWindowFocus: false,
     staleTime: 3600000,
   });
-  const createdAt = new Date(`${user?.created_at}`);
 
   return (
     <section className={`${styles.userData} ${styles.panel}`}>
@@ -41,7 +40,7 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
           hour={false}
           title="Joined at"
           style={styles.infoItem}
-          date={createdAt}
+          date={user.created_at}
         />
 
         <p role="listitem" className={styles.infoItem}>
