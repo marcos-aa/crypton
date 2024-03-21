@@ -4,9 +4,8 @@ export interface Stream {
   symbols: string[];
 }
 
-export type RawStream = Omit<Stream, "id"> & RawId;
-
 export type RawId = { _id: { $oid: string } };
+export type RawStream = Omit<Stream, "id"> & RawId;
 
 export interface NewIds {
   [id: string]: string;

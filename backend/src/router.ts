@@ -9,6 +9,7 @@ import StreamHandler from "./utils/Stream/Handler"
 import UserHandler from "./utils/User/Handler"
 
 import isAuthorized from "./middleware/ensureAuth"
+import { tryWrapper } from "./middleware/tryWrapper"
 const router = Router()
 
 // User services
@@ -19,11 +20,19 @@ router.delete("/user", isAuthorized, new UserController().delete)
 router.delete("/session", new SessionController().delete)
 
 // Stream services
-router.post("/streams", isAuthorized, new StreamController().create)
-router.post("/streams/import", isAuthorized, new StreamController().createMany)
+router.post("/streams", isAuthorized, tryWrapper(new StreamController().create))
+router.post(
+  "/streams/import",
+  isAuthorized,
+  tryWrapper(new StreamController().createMany)
+)
 router.get("/streams", isAuthorized, new StreamController().read)
-router.put("/streams", isAuthorized, new StreamController().update)
-router.delete("/streams", isAuthorized, new StreamController().delete)
+router.put("/streams", isAuthorized, tryWrapper(new StreamController().update))
+router.delete(
+  "/streams",
+  isAuthorized,
+  tryWrapper(new StreamController().delete)
+)
 
 //User microservices
 router.put("/user/name", isAuthorized, new UserHandler().updateName)

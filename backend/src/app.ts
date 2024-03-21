@@ -2,7 +2,7 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import "dotenv/config"
 import express from "express"
-import inputError from "./middleware/inputError"
+import validateInput from "./middleware/validateInput"
 import { router } from "./router"
 const { PORT, TEST_ENV } = process.env
 
@@ -17,7 +17,7 @@ app.use(
 app.use(express.json())
 app.use(cookieParser())
 app.use(router)
-app.use(inputError)
+app.use(validateInput)
 if (!TEST_ENV) app.listen(PORT || 3000)
 
 export default app

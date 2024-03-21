@@ -42,7 +42,7 @@ export default class StreamServices {
     allstreams: RawStream[],
     newids: NewIds = {}
   ): Promise<NewIds> {
-    await rawSchema.validate(allstreams)
+    await rawSchema.validateAsync(allstreams)
     const res = await prisma.$runCommandRaw({
       insert: "Stream",
       ordered: false,
