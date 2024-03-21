@@ -5,14 +5,16 @@ import { ResMessage } from "shared"
 import { UserData } from "shared/usertypes"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
-import { messages as m, userSchema } from "../utils/schemas"
-
-type UserResponse = ResMessage | UserData
+import {
+  CredError,
+  messages as m,
+  oidSchema,
+  userSchema,
+} from "../utils/schemas"
 
 export default class UserServices {
   async create(name: string, email: string, pass: string): Promise<ResMessage> {
-    const { error: e } = userSchema.validate({ name, email, pass })
-    if (e) return { status: 422, message: e.details[0].message }
+    await userSchema.validateAsync({ name, email, pass })
 
     const utils = new UserUtils()
     const dup = await utils.isVerified("email", email, {
@@ -47,46 +49,37 @@ export default class UserServices {
     return { status: 202, message: m.validate }
   }
 
-  async read(id: string): Promise<UserResponse> {
-    if (id == undefined || null) {
-      return { status: 401, message: "Invalid id" }
-    }
+  async read(id: string): Promise<UserData> {
+    await oidSchema.validateAsync(id)
 
     const utils = new UserUtils()
-    try {
-      const res = await utils.isVerified("id", id, {
-        id: true,
-        name: true,
-        email: true,
-        refresh_token: true,
-        verified: true,
-        created_at: true,
-      })
+    const res = await utils.isVerified("id", id, {
+      id: true,
+      name: true,
+      email: true,
+      refresh_token: true,
+      verified: true,
+      created_at: true,
+    })
 
-      if (!res.user?.verified)
-        return { status: res.status, message: res.message }
+    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
 
-      const access_token = await utils.signToken(
-        res.user.email,
-        process.env.JWT_SECRET,
-        process.env.JWT_EXPIRY
-      )
+    const access_token = await utils.signToken(
+      res.user.email,
+      process.env.JWT_SECRET,
+      process.env.JWT_EXPIRY
+    )
 
-      return { status: 200, user: res.user, access_token }
-    } catch (e) {
-      return { status: 401, message: "Invalid id" }
-    }
+    return { user: res.user, access_token }
   }
 
-  async update(email: string, pass: string): Promise<UserResponse> {
-    const { error: e } = Joi.object({
+  async update(email: string, pass: string): Promise<UserData> {
+    await Joi.object({
       email: userSchema.extract("email"),
       pass: userSchema.extract("pass").messages({
         "string.empty": "Invalid password",
       }),
-    }).validate({ email, pass })
-
-    if (e) return { status: 422, message: e.details[0].message }
+    }).validateAsync({ email, pass })
 
     const utils = new UserUtils()
     const res = await utils.isVerified("email", email, {
@@ -95,11 +88,9 @@ export default class UserServices {
       verified: true,
     })
 
-    if (!res.user?.verified)
-      return { status: res?.status, message: res?.message }
-
+    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
     if (!compareSync(pass, res.user.hashpass))
-      return { status: 401, message: m.invalidCredentials }
+      throw new CredError(m.invalidCredentials, 401)
 
     const [access_token, refresh_token] = await Promise.all([
       utils.signToken(
@@ -123,7 +114,7 @@ export default class UserServices {
     })
 
     delete (user as Partial<User>).hashpass
-    return { status: 200, user, access_token }
+    return { user, access_token }
   }
 
   async delete(id: string, pass: string): Promise<ResMessage> {
@@ -132,11 +123,9 @@ export default class UserServices {
       verified: true,
     })
 
-    if (!res.user?.verified)
-      return { status: res?.status, message: res?.message }
-
+    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
     if (!compareSync(pass, res.user.hashpass))
-      return { status: 401, message: m.invalidCredentials }
+      throw new CredError(m.invalidCredentials, 401)
 
     await Promise.all([
       prisma.user.delete({

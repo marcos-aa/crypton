@@ -16,10 +16,19 @@ const messages = {
   invalidCode: "Invalid code.",
 } as const
 
+export class CredError extends Error {
+  status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 const oidSchema = Joi.string().hex().length(24)
 
 const userSchema = Joi.object({
-  name: Joi.string().pattern(/\w/).messages({
+  name: Joi.string().pattern(/\w/).required().messages({
     "string.min": "Name must contain at least two characters",
     "string.pattern.base": "Name must only contain word characters",
   }),

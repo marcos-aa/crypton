@@ -13,10 +13,10 @@ import { tryWrapper } from "./middleware/tryWrapper"
 const router = Router()
 
 // User services
-router.post("/user", new UserController().create)
-router.put("/user", new UserController().update)
-router.get("/user", isAuthorized, new UserController().read)
-router.delete("/user", isAuthorized, new UserController().delete)
+router.post("/user", tryWrapper(new UserController().create))
+router.put("/user", tryWrapper(new UserController().update))
+router.get("/user", isAuthorized, tryWrapper(new UserController().read))
+router.delete("/user", isAuthorized, tryWrapper(new UserController().delete))
 router.delete("/session", new SessionController().delete)
 
 // Stream services
