@@ -8,7 +8,7 @@ import nodemailer from "nodemailer"
 import { ResMessage } from "shared"
 import { UserData } from "shared/usertypes"
 import prisma from "../../../prisma/client"
-import { messages as m, messages, userSchema } from "../../utils/schemas"
+import { CredError, messages as m, userSchema } from "../../utils/schemas"
 
 type Tokens = Pick<UserData, "access_token"> &
   Pick<UserData["user"], "refresh_token">
@@ -64,6 +64,7 @@ export default class UserUtils {
     })
 
     if (!user) return { status: 404, message: m.noUser }
+
     const { status, message } = user?.verified
       ? { status: 403, message: m.duplicateEmail }
       : {
@@ -80,14 +81,13 @@ export default class UserUtils {
     type = "email"
   ) {
     const subschema = userSchema.extract("email")
-    const { error: e } = Joi.object({
+    await Joi.object({
       email: subschema,
       newmail: subschema.optional(),
-    }).validate({
+    }).validateAsync({
       email,
       newmail,
     })
-    if (e) return { status: 422, message: e.details[0].message }
 
     const oauth2Client = new OAuth2(
       OAUTH_CLIENTID,
@@ -127,7 +127,7 @@ export default class UserUtils {
       html: mailTypes[type].html.replace("CODE_VARIABLE", code),
     }
 
-    const user = await prisma.ucodes.upsert({
+    await prisma.ucodes.upsert({
       where: { email },
       update: {
         code,
@@ -149,7 +149,7 @@ export default class UserUtils {
   async validateUser(
     code: string,
     newmail: string | undefined = undefined
-  ): Promise<UserData | ResMessage> {
+  ): Promise<UserData> {
     const cleanCode = code.trim()
     const ucode = await prisma.ucodes.findUnique({
       where: {
@@ -157,9 +157,9 @@ export default class UserUtils {
       },
     })
 
-    if (!ucode) return { status: 401, message: m.invalidCode }
+    if (!ucode) throw new CredError(m.invalidCode, 401)
     if (new Date().getTime() > ucode.expires_at.getTime())
-      return { status: 403, message: m.expiredCode }
+      throw new CredError(m.expiredCode, 403)
 
     const tokenMail = newmail || ucode.email
     const [access_token, refresh_token] = await Promise.all([
@@ -167,31 +167,25 @@ export default class UserUtils {
       this.signToken(tokenMail, JWT_SECRET_REF, JWT_EXPIRY_REF),
     ])
 
-    try {
-      const [user] = await Promise.all([
-        prisma.user.update({
-          where: { email: ucode.email },
-          data: {
-            email: tokenMail,
-            verified: true,
-            refresh_token,
-            hashpass: ucode.hash ? ucode.hash : undefined,
-          },
-        }),
-        prisma.ucodes.delete({ where: { code: cleanCode } }),
-      ])
+    const [user] = await Promise.all([
+      prisma.user.update({
+        where: { email: ucode.email },
+        data: {
+          email: tokenMail,
+          verified: true,
+          refresh_token,
+          hashpass: ucode.hash ? ucode.hash : undefined,
+        },
+      }),
+      prisma.ucodes.delete({ where: { code: cleanCode } }),
+    ])
 
-      delete (user as Partial<UserModel>).hashpass
-      return { status: 200, user, access_token }
-    } catch (e) {
-      return { status: 403, message: messages.duplicateEmail }
-    }
+    delete (user as Partial<UserModel>).hashpass
+    return { user, access_token }
   }
 
   async updateName(id: string, name: string) {
-    const { error: e } = userSchema.extract("name").validate(name)
-    if (e) return { status: 422, message: e.details[0].message }
-
+    await userSchema.extract("name").validateAsync(name)
     await prisma.user.update({
       where: { id },
       data: {
@@ -203,18 +197,7 @@ export default class UserUtils {
   }
 
   async updatePassword(email: string, password: string): Promise<ResMessage> {
-    const { error: e } = userSchema.extract("pass").validate(password)
-    if (e) return { status: 422, message: e.details[0].message }
-
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: {
-        verified: true,
-      },
-    })
-
-    if (!user?.verified) return { status: 403, message: m.verifyEmail }
-
+    await userSchema.extract("pass").validateAsync(password)
     const hashpass = hashSync(password, 8)
     await this.sendMail(email, undefined, hashpass, "password")
     return { status: 202, message: m.codeSent }
@@ -225,9 +208,7 @@ export default class UserUtils {
     newmail: string,
     password: string
   ): Promise<ResMessage> {
-    const { error: e } = userSchema.extract("email").validate(newmail)
-    if (e) return { status: 422, message: e.details[0].message }
-
+    await userSchema.extract("email").validateAsync(newmail)
     const users = await prisma.user.findMany({
       where: {
         OR: [{ email }, { email: newmail }],
@@ -239,13 +220,12 @@ export default class UserUtils {
     })
 
     const isDuplicate = users.filter((u) => u.email === newmail)[0]
-    if (isDuplicate) return { status: 403, message: m.duplicateEmail }
+    if (isDuplicate) throw new CredError(m.duplicateEmail, 403)
 
     if (!compareSync(password, users[0]?.hashpass))
-      return { status: 401, message: m.invalidCredentials }
+      throw new CredError(m.invalidCredentials, 401)
 
     await this.sendMail(email, newmail)
-
     return { status: 202, message: m.success }
   }
 

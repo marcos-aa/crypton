@@ -12,14 +12,12 @@ import isAuthorized from "./middleware/ensureAuth"
 import { tryWrapper } from "./middleware/tryWrapper"
 const router = Router()
 
-// User services
 router.post("/user", tryWrapper(new UserController().create))
 router.put("/user", tryWrapper(new UserController().update))
 router.get("/user", isAuthorized, tryWrapper(new UserController().read))
 router.delete("/user", isAuthorized, tryWrapper(new UserController().delete))
 router.delete("/session", new SessionController().delete)
 
-// Stream services
 router.post("/streams", isAuthorized, tryWrapper(new StreamController().create))
 router.post(
   "/streams/import",
@@ -34,14 +32,16 @@ router.delete(
   tryWrapper(new StreamController().delete)
 )
 
-//User microservices
-router.put("/user/name", isAuthorized, new UserHandler().updateName)
-router.put("/user/email", isAuthorized, new UserHandler().updateEmail)
-router.put("/user/password", new UserHandler().updatePassword)
-router.post("/user/code", new UserHandler().createSendmail)
-router.put("/user/validate", new UserHandler().updateValidation)
+router.put("/user/name", isAuthorized, tryWrapper(new UserHandler().updateName))
+router.put(
+  "/user/email",
+  isAuthorized,
+  tryWrapper(new UserHandler().updateEmail)
+)
+router.put("/user/password", tryWrapper(new UserHandler().updatePassword))
+router.post("/user/code", tryWrapper(new UserHandler().createSendmail))
+router.put("/user/validate", tryWrapper(new UserHandler().updateValidation))
 
-//Stream microservices
 router.get("/pairs", new StreamHandler().readPairs)
 router.get("/tickers", new StreamHandler().readTickers)
 router.get("/tickers/window", new StreamHandler().readTickWindow)

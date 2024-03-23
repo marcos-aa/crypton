@@ -30,16 +30,12 @@ export default class StreamHandler {
   async updateValidation(req: Request, res: Response) {
     const { code, newmail } = req.body
     const result = await new UserUtils().validateUser(code, newmail)
-
-    if ("user" in result)
-      return res
-        .cookie("r_token", result.user.refresh_token, {
-          httpOnly: true,
-          maxAge: Number(process.env.MAX_REFRESH),
-          secure: process.env.NODE_ENV === "production",
-        })
-        .json(result)
-
-    return res.status(result.status).json(result)
+    return res
+      .cookie("r_token", result.user.refresh_token, {
+        httpOnly: true,
+        maxAge: Number(process.env.MAX_REFRESH),
+        secure: process.env.NODE_ENV === "production",
+      })
+      .json(result)
   }
 }

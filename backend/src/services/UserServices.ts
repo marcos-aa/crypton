@@ -83,7 +83,6 @@ export default class UserServices {
 
     const utils = new UserUtils()
     const res = await utils.isVerified("email", email, {
-      id: true,
       hashpass: true,
       verified: true,
     })
@@ -93,12 +92,7 @@ export default class UserServices {
       throw new CredError(m.invalidCredentials, 401)
 
     const [access_token, refresh_token] = await Promise.all([
-      utils.signToken(
-        res.user.id,
-        process.env.JWT_SECRET,
-        process.env.JWT_EXPIRY
-      ),
-
+      utils.signToken(email, process.env.JWT_SECRET, process.env.JWT_EXPIRY),
       utils.signToken(
         email,
         process.env.JWT_SECRET_REF,
