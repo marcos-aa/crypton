@@ -11,9 +11,9 @@ import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
 import { ResMessage } from "shared";
 import { StreamData } from "shared/streamtypes";
-import { User } from "shared/usertypes";
+import { UIUser } from "shared/usertypes";
 import { useLogout, useNotification } from "../../../utils/customHooks";
-import { saveUser } from "../../../utils/datafetching";
+import { saveHeader } from "../../../utils/datafetching";
 import { importGStreams, local } from "../../../utils/helpers";
 import Logo from "../../Logo";
 import Notification from "./Notification";
@@ -23,22 +23,19 @@ import styles from "./styles.module.scss";
 
 export interface DashLoader {
   streamData: StreamData;
-  user: User;
+  user: UIUser;
 }
 
 export const dashLoader =
   (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
-    const [uid, token] = [
-      localStorage.getItem(local.id),
-      localStorage.getItem(local.token),
-    ];
-    if (!uid) return redirect("/register/signin");
+    const token = localStorage.getItem(local.token);
+    if (!token) return redirect("/home/register/signin");
 
-    const isVerified = uid !== "guest";
-    if (isVerified) saveUser(uid, token);
+    const verified = token !== "guest";
+    if (verified) saveHeader(token);
 
-    const { queryFn: userFn, queryKey: userKey } = userQuery(uid);
-    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(isVerified);
+    const { queryFn: userFn, queryKey: userKey } = userQuery(token);
+    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(verified);
 
     try {
       const [user, streamData] = await Promise.all([
@@ -51,7 +48,6 @@ export const dashLoader =
       const error = (e as AxiosError<ResMessage>).response;
 
       if (error.status == 403) {
-        localStorage.removeItem(local.id);
         localStorage.removeItem(local.token);
         return redirect("/register/signin");
       }

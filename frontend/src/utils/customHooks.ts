@@ -81,14 +81,13 @@ const useUserInput = () => {
   return { input, handleChange };
 };
 
-const useLogout = (uid: string) => {
+const useLogout = (token: string) => {
   const qc = useQueryClient();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     qc.removeQueries(["streams"]);
-    qc.removeQueries(["user", uid]);
-    localStorage.removeItem(local.id);
+    qc.removeQueries(["user", token]);
     localStorage.removeItem(local.token);
     navigate("/");
   };

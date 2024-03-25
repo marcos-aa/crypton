@@ -1,13 +1,16 @@
-export interface User {
+export interface UIUser {
   id: string;
   email: string;
   name: string;
-  refresh_token: string;
-  created_at: Date;
+  createdAt: Date;
   verified: boolean;
 }
 
 export interface UserData {
-  user: User;
-  access_token: string;
+  user: UIUser;
+  accessToken: string;
+}
+
+export interface UserTokens extends UserData {
+  refreshToken: string;
 }

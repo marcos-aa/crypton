@@ -56,7 +56,7 @@ const createGStream = (symbols: string[]): { data: Stream } => {
   const id = ObjectID().toHexString();
 
   const newStream = {
-    user_id: "guest",
+    userId: "guest",
     id,
     symbols,
   };
@@ -71,16 +71,15 @@ export const upsertStream =
   async ({ request, params }: UserParams) => {
     const method = request.method.toLowerCase() as "put" | "post";
     const formData = await request.formData();
-    const userId = localStorage.getItem(local.id);
+    const isGuest = localStorage.getItem(local.token) === "guest";
     const config: Partial<Stream> = {
       symbols: formData.getAll("selected") as string[],
     };
     if (params.id) config.id = params.id;
 
-    const { data: stream } =
-      userId == "guest"
-        ? createGStream(config.symbols)
-        : await api[method]<Stream>("/streams", config);
+    const { data: stream } = isGuest
+      ? createGStream(config.symbols)
+      : await api[method]<Stream>("/streams", config);
 
     let { newsyms, delsyms }: TickSubs = { newsyms: [], delsyms: [] };
 

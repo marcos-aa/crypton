@@ -4,40 +4,39 @@ import UserServices from "../services/UserServices"
 export class UserController {
   async create(req: Request, res: Response) {
     const { name, email, password } = req.body
-    const result = await new UserServices().create(name, email, password)
-    return res.status(result.status).json(result)
+    const { status, message } = await new UserServices().create(
+      name,
+      email,
+      password
+    )
+    return res.status(status).json({ message })
   }
 
   async read(req: Request, res: Response) {
-    const id = req.headers.id as string
-    const result = await new UserServices().read(id)
-
-    return res
-      .cookie("r_token", result.user?.refresh_token, {
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
-      })
-      .json(result)
+    const result = await new UserServices().read(req.id)
+    return res.json(result)
   }
 
   async update(req: Request, res: Response) {
     const { email, password } = req.body
 
-    const result = await new UserServices().update(email, password)
+    const { user, accessToken, refreshToken } = await new UserServices().update(
+      email,
+      password
+    )
+
     return res
-      .cookie("r_token", result.user?.refresh_token, {
+      .cookie("r_token", refreshToken, {
         httpOnly: true,
         maxAge: Number(process.env.MAX_REFRESH),
         secure: process.env.NODE_ENV === "production",
       })
-      .json(result)
+      .json({ user, accessToken })
   }
 
   async delete(req: Request, res: Response) {
-    const id = req.headers.id as string
     const { password } = req.body
-    const result = await new UserServices().delete(id, password)
+    const result = await new UserServices().delete(req.id, password)
     return res
       .clearCookie("access_token")
       .clearCookie("r_token")

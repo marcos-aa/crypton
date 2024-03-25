@@ -53,7 +53,6 @@ export type TotalCount = {
 };
 
 export const local = {
-  id: "u_id",
   token: "u_token",
   streams: "u_streams",
   joined: "u_joinDate",
@@ -157,8 +156,8 @@ const genSymcount = (
   const allsyms: string[] = [];
   const rawstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols);
-    stream.user_id = uid;
-    return { _id: { $oid: stream.id }, user_id: uid, symbols: stream.symbols };
+    stream.userId = uid;
+    return { _id: { $oid: stream.id }, userId: uid, symbols: stream.symbols };
   });
 
   const newticks = addTicks(allsyms, tracker);
@@ -203,7 +202,7 @@ const importGStreams = async (
 
   qc.setQueryData<StreamData>(["streams"], (curr) => {
     let streams: Stream[] = [...curr.streams];
-    const createdBy = curr.streams[0]?.user_id;
+    const createdBy = curr.streams[0]?.userId;
 
     const {
       data,
@@ -247,7 +246,7 @@ const importGStreams = async (
             ? res.data[stream.id]
             : stream.id;
 
-          return { id, user_id: stream.user_id, symbols: stream.symbols };
+          return { id, userId: stream.userId, symbols: stream.symbols };
         });
         return { streams, ...curr };
       });

@@ -4,29 +4,31 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { ResMessage } from "shared";
 import api from "../../../../../services/api";
+import { saveHeader } from "../../../../../utils/datafetching";
 import { InputData } from "../../../../../utils/helpers";
 import AuthForm from "../../../../AuthForm";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
 
-  const reset_password = async (
+  const resetPassword = async (
     input: InputData,
   ): Promise<ResMessage | void> => {
-    await api.put<ResMessage>("/user/password", {
+    const { data } = await api.put<ResMessage>("/user/password", {
       email: input.email,
       password: input.password,
     });
 
+    saveHeader(data.message);
     navigate("/register/validate", {
       state: {
-        newmail: input.email,
+        email: input.email,
       },
     });
   };
 
   return (
-    <AuthForm action="Reset password" submit={reset_password}>
+    <AuthForm action="Reset password" submit={resetPassword}>
       <Link to="/register/signin" title="Return to sign in">
         <FontAwesomeIcon icon={faArrowLeft} />
       </Link>

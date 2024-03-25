@@ -1,26 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
 import { StreamData } from "shared/streamtypes";
-import { User } from "shared/usertypes";
+import { UIUser } from "shared/usertypes";
 import { getUser } from "../../../../utils/datafetching";
+import { local } from "../../../../utils/helpers";
 import FullDate from "./FullDate";
 import styles from "./styles.module.scss";
 
-export const userQuery = (id: string) => ({
-  queryKey: ["user", id],
+export const userQuery = (token: string) => ({
+  queryKey: ["user", token],
   queryFn: async () => {
-    const user = getUser(id);
+    const user = getUser(token);
     return user;
   },
 });
 
 interface InfoProps extends Pick<StreamData, "tstreams" | "tsyms" | "usyms"> {
-  initialData: User;
+  initialData: UIUser;
 }
 
 function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
   const { data: user } = useQuery({
-    ...userQuery(initialData.id),
+    ...userQuery(localStorage.getItem(local.token)),
     initialData,
     refetchOnWindowFocus: false,
     staleTime: 3600000,
@@ -40,7 +41,7 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
           hour={false}
           title="Joined at"
           style={styles.infoItem}
-          date={user.created_at}
+          date={user.createdAt}
         />
 
         <p role="listitem" className={styles.infoItem}>

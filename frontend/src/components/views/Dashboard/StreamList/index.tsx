@@ -212,7 +212,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
                   icon={faUpRightAndDownLeftFromCenter}
                 />
               </Link>
-              {stream.user_id === "guest" &&
+              {stream.userId === "guest" &&
               localStorage.getItem(local.expStreams) == "exporting" ? (
                 <FontAwesomeIcon
                   title="Please wait until stream is fully imported"

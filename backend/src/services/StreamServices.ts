@@ -26,11 +26,11 @@ export default class StreamServices {
     usyms: 0,
   }
 
-  async create(user_id: string, symbols: string[]): Promise<Stream> {
-    await streamSchema.validateAsync({ user_id, symbols })
+  async create(userId: string, symbols: string[]): Promise<Stream> {
+    await streamSchema.validateAsync({ userId, symbols })
     const stream = await prisma.stream.create({
       data: {
-        user_id,
+        userId,
         symbols,
       },
     })
@@ -73,11 +73,11 @@ export default class StreamServices {
     return newids
   }
 
-  async read(user_id: string): Promise<StreamData> {
-    await oidSchema.validateAsync(user_id)
+  async read(userId: string): Promise<StreamData> {
+    await oidSchema.validateAsync(userId)
     const streams = await prisma.stream.findMany({
       where: {
-        user_id,
+        userId,
       },
     })
 

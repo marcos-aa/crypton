@@ -1,14 +1,14 @@
 import { AxiosError } from "axios";
 import { useRouteError } from "react-router";
 import { Link } from "react-router-dom";
+import { ResMessage } from "shared";
 import { useLogout } from "../../utils/customHooks";
 import { local } from "../../utils/helpers";
 import Logo from "../Logo";
 import styles from "./styles.module.scss";
-import { ResMessage } from "shared";
 
 export default function ErrorPage() {
-  const logout = useLogout(localStorage.getItem(local.id));
+  const logout = useLogout(localStorage.getItem(local.token));
   const error = useRouteError() as AxiosError<ResMessage>;
 
   return (

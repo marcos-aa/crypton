@@ -14,16 +14,16 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleGuest = () => {
+    localStorage.setItem(local.token, "guest");
     const prevJoin = localStorage.getItem(local.joined);
-    localStorage.setItem(local.id, "guest");
     if (!prevJoin)
       localStorage.setItem(local.joined, JSON.stringify(new Date()));
     navigate("/dashboard");
   };
 
   useEffect(() => {
-    const uid = localStorage.getItem(local.id);
-    if (uid) return navigate("/dashboard");
+    const token = localStorage.getItem(local.token);
+    if (token) return navigate("/dashboard");
 
     const controller = new AbortController();
     api

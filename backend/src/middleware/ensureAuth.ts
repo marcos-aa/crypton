@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { VerifyErrors, verify } from "jsonwebtoken"
+import { JwtPayload, VerifyErrors, verify } from "jsonwebtoken"
 import UserUtils from "../utils/User"
 import { messages } from "../utils/schemas"
 
@@ -14,7 +14,8 @@ export default async function isAuthorized(
   if (!token) return res.status(403).json({ message: messages.invalidToken })
 
   try {
-    verify(token, JWT_SECRET)
+    const { id } = verify(token, JWT_SECRET) as JwtPayload
+    req.id = id
     return next()
   } catch (e) {
     const ename = [(e as VerifyErrors).name, "TokenExpiredError"]
@@ -28,9 +29,9 @@ export default async function isAuthorized(
     if ("status" in r) return res.status(r.status).json({ message: r.message })
 
     res
-      .set("authorization", `Bearer ${r.access_token as string}`)
+      .set("authorization", `Bearer ${r.accessToken as string}`)
       .set("Access-Control-Expose-Headers", "authorization")
-      .cookie("r_token", r.refresh_token, {
+      .cookie("r_token", r.refreshToken, {
         httpOnly: true,
         maxAge: Number(MAX_REFRESH),
         secure: NODE_ENV === "production",

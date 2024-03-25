@@ -3,9 +3,8 @@ import StreamServices from "../services/StreamServices"
 
 export class StreamController {
   async create(req: Request, res: Response) {
-    const user_id = req.headers.id as string
     const { symbols } = req.body
-    const result = await new StreamServices().create(user_id, symbols)
+    const result = await new StreamServices().create(req.id, symbols)
     return res.json(result)
   }
 
@@ -16,8 +15,7 @@ export class StreamController {
   }
 
   async read(req: Request, res: Response) {
-    const id = req.headers.id as string
-    const result = await new StreamServices().read(id)
+    const result = await new StreamServices().read(req.id)
     return res.json(result)
   }
 

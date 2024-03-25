@@ -76,7 +76,7 @@ const symbolsSchema = Joi.array()
   .messages(symMessages.arr)
 
 const streamSchema = Joi.object({
-  user_id: oidSchema,
+  userId: oidSchema,
   id: oidSchema,
   symbols: symbolsSchema,
 })
@@ -87,7 +87,7 @@ const rawSchema = Joi.array()
       $oid: oidSchema,
     },
     symbols: symbolsSchema,
-    user_id: oidSchema,
+    userId: oidSchema,
   })
   .min(1)
 

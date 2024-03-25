@@ -2,7 +2,7 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Outlet, redirect, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router-dom";
 import { Form, Link } from "react-router-dom";
-import { User } from "shared/usertypes";
+import { UIUser } from "shared/usertypes";
 import api from "../../../../services/api";
 import { local, messages, validateField } from "../../../../utils/helpers";
 import InputWarning from "../../../AuthForm/InputField/InputWarning";
@@ -21,7 +21,7 @@ export interface UserParams extends ActionFunctionArgs {
 
 export const nameAction =
   (qc: QueryClient) =>
-  async ({ request, params }: UserParams) => {
+  async ({ request }: UserParams) => {
     const formData = await request.formData();
     const name = (formData.get("name") as string).trim();
 
@@ -31,7 +31,8 @@ export const nameAction =
         name,
       });
 
-      qc.setQueryData<User>(["user", params.id], (cached) => {
+      const token = localStorage.getItem(local.token);
+      qc.setQueryData<UIUser>(["user", token], (cached) => {
         const newuser = { ...cached, name };
         return newuser;
       });
@@ -43,7 +44,7 @@ export const nameAction =
   };
 
 export default function UserSettings() {
-  const { data: user } = useQuery(userQuery(localStorage.getItem(local.id)));
+  const { data: user } = useQuery(userQuery(localStorage.getItem(local.token)));
   const error = useActionData();
 
   return (

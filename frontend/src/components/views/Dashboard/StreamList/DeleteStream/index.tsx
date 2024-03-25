@@ -50,7 +50,7 @@ export const deleteStream =
       },
     );
 
-    const isGuest = localStorage.getItem(local.id) === "guest";
+    const isGuest = localStorage.getItem(local.token) === "guest";
     const delparams = queryTicks(delticks, "?delsyms");
 
     if (isGuest) {

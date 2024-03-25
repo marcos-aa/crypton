@@ -6,17 +6,17 @@ import { SyntheticEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { ResMessage } from "shared";
-import { User, UserData } from "shared/usertypes";
+import { UIUser, UserData } from "shared/usertypes";
 import api from "../../services/api";
 import { useLoadError } from "../../utils/customHooks";
-import { saveUser } from "../../utils/datafetching";
+import { saveHeader } from "../../utils/datafetching";
 import { importGStreams, local, stopPropagation } from "../../utils/helpers";
 import AuthButtons from "../AuthForm/AuthButtons";
 import ErrorResponse from "../LoadingError";
 import styles from "./styles.module.scss";
 
 interface ValidationState {
-  newmail: string;
+  email: string;
 }
 
 interface ValidationProps {
@@ -35,7 +35,7 @@ export default function ValidateUser({ style }: ValidationProps) {
 
     try {
       const { data } = await api.post<ResMessage>("/user/code", {
-        email: state.newmail,
+        email: state.email,
       });
       isLoading(false, data.message);
     } catch (e) {
@@ -51,11 +51,11 @@ export default function ValidateUser({ style }: ValidationProps) {
     try {
       const { data } = await api.put<UserData>("/user/validate", {
         code,
-        newmail: state.newmail,
+        email: state.email,
       });
 
-      saveUser(data.user.id, data.access_token);
-      qc.setQueryData<User>(["user", data.user.id], () => data.user);
+      saveHeader(data.accessToken);
+      qc.setQueryData<UIUser>(["user", data.accessToken], () => data.user);
 
       if (localStorage.getItem(local.expStreams))
         importGStreams(qc, data.user.id);

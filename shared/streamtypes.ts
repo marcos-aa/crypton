@@ -1,6 +1,6 @@
 export interface Stream {
   id: string;
-  user_id: string;
+  userId: string;
   symbols: string[];
 }
 

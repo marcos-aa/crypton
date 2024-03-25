@@ -12,21 +12,21 @@ model User {
   name          String
   email         String   @unique
   hashpass      String
-  refresh_token String
-  created_at    DateTime @default(now())
+  refreshToken  String
+  createdAt     DateTime @default(now())
   verified      Boolean  @default(false)
 }
 
 model Ucodes {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  email      String  @unique
+  userId     String  @unique
   code       String  @unique
   hash       String?
-  expires_at DateTime
+  expiresAt  DateTime
 }
 
 model Stream {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String
+  userId     String
   symbols    String[]
 }

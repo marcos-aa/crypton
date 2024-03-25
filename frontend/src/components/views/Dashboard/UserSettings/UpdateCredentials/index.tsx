@@ -30,10 +30,10 @@ export default function UpdateCredentials({ type }: CredProps) {
 
   const navigate = useNavigate();
 
-  const toValidation = (newmail: string) => {
+  const toValidation = (email: string) => {
     navigate("/dashboard/settings/validate", {
       state: {
-        newmail,
+        email,
       },
     });
   };
@@ -41,7 +41,6 @@ export default function UpdateCredentials({ type }: CredProps) {
   const requests = {
     email: async (input: InputData) => {
       await api.put<ResMessage>("/user/email", {
-        email: user?.email,
         newmail: input.email,
         password: input.password,
       });
@@ -49,10 +48,10 @@ export default function UpdateCredentials({ type }: CredProps) {
     },
     password: async (input: InputData) => {
       await api.put<ResMessage>("/user/password", {
-        email: user?.email,
+        email: user.email,
         password: input.password,
       });
-      toValidation(input.email);
+      toValidation(user.email);
     },
     delete: async (input: InputData) => {
       await api.delete<ResMessage>("/user", {

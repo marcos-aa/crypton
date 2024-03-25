@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { ResMessage } from "shared";
 import api from "../../../../../services/api";
+import { saveHeader } from "../../../../../utils/datafetching";
 import { InputData, local } from "../../../../../utils/helpers";
 import AuthForm from "../../../../AuthForm";
 import CheckboxField from "../../../../AuthForm/CheckboxField";
@@ -16,8 +17,8 @@ export default function SignUp({ isExport }: SignProps) {
   const [saveStreams, setSaveStreams] = useState(isExport);
   const navigate = useNavigate();
 
-  const sign_up = async (input: InputData): Promise<void> => {
-    await api.post<ResMessage>("/user", {
+  const signUp = async (input: InputData) => {
+    const { data } = await api.post<ResMessage>("/user", {
       name: input.name,
       email: input.email,
       password: input.password,
@@ -26,15 +27,16 @@ export default function SignUp({ isExport }: SignProps) {
     if (saveStreams) localStorage.setItem(local.expStreams, "true");
     const destination = `/${isExport ? "dashboard" : "register"}/validate`;
 
+    saveHeader(data.message);
     navigate(destination, {
-      state: { newmail: input.email },
+      state: { email: input.email },
     });
   };
 
   const handleGStreams = () => setSaveStreams(!saveStreams);
 
   return (
-    <AuthForm action="Sign up" exfields={exfields} submit={sign_up}>
+    <AuthForm action="Sign up" exfields={exfields} submit={signUp}>
       <CheckboxField
         label="Export guest streams"
         checked={saveStreams}
