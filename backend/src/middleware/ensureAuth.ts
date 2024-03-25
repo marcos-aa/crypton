@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express"
 import { JwtPayload, VerifyErrors, verify } from "jsonwebtoken"
-import UserUtils from "../utils/User"
 import { messages } from "../utils/schemas"
 
 export default async function isAuthorized(
@@ -18,25 +17,10 @@ export default async function isAuthorized(
     req.id = id
     return next()
   } catch (e) {
-    const ename = [(e as VerifyErrors).name, "TokenExpiredError"]
-    const refToken = req.cookies?.r_token
+    const expMessage = "TokenExpiredError"
+    if ((e as VerifyErrors).name === expMessage)
+      return res.status(403).send(expMessage)
 
-    if (ename[0] !== ename[1] || !refToken)
-      return res.status(403).send({ message: "Unauthorized request." })
-
-    const r = await new UserUtils().refreshToken(refToken)
-
-    if ("status" in r) return res.status(r.status).json({ message: r.message })
-
-    res
-      .set("authorization", `Bearer ${r.accessToken as string}`)
-      .set("Access-Control-Expose-Headers", "authorization")
-      .cookie("r_token", r.refreshToken, {
-        httpOnly: true,
-        maxAge: Number(MAX_REFRESH),
-        secure: NODE_ENV === "production",
-      })
-
-    return next()
+    return res.status(500).send("Something wrong happened")
   }
 }

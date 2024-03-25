@@ -252,30 +252,29 @@ export default class UserUtils {
     return token
   }
 
-  async refreshToken(refToken: string): Promise<Tokens | ResMessage> {
+  async refreshToken(refToken: string): Promise<Tokens> {
     const decoded = verify(refToken, JWT_SECRET_REF) as JwtPayload
-    const email = decoded.sub
-    if (!email) return { status: 401, message: m.noToken }
+    const id = decoded.id
+    if (!id) throw new CredError(m.invalidToken, 401)
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { id },
       select: {
         id: true,
         refreshToken: true,
       },
     })
 
-    if (user?.refreshToken !== refToken) {
-      return { status: 403, message: m.invalidToken }
-    }
+    if (user?.refreshToken !== refToken)
+      throw new CredError(m.invalidToken, 403)
 
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(user.id, JWT_SECRET, JWT_EXPIRY),
-      this.signToken(email, JWT_SECRET_REF, JWT_EXPIRY_REF),
+      this.signToken(user.id, JWT_SECRET_REF, JWT_EXPIRY_REF),
     ])
 
     await prisma.user.update({
-      where: { email },
+      where: { id },
       data: { refreshToken },
     })
 

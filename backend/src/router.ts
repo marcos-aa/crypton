@@ -45,7 +45,7 @@ router.post(
   tryWrapper(new UserHandler().createSendmail)
 )
 router.put("/user/validate", tryWrapper(new UserHandler().updateValidation))
-
+router.post("/user/token", tryWrapper(new UserHandler().createToken))
 router.get("/pairs", new StreamHandler().readPairs)
 router.get("/tickers", new StreamHandler().readTickers)
 router.get("/tickers/window", new StreamHandler().readTickWindow)

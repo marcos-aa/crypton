@@ -2,6 +2,20 @@ import { Request, Response } from "express"
 import UserUtils from "."
 
 export default class StreamHandler {
+  async createToken(req: Request, res: Response) {
+    const rtoken = req.cookies.r_token
+    const { accessToken, refreshToken } = await new UserUtils().refreshToken(
+      rtoken
+    )
+    return res
+      .cookie("r_token", refreshToken, {
+        httpOnly: true,
+        maxAge: Number(process.env.MAX_REFRESH),
+        secure: process.env.NODE_ENV === "production",
+      })
+      .json({ accessToken })
+  }
+
   async updateName(req: Request, res: Response) {
     const { name } = req.body
     const result = await new UserUtils().updateName(req.id, name)
