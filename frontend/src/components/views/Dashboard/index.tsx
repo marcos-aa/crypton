@@ -64,9 +64,9 @@ export default function Dashboard() {
 
   const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     clearNotif();
-    logout();
+    await logout();
   };
 
   const handleImport = () => {

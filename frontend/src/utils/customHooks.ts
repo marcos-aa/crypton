@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { NotifType } from "../components/views/Dashboard/Notification";
+import api from "../services/api";
 import { InputData, local, validateField } from "./helpers";
 
 type InputValidation = InputData & { path: string };
@@ -85,10 +86,14 @@ const useLogout = (token: string) => {
   const qc = useQueryClient();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    delete api.defaults.headers.common.authorization;
+    if (token !== "guest") await api.delete("/session");
+
     qc.removeQueries(["streams"]);
     qc.removeQueries(["user", token]);
     localStorage.removeItem(local.token);
+
     navigate("/");
   };
 
