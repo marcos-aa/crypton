@@ -7,13 +7,11 @@ export default async function isAuthorized(
   res: Response,
   next: NextFunction
 ) {
-  const { JWT_SECRET, MAX_REFRESH, NODE_ENV } = process.env
-
   const token = req.headers.authorization?.split(" ")[1]
   if (!token) return res.status(403).json({ message: messages.invalidToken })
 
   try {
-    const { id } = verify(token, JWT_SECRET) as JwtPayload
+    const { id } = verify(token, process.env.JWT_SECRET) as JwtPayload
     req.id = id
     return next()
   } catch (e) {

@@ -1,17 +1,22 @@
-import axios from "axios";
-import { local } from "../utils/helpers";
+import axios, { AxiosError } from "axios";
+import { saveHeader } from "../utils/datafetching";
 
+const baseURL = "http://localhost:3000";
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL,
   withCredentials: true,
 });
 
-api.interceptors.response.use((res) => {
-  if (res.headers.authorization) {
-    localStorage.setItem(local.token, res.headers.authorization.split(" ")[1]);
-  }
+api;
 
-  return res;
+api.interceptors.response.use(null, async (error: AxiosError) => {
+  if (error.response.data !== "TokenExpiredError") return Promise.reject(error);
+
+  const { data } = await api.post("/user/token");
+  const config = error.config;
+  config.headers.authorization = `Bearer ${data.accessToken}`;
+  saveHeader(data.accessToken);
+  return axios.request(config);
 });
 
 export default api;
