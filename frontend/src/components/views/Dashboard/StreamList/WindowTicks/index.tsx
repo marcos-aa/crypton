@@ -22,7 +22,7 @@ export const windowLoader =
       uncached: string[] = [];
     const winsize = "7d";
 
-    let { tickers } = await qc.ensureQueryData<StreamData>(["streams"]),
+    let tickers = { ...qc.getQueryData<StreamData>(["streams"]).tickers },
       currTickers: Tickers = {},
       winTickers: Tickers = {};
 
@@ -37,16 +37,12 @@ export const windowLoader =
     if (uncached.length > 0) {
       const toCache = await getWindowTicks(uncached, winsize);
       qc.setQueryData<StreamData>(["streams"], (cached) => {
-        const newtickers: Tickers = {
-          ...cached.tickers,
-        };
-
         uncached.forEach((sym) => {
-          newtickers[sym][winsize] = toCache[sym];
+          tickers[sym][winsize] = toCache[sym];
           winTickers[sym] = toCache[sym];
         });
 
-        return { ...cached, tickers: newtickers };
+        return { ...cached, tickers };
       });
     }
 
