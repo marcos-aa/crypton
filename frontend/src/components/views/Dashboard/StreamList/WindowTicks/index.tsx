@@ -1,9 +1,9 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { CSSProperties, MouseEvent, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { StreamData, Tickers, WindowData } from "shared/streamtypes";
+import { StreamData, Tickers, WindowTicker } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
 import ModalContainer from "../../../../ModalContainer";
 import CloseModal from "../../../../ModalContainer/CloseModal";
@@ -16,7 +16,7 @@ interface WindowReq {
 }
 export const windowLoader =
   (qc: QueryClient) =>
-  async ({ request }: WindowReq) => {
+  async ({ request }: WindowReq): Promise<WindowData> => {
     const { searchParams } = new URL(request.url);
     const syms: string[] = JSON.parse(searchParams.get("symbols")),
       uncached: string[] = [];
@@ -51,13 +51,23 @@ export const windowLoader =
       "1s": currTickers,
     };
 
-    return res;
+    return { data: res, tickers };
   };
 
+type WindowInterval = {
+  [window: string]: {
+    [ticker: string]: WindowTicker;
+  };
+};
 interface WindowState {
   intv: string[];
-  data: WindowData;
+  data: WindowInterval;
 }
+
+type WindowData = {
+  data: WindowInterval;
+  tickers: Tickers;
+};
 
 const multip = {
   m: 1,
@@ -66,7 +76,8 @@ const multip = {
 } as const;
 
 export default function WindowTicks() {
-  const data = useLoaderData() as WindowData;
+  const qc = useQueryClient();
+  let { data, tickers } = useLoaderData() as WindowData;
   const [windows, setWindows] = useState<WindowState>({
     intv: ["1s", "7d"],
     data,
@@ -116,10 +127,25 @@ export default function WindowTicks() {
     const [inPos, end] = sortWindows(interval);
     const wins = [...windows.intv];
 
-    let tickers: Tickers = windows.data[interval];
     if (end !== -1) {
       const symbols = Object.keys(data["1s"]);
-      tickers = await getWindowTicks(symbols, interval);
+      let uncached: string[] = [];
+
+      symbols.forEach((sym) => {
+        if (!tickers[sym][interval]) {
+          uncached.push(sym);
+        }
+      });
+
+      if (uncached.length > 0) {
+        const toCache = await getWindowTicks(uncached, interval);
+        uncached.forEach((sym) => (tickers[sym][interval] = toCache[sym]));
+        qc.setQueryData<StreamData>(["streams"], (cached) => ({
+          ...cached,
+          tickers: tickers,
+        }));
+      }
+
       wins.splice(inPos, 0, interval);
     }
 

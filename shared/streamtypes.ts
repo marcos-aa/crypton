@@ -56,9 +56,3 @@ export type WindowTicker = Ticker & {
 export interface Tickers {
   [ticker: string]: WindowTicker;
 }
-
-export type WindowData = {
-  [window: string]: {
-    [ticker: string]: WindowTicker;
-  };
-};
