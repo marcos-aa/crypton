@@ -2,7 +2,7 @@ import { ChangeEvent, MouseEvent, useState } from "react";
 import styles from "./styles.module.scss";
 
 interface TimeProps {
-  addWindow(interval: string): void;
+  updateWindow(interval: string): void;
 }
 
 const maxUnits = {
@@ -11,7 +11,7 @@ const maxUnits = {
   d: 7,
 } as const;
 
-export default function WindowOptions({ addWindow }: TimeProps) {
+export default function WindowOptions({ updateWindow }: TimeProps) {
   const [cwindow, setCwindow] = useState({ value: "1", unit: "m" });
 
   const changeTime = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ export default function WindowOptions({ addWindow }: TimeProps) {
     const interval = e.currentTarget.type
       ? cwindow.value.concat(cwindow.unit)
       : e.currentTarget.innerHTML;
-    addWindow(interval);
+    updateWindow(interval);
   };
 
   return (

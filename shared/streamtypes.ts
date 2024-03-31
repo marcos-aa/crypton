@@ -49,9 +49,9 @@ export interface Ticker {
   open: number;
 }
 
-export type WindowedTicker = Ticker & {
+export interface WindowedTicker extends Ticker {
   [key: symbol]: Ticker;
-};
+}
 
 export interface Tickers {
   [ticker: string]: WindowedTicker;
