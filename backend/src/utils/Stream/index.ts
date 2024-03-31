@@ -1,6 +1,6 @@
 import axios from "axios"
 import NodeCache from "node-cache"
-import { RawTicker, Tickers, WindowTicker } from "shared/streamtypes"
+import { RawTicker, Tickers, WindowedTicker } from "shared/streamtypes"
 
 interface CachedTickers {
   cached: Tickers
@@ -43,7 +43,7 @@ export default class StreamUtils {
   }
 
   getCachedTickers(symbols: string[]): CachedTickers {
-    const cached = cache.mget<WindowTicker>(symbols)
+    const cached = cache.mget<WindowedTicker>(symbols)
     const keys = Object.keys(cached)
     if (keys.length == symbols.length) return { cached }
 
@@ -86,7 +86,7 @@ export default class StreamUtils {
       },
     })
     this.cacheTickers(data)
-    const tickers = Object.assign(cached, cache.mget<WindowTicker>(uncsyms))
+    const tickers = Object.assign(cached, cache.mget<WindowedTicker>(uncsyms))
     return tickers
   }
 

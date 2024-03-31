@@ -1,8 +1,8 @@
-import { WindowTicker } from "shared/streamtypes";
+import { WindowedTicker } from "shared/streamtypes";
 import styles from "./styles.module.scss";
 
 export type Prices = Pick<
-  WindowTicker,
+  WindowedTicker,
   "change" | "pchange" | "average" | "last"
 >;
 

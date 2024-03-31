@@ -1,27 +1,28 @@
 #timeWindow {
-  --y-translate: calc((var(--modal-height) / -2) + var(--ctitle-h));
-  position: fixed;
+  position: absolute;
   z-index: 3;
-  top: 50%;
-  right: 50%;
-  transform: translate(calc(var(--modal-width) / 2 - 1px), var(--y-translate));
-  min-height: 200px;
-  padding: 5px 10px;
-  background-color: white;
-  box-shadow: 0 0 4px 0px black;
-  border-radius: 2px;
+  top: 40px;
+  left: 1px;
   max-width: 100%;
+  min-height: 160px;
+  padding: 0px 10px;
+  border-radius: 2px;
+  box-shadow: 0 0 4px 0px black;
+  background-color: white;
+
+  p {
+    margin: 5px 0;
+  }
 
   #commonWindows,
   #customWindow {
-    width: 270px;
+    max-width: 270px;
   }
 
   #commonWindows {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    margin-top: 10px;
     margin-bottom: 5px;
     gap: 5px;
 
@@ -55,15 +56,5 @@
     input {
       width: 165px;
     }
-  }
-
-  @media (max-width: 1200px) {
-    right: 0;
-    transform: translate(0, var(--y-translate));
-  }
-
-  @media (max-width: 500px) {
-    top: 40px;
-    transform: translate(0);
   }
 }

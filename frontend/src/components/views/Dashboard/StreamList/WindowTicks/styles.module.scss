@@ -48,6 +48,15 @@
       width: 100%;
     }
 
+    .colTitle:last-of-type {
+      position: relative;
+      cursor: pointer;
+
+      span {
+        margin: 5px;
+      }
+    }
+
     .rowTitle {
       border-top-left-radius: 5px;
     }

@@ -44,7 +44,7 @@ export default function WindowOptions({ addWindow }: TimeProps) {
 
   return (
     <div id={styles.timeWindow}>
-      <span> Add a window to table of values </span>
+      <p> Select active window </p>
       <div id={styles.commonWindows}>
         <li onClick={addFromEvent} className={styles.prewindow}>
           1m
@@ -90,7 +90,7 @@ export default function WindowOptions({ addWindow }: TimeProps) {
         </select>
 
         <button type="button" className="action fullwd" onClick={addFromEvent}>
-          Add window
+          Select window
         </button>
       </div>
     </div>

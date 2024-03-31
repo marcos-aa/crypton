@@ -1,85 +1,114 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { CSSProperties, MouseEvent, useState } from "react";
+import { CSSProperties, MouseEvent, memo, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { StreamData, Tickers, WindowTicker } from "shared/streamtypes";
+import { StreamData, Ticker } from "shared/streamtypes";
 import { getWindowTicks } from "../../../../../utils/datafetching";
+import { local } from "../../../../../utils/helpers";
 import ModalContainer from "../../../../ModalContainer";
 import CloseModal from "../../../../ModalContainer/CloseModal";
-import FullDate from "../../UserInfo/FullDate";
+import SymValues from "./SymValues";
 import TimeWindows from "./WindowOptions";
 import styles from "./styles.module.scss";
 
 interface WindowReq {
   request: Request;
 }
-export const windowLoader =
-  (qc: QueryClient) =>
-  async ({ request }: WindowReq): Promise<WindowData> => {
-    const { searchParams } = new URL(request.url);
-    const syms: string[] = JSON.parse(searchParams.get("symbols")),
-      uncached: string[] = [];
-    const winsize = "7d";
 
-    let tickers = { ...qc.getQueryData<StreamData>(["streams"]).tickers },
-      currTickers: Tickers = {},
-      winTickers: Tickers = {};
-
-    syms.forEach((sym) => {
-      const ticker = tickers[sym];
-      const wticker = ticker[winsize];
-      if (!wticker) uncached.push(sym);
-      currTickers[sym] = ticker;
-      winTickers[sym] = wticker;
-    });
-
-    if (uncached.length > 0) {
-      const toCache = await getWindowTicks(uncached, winsize);
-      qc.setQueryData<StreamData>(["streams"], (cached) => {
-        uncached.forEach((sym) => {
-          tickers[sym][winsize] = toCache[sym];
-          winTickers[sym] = toCache[sym];
-        });
-
-        return { ...cached, tickers };
-      });
-    }
-
-    const res = {
-      "7d": winTickers,
-      "1s": currTickers,
-    };
-
-    return { data: res, tickers };
-  };
-
-type WindowInterval = {
-  [window: string]: {
-    [ticker: string]: WindowTicker;
-  };
+type Tickers = {
+  [ticker: string]: Ticker;
 };
-interface WindowState {
-  intv: string[];
-  data: WindowInterval;
+
+interface WindowTickers {
+  windowTickers: Tickers;
+  tickers: Tickers;
 }
 
-type WindowData = {
-  data: WindowInterval;
-  tickers: Tickers;
+interface WindowData {
+  "1s": Tickers;
+  [window: string]: Tickers;
+}
+interface WindowResponse {
+  data: WindowData;
+  symbols: string[];
+  interval: string;
+}
+
+interface WindowState {
+  interval: string;
+  data: WindowData;
+}
+
+const saveWindow = async (
+  qc: QueryClient,
+  symbols: string[],
+  interval: string,
+): Promise<WindowTickers> => {
+  let uncached: string[] = [];
+  let tickers = {
+      ...qc.getQueryData<StreamData>(["streams"]).tickers,
+    },
+    windowTickers: Tickers = {};
+
+  symbols.forEach((sym) => {
+    const ticker = tickers[sym][interval];
+    if (!ticker) uncached.push(sym);
+    windowTickers[sym] = ticker;
+  });
+
+  if (uncached.length > 0) {
+    const toCache = await getWindowTicks(uncached, interval);
+    qc.setQueryData<StreamData>(["streams"], (cached) => {
+      uncached.forEach((sym) => {
+        tickers[sym][interval] = toCache[sym];
+        windowTickers[sym] = toCache[sym];
+      });
+
+      return { ...cached, tickers };
+    });
+  }
+
+  return { windowTickers, tickers };
 };
 
-const multip = {
-  m: 1,
-  h: 60,
-  d: 1440,
-} as const;
+export const windowLoader =
+  (qc: QueryClient) =>
+  async ({ request }: WindowReq): Promise<WindowResponse> => {
+    const { searchParams } = new URL(request.url);
+    const symbols: string[] = JSON.parse(searchParams.get("symbols")),
+      interval = localStorage.getItem(local.window) || "7d";
 
-export default function WindowTicks() {
+    const { windowTickers, tickers } = await saveWindow(qc, symbols, interval);
+    let latest: Tickers = {};
+    symbols.forEach((sym) => {
+      const ticker = tickers[sym];
+      latest[sym] = {
+        last: ticker.last,
+        average: ticker.average,
+        change: ticker.change,
+        pchange: ticker.pchange,
+        volume: ticker.volume,
+        qvolume: ticker.qvolume,
+        trades: ticker.trades,
+        open: ticker.open,
+        close: ticker.close,
+      };
+    });
+
+    const res = {
+      "7d": windowTickers,
+      "1s": latest,
+    };
+
+    return { data: res, symbols, interval };
+  };
+
+export default memo(function WindowTicks() {
   const qc = useQueryClient();
-  let { data, tickers } = useLoaderData() as WindowData;
+  const { data, symbols, interval } = useLoaderData() as WindowResponse;
   const [windows, setWindows] = useState<WindowState>({
-    intv: ["1s", "7d"],
+    interval,
     data,
   });
   const [edit, setEdit] = useState(false);
@@ -94,65 +123,14 @@ export default function WindowTicks() {
 
   const editWindows = () => setEdit((prev) => !prev);
 
-  const sortWindows = (interval: string) => {
-    const lastInd = interval.length - 1;
-    const cUnit = interval[lastInd];
-
-    const value = Number(interval.slice(0, lastInd)) * multip[cUnit];
-
-    let start = 1,
-      end = windows.intv.length - 1,
-      mid = start;
-
-    while (start < end) {
-      mid = Math.floor((start + end) / 2);
-      const midtx = windows.intv[mid];
-
-      if (midtx == interval) {
-        end = -1;
-        break;
-      }
-
-      const midValue = midtx.slice(0, midtx.length - 1);
-      const midMult = Number(midValue) * multip[midtx[midtx.length - 1]];
-
-      if (value > midMult) start = mid + 1;
-      else end = mid;
-    }
-
-    return [start, end];
-  };
-
-  const addWindow = async (interval: string) => {
-    const [inPos, end] = sortWindows(interval);
-    const wins = [...windows.intv];
-
-    if (end !== -1) {
-      const symbols = Object.keys(data["1s"]);
-      let uncached: string[] = [];
-
-      symbols.forEach((sym) => {
-        if (!tickers[sym][interval]) {
-          uncached.push(sym);
-        }
-      });
-
-      if (uncached.length > 0) {
-        const toCache = await getWindowTicks(uncached, interval);
-        uncached.forEach((sym) => (tickers[sym][interval] = toCache[sym]));
-        qc.setQueryData<StreamData>(["streams"], (cached) => ({
-          ...cached,
-          tickers: tickers,
-        }));
-      }
-
-      wins.splice(inPos, 0, interval);
-    }
+  const addWindow = async (newitv: string) => {
+    const { windowTickers } = await saveWindow(qc, symbols, newitv);
+    localStorage.setItemk(local.window, newitv);
 
     setEdit(false);
     setWindows((prev) => ({
-      intv: wins,
-      data: { ...prev.data, [interval]: tickers },
+      interval: newitv,
+      data: { ...prev.data, [newitv]: windowTickers },
     }));
   };
 
@@ -161,74 +139,49 @@ export default function WindowTicks() {
       <div id={expanded ? styles.expTick : styles.compareTicks}>
         <div className={styles.timeOptions}>
           <h2 className={styles.rowTitle}> Symbols </h2>
-          {windows.intv.map((frame) => {
-            return (
-              <h2 className={styles.colTitle} key={frame}>
-                {frame}
-              </h2>
-            );
-          })}
+          <h2 className={styles.colTitle}> 1s </h2>
+          <h2 className={styles.colTitle} onClick={editWindows}>
+            {windows.interval}
+            <span>
+              <FontAwesomeIcon icon={faCaretDown} />
+            </span>
+            {edit && <TimeWindows addWindow={addWindow} />}
+          </h2>
 
           <div id={styles.timeActions}>
-            <button id={styles.editWindows} type="button" onClick={editWindows}>
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
             <CloseModal predecessor="/dashboard" />
           </div>
-          {edit && <TimeWindows addWindow={addWindow} />}
         </div>
 
-        {Object.keys(data["1s"]).map((symbol, i) => {
-          const style = {
+        {symbols.map((symbol, i) => {
+          const rowIndex = {
             "--elindex": i,
           } as CSSProperties;
+
           return (
             <div
-              style={style}
+              style={rowIndex}
               key={symbol}
               className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
             >
               <h2 className={styles.rowTitle} onClick={expandSymbol}>
                 {symbol}
               </h2>
-              {windows.intv.map((frame) => {
-                const trade = windows.data[frame][symbol];
-                const decreased = trade.change[0] === "-";
-                return (
-                  <div className={styles.symValues} key={`${frame}${symbol}`}>
-                    <span> Last price: {trade.last}</span>
-                    <span> Weighted average: {trade.average}</span>
-                    <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Price change: {trade.change}
-                    </span>
-                    <span className={decreased ? "priceFall" : "priceRaise"}>
-                      Price change %: {trade.pchange}
-                    </span>
 
-                    <div className={styles.extraValues}>
-                      <span>Quote volume: {trade.qvolume}</span>
-                      <span> Asset volume: {trade.volume}</span>
-                      <span> Total trades: {trade.trades}</span>
-                      <FullDate
-                        style={styles.windowTime}
-                        hour={true}
-                        date={new Date(trade?.open)}
-                        title="Open date:"
-                      />
-                      <FullDate
-                        style={styles.windowTime}
-                        hour={true}
-                        date={new Date(trade?.close)}
-                        title="Close date:"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+              <SymValues
+                decreased={windows.data["1s"][symbol].change[0] === "-"}
+                value={windows.data["1s"][symbol]}
+              />
+              <SymValues
+                decreased={
+                  windows.data[windows.interval][symbol].change[0] === "-"
+                }
+                value={windows.data[windows.interval][symbol]}
+              />
             </div>
           );
         })}
       </div>
     </ModalContainer>
   );
-}
+});

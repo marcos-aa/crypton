@@ -37,7 +37,7 @@ export interface RawTicker {
   openTime: number;
 }
 
-interface Ticker {
+export interface Ticker {
   change: string;
   pchange: string;
   average: string;
@@ -49,10 +49,10 @@ interface Ticker {
   open: number;
 }
 
-export type WindowTicker = Ticker & {
+export type WindowedTicker = Ticker & {
   [key: symbol]: Ticker;
 };
 
 export interface Tickers {
-  [ticker: string]: WindowTicker;
+  [ticker: string]: WindowedTicker;
 }

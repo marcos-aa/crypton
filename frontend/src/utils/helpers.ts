@@ -55,6 +55,7 @@ export type TotalCount = {
 export const local = {
   token: "u_token",
   streams: "u_streams",
+  window: "u_prefWindow",
   joined: "u_joinDate",
   expStreams: "u_exportStreams",
   expPrompt: "u:exportPrompt",
