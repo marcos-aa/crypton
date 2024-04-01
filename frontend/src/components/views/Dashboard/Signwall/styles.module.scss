@@ -1,21 +1,16 @@
 #signwall {
-  h2,
-  a {
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    width: var(--modal-width);
-    max-width: 100%;
-    height: calc(var(--modal-height) / 2);
-    background-color: white;
-  }
-
+  form,
+  header,
   h2 {
-    align-items: flex-end;
+    width: 700px;
+    max-width: 100%;
+    background-color: white;
+    padding: 10px;
   }
 
-  a {
-    align-items: flex-start;
-    text-decoration: underline;
+  @media (max-width: 500px) {
+    form {
+      height: 100%;
+    }
   }
 }

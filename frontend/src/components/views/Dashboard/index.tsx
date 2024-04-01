@@ -92,7 +92,7 @@ export default function Dashboard() {
           <div id={styles.dropList}>
             <Link
               className={styles.dropAction}
-              to={user.verified ? "/dashboard/settings" : "/dashboard/signwall"}
+              to={user.verified ? "/dashboard/settings" : "/dashboard/export"}
             >
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
