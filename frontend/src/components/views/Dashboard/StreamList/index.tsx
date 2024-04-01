@@ -76,23 +76,29 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     generateURL(Object.keys(initialData.symtracker)),
     {
       onMessage: (item) => {
+        const interval = localStorage.getItem(local.window);
         const ticker: WSTIcker = JSON.parse(item.data);
         if (ticker.result === null) return;
 
         setTemp((prev) => {
+          const newticker = {
+            average: ticker.w,
+            change: ticker.p,
+            pchange: ticker.P,
+            last: ticker.c,
+            volume: Number(ticker.v),
+            qvolume: Number(ticker.q),
+            trades: ticker.n,
+            close: ticker.C,
+            open: ticker.O,
+          };
+
+          const windowTicker = data.tickers[ticker.s]?.[interval];
+          if (windowTicker) newticker[interval] = windowTicker;
+
           return {
             ...prev,
-            [ticker.s]: {
-              average: ticker.w,
-              change: ticker.p,
-              pchange: ticker.P,
-              last: ticker.c,
-              volume: Number(ticker.v),
-              qvolume: Number(ticker.q),
-              trades: ticker.n,
-              close: ticker.C,
-              open: ticker.O,
-            },
+            [ticker.s]: newticker,
           };
         });
       },
