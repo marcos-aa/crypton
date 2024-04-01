@@ -29,10 +29,10 @@ export default function WindowOptions({ updateWindow }: TimeProps) {
 
   const changeOption = (e: ChangeEvent<HTMLSelectElement>) => {
     const newUnit = e.currentTarget.value;
-    setCwindow((prev) => ({
+    setCwindow({
       value: "1",
       unit: newUnit,
-    }));
+    });
   };
 
   const addFromEvent = (e: MouseEvent<HTMLLIElement | HTMLButtonElement>) => {

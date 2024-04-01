@@ -5,8 +5,8 @@ import { CSSProperties, MouseEvent, memo, useState } from "react";
 import { WindowData, saveWindow } from "..";
 import { local } from "../../../../../../utils/helpers";
 import FullDate from "../../../UserInfo/FullDate";
-import WindowOptions from "../WindowOptions";
 import styles from "../styles.module.scss";
+import WindowOptions from "./WindowOptions";
 export interface ValueProps {
   symbols: string[];
   initialData: WindowData;
@@ -31,6 +31,7 @@ function SymValues({
   const showWindowOptions = () => setEdit((prev) => !prev);
 
   const updateWindow = async (newitv: string) => {
+    setEdit(false);
     const data = await saveWindow(qc, symbols, newitv);
     localStorage.setItem(local.window, newitv);
     changeInterval(newitv);
@@ -38,23 +39,6 @@ function SymValues({
   };
   return (
     <>
-      <button
-        type="button"
-        style={{
-          position: "absolute",
-          width: "40px",
-          height: "40px",
-          top: "0",
-          right: "40px",
-          fontSize: "25px",
-          border: "none",
-          paddingBottom: "10px",
-        }}
-        onClick={showWindowOptions}
-      >
-        <FontAwesomeIcon icon={faCaretDown} />
-      </button>
-      {edit && <WindowOptions updateWindow={updateWindow} />}
       {symbols.map((symbol, i) => {
         const data = tickers["1s"] ? tickers : initialData;
         const value = data["1s"][symbol];
@@ -136,6 +120,29 @@ function SymValues({
           </div>
         );
       })}
+      <button
+        type="button"
+        title="Show window options"
+        style={{
+          position: "absolute",
+          width: "40px",
+          height: "40px",
+          top: "0",
+          right: "40px",
+          fontSize: "25px",
+          border: "none",
+          paddingBottom: "10px",
+        }}
+        onClick={showWindowOptions}
+      >
+        <FontAwesomeIcon
+          style={{
+            rotate: edit ? "180deg" : "0deg",
+          }}
+          icon={faCaretDown}
+        />
+      </button>
+      {edit && <WindowOptions updateWindow={updateWindow} />}
     </>
   );
 }
