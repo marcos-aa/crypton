@@ -17,7 +17,7 @@ export default function AuthButtons({
       <button disabled={invalid} type="submit" className="action fullwd">
         {action}
       </button>
-      {children?.[1] || children}
+      {!children?.[0] ? children : children?.[1]}
     </div>
   );
 }
