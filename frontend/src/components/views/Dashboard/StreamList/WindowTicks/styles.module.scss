@@ -130,6 +130,40 @@
     .rowTitle:hover {
       cursor: pointer;
     }
+
+    .symValues.skeleton {
+      &::after,
+      &::before {
+        content: "";
+        display: block;
+        max-width: 100%;
+      }
+
+      &::after {
+        width: 150px;
+        height: 10px;
+        border-top: 35px double #e3e3e3;
+        border-bottom: 35px double #e3e3e3;
+      }
+
+      &::before {
+        position: absolute;
+        margin-left: 0px;
+        width: 10px;
+        height: 80px;
+        background-color: white;
+        box-shadow: 0 5px 10px white;
+        animation: move 700ms ease infinite;
+        @keyframes move {
+          from {
+            margin-left: 0;
+          }
+          to {
+            margin-left: 150px;
+          }
+        }
+      }
+    }
     .symValues {
       display: flex;
       flex-direction: column;

@@ -6,7 +6,7 @@ import { getWindowTicks } from "../../../../../utils/datafetching";
 import { local } from "../../../../../utils/helpers";
 import ModalContainer from "../../../../ModalContainer";
 import CloseModal from "../../../../ModalContainer/CloseModal";
-import SkeletonPairs from "../SymbolList/SkeletonPairs";
+import SkeletonSyms from "./SkeletonSyms";
 import SymValues from "./SymValues";
 import styles from "./styles.module.scss";
 
@@ -129,16 +129,14 @@ export default function WindowTicks() {
         <div className={styles.timeOptions}>
           <h2 className={styles.rowTitle}> Symbols </h2>
           <h2 className={styles.colTitle}> 1s </h2>
-          <h2 className={styles.colTitle}>
-            {localStorage.getItem(local.window) || interval}
-          </h2>
+          <h2 className={styles.colTitle}>{interval}</h2>
 
           <div id={styles.timeActions}>
             <CloseModal predecessor="/dashboard" />
           </div>
         </div>
 
-        <Suspense fallback={<SkeletonPairs />}>
+        <Suspense fallback={<SkeletonSyms symbols={symbols} />}>
           <Await resolve={deferred.data.result} errorElement={<p>Error!</p>}>
             {(data: WindowData) => {
               return (
