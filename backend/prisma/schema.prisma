@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output = env("PRISMA_LOCATION")
 }
 
 datasource db {

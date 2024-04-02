@@ -5,3 +5,6 @@ node_modules
 .env
 .env.*
 .yarn
+.pnp.*
+backend/dist/prisma/generated
+backend/prisma/generated/

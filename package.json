@@ -9,5 +9,9 @@
     "setup": "cd backend && prisma generate && prisma db push",
     "dev": "yarn workspaces foreach -A -p -i run dev",
     "build": "yarn workspaces foreach -A -p run build"
+  },
+  "packageManager": "yarn@4.1.1",
+  "devDependencies": {
+    "typescript": "^5.4.3"
   }
 }

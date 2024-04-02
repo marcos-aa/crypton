@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client"
 import { compareSync, hashSync } from "bcryptjs"
 import { google } from "googleapis"
 import Joi from "joi"
@@ -8,6 +7,7 @@ import nodemailer from "nodemailer"
 import { ResMessage } from "shared"
 import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
+import { Prisma } from "../../../prisma/generated/client"
 import {
   CredError,
   messages as m,
