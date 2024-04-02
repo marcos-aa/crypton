@@ -6,7 +6,7 @@
     "shared"
   ],
   "scripts": {
-    "setup": "cd backend && prisma generate && prisma db push",
+    "setup": "yarn workspace backend run setup",
     "dev": "yarn workspaces foreach -A -p -i run dev",
     "build": "yarn workspaces foreach -A -p run build"
   },

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "pnpify prisma generate && tsc",
     "start": "node ./dist/src/app.js",
+    "setup": "dotenv -e .env.dev pnpify prisma generate",
     "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts"
   },
   "dependencies": {
