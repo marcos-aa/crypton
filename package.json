@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "setup": "cd backend && prisma generate && prisma db push",
-    "dev": "cd backend && yarn dev & cd frontend && yarn dev"
+    "dev": "yarn workspaces foreach -A -p -i run dev",
+    "build": "yarn workspaces foreach -A -p run build"
   }
 }
