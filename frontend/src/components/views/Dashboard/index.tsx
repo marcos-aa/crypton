@@ -7,9 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import { Link, redirect, useLoaderData } from "react-router-dom";
-import { ResMessage } from "shared";
 import { StreamData } from "shared/streamtypes";
 import { UIUser } from "shared/usertypes";
 import { useLogout, useNotification } from "../../../utils/customHooks";
@@ -34,26 +32,28 @@ export const dashLoader =
     const verified = token !== "guest";
     if (verified) saveHeader(token);
 
-    const { queryFn: userFn, queryKey: userKey } = userQuery(verified);
-    const { queryFn: streamFn, queryKey: streamKey } = streamQuery(verified);
-
-    try {
-      const [user, streamData] = await Promise.all([
-        qc.ensureQueryData({ queryKey: userKey, queryFn: userFn }),
-        qc.ensureQueryData({ queryKey: streamKey, queryFn: streamFn }),
-      ]);
-
-      return { user, streamData };
-    } catch (e) {
-      const error = (e as AxiosError<ResMessage>).response;
-
-      if (error.status == 403) {
-        localStorage.removeItem(local.token);
-        return redirect("/register/signin");
-      }
-
-      throw { message: error.data?.message || "" };
+    const userConfig = userQuery(verified);
+    const streamConfig = streamQuery(verified);
+  
+    let res: DashLoader = {
+      user: null,
+      streamData: null
     }
+
+    const data = await Promise.all([
+     qc.ensureQueryData(userConfig),
+     qc.ensureQueryData(streamConfig),
+    ]);
+
+    res.user = data[0];
+    res.streamData = data[1]
+
+    if(!res.user || !res.streamData) {
+      const keyName = res.user ? "streamData" : "user"  
+      const data = await qc.ensureQueryData<UIUser | StreamData>(res.user ? streamConfig : userConfig)
+      res = Object.assign(res, { [keyName]: data })
+    }
+    return res;
   };
 
 export default function Dashboard() {
