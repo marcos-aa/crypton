@@ -34,7 +34,7 @@ export const dashLoader =
     const verified = token !== "guest";
     if (verified) saveHeader(token);
 
-    const { queryFn: userFn, queryKey: userKey } = userQuery(token);
+    const { queryFn: userFn, queryKey: userKey } = userQuery(verified);
     const { queryFn: streamFn, queryKey: streamKey } = streamQuery(verified);
 
     try {
@@ -60,7 +60,7 @@ export default function Dashboard() {
   const qc = useQueryClient();
   const { user, streamData } = useLoaderData() as DashLoader;
   const { notif, updateNotif, clearNotif } = useNotification();
-  const logout = useLogout(user.id);
+  const logout = useLogout(user.verified);
 
   const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"]);
 

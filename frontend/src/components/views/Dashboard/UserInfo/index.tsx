@@ -2,15 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
 import { StreamData } from "shared/streamtypes";
 import { UIUser } from "shared/usertypes";
-import { getUser } from "../../../../utils/datafetching";
-import { local } from "../../../../utils/helpers";
+import { getGuestUser, getUser } from "../../../../utils/datafetching";
 import FullDate from "./FullDate";
 import styles from "./styles.module.scss";
 
-export const userQuery = (token: string) => ({
-  queryKey: ["user", token],
+export const userQuery = (verified: boolean) => ({
+  queryKey: ["user"],
   queryFn: async () => {
-    const user = getUser(token);
+    const user = verified ? getUser() : getGuestUser();
     return user;
   },
 });
@@ -21,7 +20,7 @@ interface InfoProps extends Pick<StreamData, "tstreams" | "tsyms" | "usyms"> {
 
 function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
   const { data: user } = useQuery({
-    ...userQuery(localStorage.getItem(local.token)),
+    ...userQuery(initialData.verified),
     initialData,
     refetchOnWindowFocus: false,
     staleTime: 3600000,

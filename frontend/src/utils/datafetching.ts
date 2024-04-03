@@ -8,7 +8,7 @@ export const saveHeader = (token: string) => {
   api.defaults.headers.common.authorization = `Bearer ${token}`;
 };
 
-const guestData = (): UIUser => {
+const getGuestUser = (): UIUser => {
   const joinDate = JSON.parse(localStorage.getItem(local.joined));
 
   const udata: UIUser = {
@@ -22,8 +22,7 @@ const guestData = (): UIUser => {
   return udata;
 };
 
-const getUser = async (token: string): Promise<UIUser> => {
-  if (token === "guest") return guestData();
+const getUser = async (): Promise<UIUser> => {
   const { data } = await api.get<UserData>("/user");
   return data.user;
 };
@@ -63,4 +62,5 @@ const getWindowTicks = async (symbols: string[], window: string) => {
   return data;
 };
 
-export { getGuestStreams, getPairs, getStreams, getUser, getWindowTicks };
+export { getGuestStreams, getGuestUser, getPairs, getStreams, getUser, getWindowTicks };
+

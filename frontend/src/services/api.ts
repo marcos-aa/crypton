@@ -7,11 +7,10 @@ const api = axios.create({
   withCredentials: true,
 });
 
-api;
 
 api.interceptors.response.use(null, async (error: AxiosError) => {
   if (error.response.data !== "TokenExpiredError") return Promise.reject(error);
-
+  
   const { data } = await api.post("/user/token");
   const config = error.config;
   config.headers.authorization = `Bearer ${data.accessToken}`;

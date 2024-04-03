@@ -55,7 +55,7 @@ export default function ValidateUser({ style }: ValidationProps) {
       });
 
       saveHeader(data.accessToken);
-      qc.setQueryData<UIUser>(["user", data.accessToken], () => data.user);
+      qc.setQueryData<UIUser>(["user"], () => data.user);
 
       if (localStorage.getItem(local.expStreams))
         importGStreams(qc, data.user.id);

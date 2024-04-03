@@ -82,16 +82,16 @@ const useUserInput = () => {
   return { input, handleChange };
 };
 
-const useLogout = (token: string) => {
+const useLogout = (verified: boolean) => {
   const qc = useQueryClient();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     delete api.defaults.headers.common.authorization;
-    if (token !== "guest") await api.delete("/session");
+    if (verified) await api.delete("/session");
 
     qc.removeQueries(["streams"]);
-    qc.removeQueries(["user", token]);
+    qc.removeQueries(["user"]);
     localStorage.removeItem(local.token);
 
     navigate("/");
@@ -127,5 +127,6 @@ export {
   useLoadError,
   useLogout,
   useNotification,
-  useUserInput,
+  useUserInput
 };
+

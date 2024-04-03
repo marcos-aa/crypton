@@ -26,8 +26,7 @@ const formMessages: formMessages = {
 
 export default function UpdateCredentials({ type }: CredProps) {
   const { user } = useRouteLoaderData("dash") as DashLoader;
-  const handleLogout = useLogout(user.id);
-
+  const handleLogout = useLogout(user.verified);
   const navigate = useNavigate();
 
   const toValidation = (email: string) => {

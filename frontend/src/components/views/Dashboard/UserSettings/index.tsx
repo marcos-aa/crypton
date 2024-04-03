@@ -31,8 +31,7 @@ export const nameAction =
         name,
       });
 
-      const token = localStorage.getItem(local.token);
-      qc.setQueryData<UIUser>(["user", token], (cached) => {
+      qc.setQueryData<UIUser>(["user"], (cached) => {
         const newuser = { ...cached, name };
         return newuser;
       });
@@ -44,7 +43,8 @@ export const nameAction =
   };
 
 export default function UserSettings() {
-  const { data: user } = useQuery(userQuery(localStorage.getItem(local.token)));
+  const verified = localStorage.getItem(local.token) !== "guest";
+  const { data: user } = useQuery(userQuery(verified));
   const error = useActionData();
 
   return (

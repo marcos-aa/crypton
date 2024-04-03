@@ -8,7 +8,8 @@ import Logo from "../Logo";
 import styles from "./styles.module.scss";
 
 export default function ErrorPage() {
-  const logout = useLogout(localStorage.getItem(local.token));
+  const verified = localStorage.getItem(local.token) !== "guest"
+  const logout = useLogout(verified);
   const error = useRouteError() as AxiosError<ResMessage>;
 
   return (
