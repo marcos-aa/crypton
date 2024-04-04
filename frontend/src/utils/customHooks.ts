@@ -1,66 +1,66 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { ChangeEvent, useCallback, useState } from "react";
-import { useNavigate } from "react-router";
-import { NotifType } from "../components/views/Dashboard/Notification";
-import api from "../services/api";
-import { InputData, local, validateField } from "./helpers";
+import { useQueryClient } from "@tanstack/react-query"
+import { ChangeEvent, useCallback, useState } from "react"
+import { useNavigate } from "react-router"
+import { NotifType } from "../components/views/Dashboard/Notification"
+import api from "../services/api"
+import { InputData, local, validateField } from "./helpers"
 
-type InputValidation = InputData & { path: string };
+type InputValidation = InputData & { path: string }
 
 type Notif = {
-  type: NotifType;
-  message: string;
-  expires?: number;
-};
+  type: NotifType
+  message: string
+  expires?: number
+}
 
 const useNotification = () => {
   const [notif, setNotif] = useState<Notif>({
     type: null,
     message: null,
     expires: null,
-  });
+  })
 
   const clearNotif = () => {
     setNotif((prev) => {
-      clearTimeout(prev.expires);
-      return { type: null, message: null };
-    });
-  };
+      clearTimeout(prev.expires)
+      return { type: null, message: null }
+    })
+  }
 
   const updateNotif = useCallback((message: string, type: NotifType) => {
     const timeoutId = window.setTimeout(() => {
-      clearNotif();
-    }, 2000);
+      clearNotif()
+    }, 2000)
 
-    setNotif({ type, message, expires: timeoutId });
+    setNotif({ type, message, expires: timeoutId })
 
-    return timeoutId;
-  }, []);
+    return timeoutId
+  }, [])
 
-  return { notif, updateNotif, clearNotif };
-};
+  return { notif, updateNotif, clearNotif }
+}
 
 const useCloseModal = (predecessor: string) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const closeModal = () => {
-    navigate(predecessor);
-  };
+    navigate(predecessor)
+  }
 
-  return { closeModal };
-};
+  return { closeModal }
+}
 const useLoadError = () => {
   const [error, setError] = useState({
     message: null,
     loading: false,
-  });
+  })
 
   const isLoading = (loading: boolean, message: string = null) => {
-    setError({ message, loading });
-  };
+    setError({ message, loading })
+  }
 
-  return { error, isLoading };
-};
+  return { error, isLoading }
+}
 
 const useUserInput = () => {
   const [input, setInput] = useState<InputValidation>({
@@ -68,58 +68,58 @@ const useUserInput = () => {
     email: "",
     password: "",
     path: null,
-  });
+  })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setInput((prev) => ({
       ...prev,
       [name]: value.trim(),
       path: name,
-    }));
-  };
+    }))
+  }
 
-  return { input, handleChange };
-};
+  return { input, handleChange }
+}
 
 const useLogout = (verified: boolean) => {
-  const qc = useQueryClient();
-  const navigate = useNavigate();
+  const qc = useQueryClient()
+  const navigate = useNavigate()
 
   const handleLogout = async () => {
-    delete api.defaults.headers.common.authorization;
-    if (verified) await api.delete("/session");
+    delete api.defaults.headers.common.authorization
+    if (verified) await api.delete("/session")
 
-    qc.removeQueries(["streams"]);
-    qc.removeQueries(["user"]);
-    localStorage.removeItem(local.token);
+    qc.removeQueries(["streams"])
+    qc.removeQueries(["user"])
+    localStorage.removeItem(local.token)
 
-    navigate("/");
-  };
+    navigate("/")
+  }
 
-  return handleLogout;
-};
+  return handleLogout
+}
 
 const useInputErrors = () => {
-  const [warnings, setWarnings] = useState<InputData>(null);
+  const [warnings, setWarnings] = useState<InputData>(null)
 
   const updateWarnings = (input: InputValidation) => {
-    let warning: string = null;
+    let warning: string = null
 
     try {
-      validateField(input.path, input);
+      validateField(input.path, input)
     } catch (e) {
-      warning = e as string;
+      warning = e as string
     }
 
     setWarnings((prev) => ({
       ...prev,
       [input.path]: warning,
-    }));
-  };
+    }))
+  }
 
-  return { warnings, updateWarnings };
-};
+  return { warnings, updateWarnings }
+}
 
 export {
   useCloseModal,
@@ -127,6 +127,5 @@ export {
   useLoadError,
   useLogout,
   useNotification,
-  useUserInput
-};
-
+  useUserInput,
+}

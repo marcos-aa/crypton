@@ -1,7 +1,7 @@
-import { NavLink, Outlet } from "react-router-dom";
-import ModalContainer from "../../../ModalContainer";
-import CloseModal from "../../../ModalContainer/CloseModal";
-import styles from "./styles.module.scss";
+import { NavLink, Outlet } from "react-router-dom"
+import ModalContainer from "../../../ModalContainer"
+import CloseModal from "../../../ModalContainer/CloseModal"
+import styles from "./styles.module.scss"
 
 export default function Registration() {
   return (
@@ -32,5 +32,5 @@ export default function Registration() {
         <Outlet />
       </section>
     </ModalContainer>
-  );
+  )
 }

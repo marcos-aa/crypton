@@ -1,15 +1,15 @@
-import { WindowedTicker } from "shared/streamtypes";
-import styles from "./styles.module.scss";
+import { WindowedTicker } from "shared/streamtypes"
+import styles from "./styles.module.scss"
 
 export type Prices = Pick<
   WindowedTicker,
   "change" | "pchange" | "average" | "last"
->;
+>
 
 interface SymbolProps {
-  symbol: string;
-  prices: Prices;
-  decreased?: boolean;
+  symbol: string
+  prices: Prices
+  decreased?: boolean
 }
 
 export default function SymbolTicks({
@@ -29,5 +29,5 @@ export default function SymbolTicks({
       </p>
       <p> Average: {prices?.average}</p>
     </article>
-  );
+  )
 }

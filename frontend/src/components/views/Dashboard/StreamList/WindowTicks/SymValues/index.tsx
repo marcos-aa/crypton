@@ -1,19 +1,19 @@
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQueryClient } from "@tanstack/react-query";
-import { CSSProperties, MouseEvent, memo, useState } from "react";
-import { WindowData, saveWindow } from "..";
-import { local } from "../../../../../../utils/helpers";
-import FullDate from "../../../UserInfo/FullDate";
-import styles from "../styles.module.scss";
-import WindowOptions from "./WindowOptions";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useQueryClient } from "@tanstack/react-query"
+import { CSSProperties, MouseEvent, memo, useState } from "react"
+import { WindowData, saveWindow } from ".."
+import { local } from "../../../../../../utils/helpers"
+import FullDate from "../../../UserInfo/FullDate"
+import styles from "../styles.module.scss"
+import WindowOptions from "./WindowOptions"
 export interface ValueProps {
-  symbols: string[];
-  initialData: WindowData;
-  expanded: string;
-  interval: string;
-  expandSymbol(e: MouseEvent<HTMLHeadingElement>): void;
-  changeInterval(newitv: string): void;
+  symbols: string[]
+  initialData: WindowData
+  expanded: string
+  interval: string
+  expandSymbol(e: MouseEvent<HTMLHeadingElement>): void
+  changeInterval(newitv: string): void
 }
 
 function SymValues({
@@ -24,31 +24,31 @@ function SymValues({
   expandSymbol,
   changeInterval,
 }: ValueProps) {
-  const qc = useQueryClient();
-  const [tickers, setTickers] = useState<WindowData>(initialData);
-  const [edit, setEdit] = useState(false);
+  const qc = useQueryClient()
+  const [tickers, setTickers] = useState<WindowData>(initialData)
+  const [edit, setEdit] = useState(false)
 
-  const showWindowOptions = () => setEdit((prev) => !prev);
+  const showWindowOptions = () => setEdit((prev) => !prev)
 
   const updateWindow = async (newitv: string) => {
-    setEdit(false);
-    const data = await saveWindow(qc, symbols, newitv);
-    localStorage.setItem(local.window, newitv);
-    changeInterval(newitv);
-    setTickers((prev) => ({ "1s": prev["1s"], [newitv]: data[newitv] }));
-  };
+    setEdit(false)
+    const data = await saveWindow(qc, symbols, newitv)
+    localStorage.setItem(local.window, newitv)
+    changeInterval(newitv)
+    setTickers((prev) => ({ "1s": prev["1s"], [newitv]: data[newitv] }))
+  }
   return (
     <>
       {symbols.map((symbol, i) => {
-        const data = tickers["1s"] ? tickers : initialData;
-        const value = data["1s"][symbol];
-        const valDecrease = value.change[0] === "-";
-        const comparedValue = data[interval][symbol];
-        const comparedDecrease = comparedValue.change[0] === "-";
+        const data = tickers["1s"] ? tickers : initialData
+        const value = data["1s"][symbol]
+        const valDecrease = value.change[0] === "-"
+        const comparedValue = data[interval][symbol]
+        const comparedDecrease = comparedValue.change[0] === "-"
 
         const rowIndex = {
           "--elindex": i,
-        } as CSSProperties;
+        } as CSSProperties
 
         return (
           <div
@@ -118,7 +118,7 @@ function SymValues({
               </div>
             </div>
           </div>
-        );
+        )
       })}
       <button
         type="button"
@@ -144,7 +144,7 @@ function SymValues({
       </button>
       {edit && <WindowOptions updateWindow={updateWindow} />}
     </>
-  );
+  )
 }
 
-export default memo(SymValues);
+export default memo(SymValues)

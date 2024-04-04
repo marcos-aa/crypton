@@ -1,46 +1,46 @@
-import { ChangeEvent, MouseEvent, useState } from "react";
-import styles from "./styles.module.scss";
+import { ChangeEvent, MouseEvent, useState } from "react"
+import styles from "./styles.module.scss"
 
 interface TimeProps {
-  updateWindow(interval: string): void;
+  updateWindow(interval: string): void
 }
 
 const maxUnits = {
   m: 59,
   h: 23,
   d: 7,
-} as const;
+} as const
 
 export default function WindowOptions({ updateWindow }: TimeProps) {
-  const [cwindow, setCwindow] = useState({ value: "1", unit: "m" });
+  const [cwindow, setCwindow] = useState({ value: "1", unit: "m" })
 
   const changeTime = (e: ChangeEvent<HTMLInputElement>) => {
-    const newtime = e.currentTarget.value;
+    const newtime = e.currentTarget.value
     let value = newtime,
-      unit = cwindow.unit;
+      unit = cwindow.unit
 
     if (newtime > maxUnits[cwindow.unit]) {
-      value = "1";
-      unit = unit === "m" ? "h" : "d";
+      value = "1"
+      unit = unit === "m" ? "h" : "d"
     }
 
-    setCwindow({ value, unit });
-  };
+    setCwindow({ value, unit })
+  }
 
   const changeOption = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newUnit = e.currentTarget.value;
+    const newUnit = e.currentTarget.value
     setCwindow({
       value: "1",
       unit: newUnit,
-    });
-  };
+    })
+  }
 
   const addFromEvent = (e: MouseEvent<HTMLLIElement | HTMLButtonElement>) => {
     const interval = e.currentTarget.type
       ? cwindow.value.concat(cwindow.unit)
-      : e.currentTarget.innerHTML;
-    updateWindow(interval);
-  };
+      : e.currentTarget.innerHTML
+    updateWindow(interval)
+  }
 
   return (
     <div id={styles.timeWindow}>
@@ -94,5 +94,5 @@ export default function WindowOptions({ updateWindow }: TimeProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }

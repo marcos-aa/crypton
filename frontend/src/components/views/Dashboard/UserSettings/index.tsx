@@ -1,51 +1,51 @@
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import { Outlet, redirect, useActionData } from "react-router";
-import type { ActionFunctionArgs } from "react-router-dom";
-import { Form, Link } from "react-router-dom";
-import { UIUser } from "shared/usertypes";
-import api from "../../../../services/api";
-import { local, messages, validateField } from "../../../../utils/helpers";
-import InputWarning from "../../../AuthForm/InputField/InputWarning";
-import ModalContainer from "../../../ModalContainer";
-import CloseModal from "../../../ModalContainer/CloseModal";
-import ActionAnimation from "../StreamList/ActionAnimation";
-import SubmitAction from "../SubmitAction";
-import { userQuery } from "../UserInfo";
-import styles from "./styles.module.scss";
+import { QueryClient, useQuery } from "@tanstack/react-query"
+import { Outlet, redirect, useActionData } from "react-router"
+import type { ActionFunctionArgs } from "react-router-dom"
+import { Form, Link } from "react-router-dom"
+import { UIUser } from "shared/usertypes"
+import api from "../../../../services/api"
+import { local, messages, validateField } from "../../../../utils/helpers"
+import InputWarning from "../../../AuthForm/InputField/InputWarning"
+import ModalContainer from "../../../ModalContainer"
+import CloseModal from "../../../ModalContainer/CloseModal"
+import ActionAnimation from "../StreamList/ActionAnimation"
+import SubmitAction from "../SubmitAction"
+import { userQuery } from "../UserInfo"
+import styles from "./styles.module.scss"
 
 export interface UserParams extends ActionFunctionArgs {
   params: {
-    id: string;
-  };
+    id: string
+  }
 }
 
 export const nameAction =
   (qc: QueryClient) =>
   async ({ request }: UserParams) => {
-    const formData = await request.formData();
-    const name = (formData.get("name") as string).trim();
+    const formData = await request.formData()
+    const name = (formData.get("name") as string).trim()
 
     try {
-      validateField("name", { name });
+      validateField("name", { name })
       await api.put("/user/name", {
         name,
-      });
+      })
 
       qc.setQueryData<UIUser>(["user"], (cached) => {
-        const newuser = { ...cached, name };
-        return newuser;
-      });
+        const newuser = { ...cached, name }
+        return newuser
+      })
     } catch (e) {
-      return e;
+      return e
     }
 
-    return redirect("/dashboard/settings");
-  };
+    return redirect("/dashboard/settings")
+  }
 
 export default function UserSettings() {
-  const verified = localStorage.getItem(local.token) !== "guest";
-  const { data: user } = useQuery(userQuery(verified));
-  const error = useActionData();
+  const verified = localStorage.getItem(local.token) !== "guest"
+  const { data: user } = useQuery(userQuery(verified))
+  const error = useActionData()
 
   return (
     <ModalContainer predecessor="/dashboard">
@@ -114,5 +114,5 @@ export default function UserSettings() {
         </div>
       </section>
     </ModalContainer>
-  );
+  )
 }

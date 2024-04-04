@@ -1,8 +1,8 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react"
 
 interface SubmitProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  value?: string;
-  children: ReactNode;
+  value?: string
+  children: ReactNode
 }
 
 export default function SubmitAction(props: SubmitProps) {
@@ -10,5 +10,5 @@ export default function SubmitAction(props: SubmitProps) {
     <button {...props} className="action" type="submit">
       {props.children}
     </button>
-  );
+  )
 }

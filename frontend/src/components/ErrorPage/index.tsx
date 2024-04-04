@@ -1,16 +1,16 @@
-import { AxiosError } from "axios";
-import { useRouteError } from "react-router";
-import { Link } from "react-router-dom";
-import { ResMessage } from "shared";
-import { useLogout } from "../../utils/customHooks";
-import { local } from "../../utils/helpers";
-import Logo from "../Logo";
-import styles from "./styles.module.scss";
+import { AxiosError } from "axios"
+import { useRouteError } from "react-router"
+import { Link } from "react-router-dom"
+import { ResMessage } from "shared"
+import { useLogout } from "../../utils/customHooks"
+import { local } from "../../utils/helpers"
+import Logo from "../Logo"
+import styles from "./styles.module.scss"
 
 export default function ErrorPage() {
   const verified = localStorage.getItem(local.token) !== "guest"
-  const logout = useLogout(verified);
-  const error = useRouteError() as AxiosError<ResMessage>;
+  const logout = useLogout(verified)
+  const error = useRouteError() as AxiosError<ResMessage>
 
   return (
     <div className="page">
@@ -31,5 +31,5 @@ export default function ErrorPage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

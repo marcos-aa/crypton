@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode } from "react"
 
 interface ActionProps {
-  children?: ReactNode;
-  action: string;
-  invalid: boolean;
+  children?: ReactNode
+  action: string
+  invalid: boolean
 }
 
 export default function AuthButtons({
@@ -19,5 +19,5 @@ export default function AuthButtons({
       </button>
       {!children?.[0] ? children : children?.[1]}
     </div>
-  );
+  )
 }

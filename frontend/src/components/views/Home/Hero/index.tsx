@@ -1,6 +1,6 @@
-import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from "./styles.module.scss";
+import { faCoins } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import styles from "./styles.module.scss"
 
 export default function Hero() {
   return (
@@ -16,5 +16,5 @@ export default function Hero() {
         </ul>
       </div>
     </div>
-  );
+  )
 }

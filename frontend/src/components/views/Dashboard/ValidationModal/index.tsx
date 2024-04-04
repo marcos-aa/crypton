@@ -1,8 +1,8 @@
-import ModalContainer from "../../../ModalContainer";
-import ValidateUser from "../../../ValidateUser";
+import ModalContainer from "../../../ModalContainer"
+import ValidateUser from "../../../ValidateUser"
 
 interface ValidModal {
-  origin: string;
+  origin: string
 }
 
 export default function ValidationModal({ origin }: ValidModal) {
@@ -10,5 +10,5 @@ export default function ValidationModal({ origin }: ValidModal) {
     <ModalContainer id="innerModal" predecessor={origin}>
       <ValidateUser />
     </ModalContainer>
-  );
+  )
 }

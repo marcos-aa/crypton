@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom"
 
 const currencies = [
   "1INCHBTC",
@@ -25,6 +25,6 @@ const currencies = [
   "ACMBUSD",
   "ACMUSDT",
   "ADAAUD",
-];
+]
 
-export { currencies };
+export { currencies }

@@ -1,10 +1,10 @@
-import { SyntheticEvent } from "react";
-import styles from "./styles.module.scss";
+import { SyntheticEvent } from "react"
+import styles from "./styles.module.scss"
 
 interface ToggleProps {
-  label: string;
-  handleChange?(e: SyntheticEvent): void;
-  checked?: boolean;
+  label: string
+  handleChange?(e: SyntheticEvent): void
+  checked?: boolean
 }
 
 export default function CheckboxField({
@@ -22,5 +22,5 @@ export default function CheckboxField({
       />
       <span>{label}</span>
     </label>
-  );
+  )
 }

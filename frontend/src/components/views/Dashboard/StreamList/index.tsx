@@ -3,82 +3,82 @@ import {
   faPencil,
   faTrash,
   faUpRightAndDownLeftFromCenter,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { memo, useEffect, useState } from "react";
-import { Outlet } from "react-router";
+} from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { memo, useEffect, useState } from "react"
+import { Outlet } from "react-router"
 import {
   Link,
   createSearchParams,
   useFetcher,
   useLocation,
-} from "react-router-dom";
-import useWebSocket from "react-use-websocket";
-import { StreamData, Tickers } from "shared/streamtypes";
-import { getGuestStreams, getStreams } from "../../../../utils/datafetching";
-import { formatSymbols, local, queryTicks } from "../../../../utils/helpers";
-import { NotifType } from "../Notification";
-import SymbolTicks from "./SymbolTicks";
-import styles from "./styles.module.scss";
+} from "react-router-dom"
+import useWebSocket from "react-use-websocket"
+import { StreamData, Tickers } from "shared/streamtypes"
+import { getGuestStreams, getStreams } from "../../../../utils/datafetching"
+import { formatSymbols, local, queryTicks } from "../../../../utils/helpers"
+import { NotifType } from "../Notification"
+import SymbolTicks from "./SymbolTicks"
+import styles from "./styles.module.scss"
 
 export const streamQuery = (verified: boolean) => ({
   queryKey: ["streams"],
   queryFn: async () => {
-    const streamData = verified ? getStreams() : getGuestStreams();
-    return streamData;
+    const streamData = verified ? getStreams() : getGuestStreams()
+    return streamData
   },
-});
+})
 
 export const generateURL = (symbols: string[]) => {
-  const symurl = symbols.join("@ticker/").toLowerCase();
-  return "wss:stream.binance.com:9443/ws/" + symurl + "@ticker";
-};
+  const symurl = symbols.join("@ticker/").toLowerCase()
+  return "wss:stream.binance.com:9443/ws/" + symurl + "@ticker"
+}
 
 const tformatter = Intl.NumberFormat("en-us", {
   style: "decimal",
   maximumFractionDigits: 2,
-});
+})
 
 interface StreamsProps {
-  initialData: StreamData;
-  verified: boolean;
-  notify(message: string, type: NotifType): void;
+  initialData: StreamData
+  verified: boolean
+  notify(message: string, type: NotifType): void
 }
 
 interface WSTIcker {
-  s: string;
-  p: string;
-  w: string;
-  P: string;
-  c: string;
-  q: string;
-  v: string;
-  n: number;
-  O: number;
-  C: number;
-  result?: string;
+  s: string
+  p: string
+  w: string
+  P: string
+  c: string
+  q: string
+  v: string
+  n: number
+  O: number
+  C: number
+  result?: string
 }
 
 function StreamList({ initialData, verified, notify }: StreamsProps) {
-  const qc = useQueryClient();
-  const fetcher = useFetcher();
+  const qc = useQueryClient()
+  const fetcher = useFetcher()
   const { data } = useQuery({
     ...streamQuery(verified),
     initialData,
     refetchOnWindowFocus: false,
     staleTime: 3600000,
-  });
-  const [, setTemp] = useState<Tickers>({});
-  const { pathname } = useLocation();
+  })
+  const [, setTemp] = useState<Tickers>({})
+  const { pathname } = useLocation()
 
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symtracker)),
     {
       onMessage: (item) => {
-        const interval = localStorage.getItem(local.window);
-        const ticker: WSTIcker = JSON.parse(item.data);
-        if (ticker.result === null) return;
+        const interval = localStorage.getItem(local.window)
+        const ticker: WSTIcker = JSON.parse(item.data)
+        if (ticker.result === null) return
 
         setTemp((prev) => {
           const newticker = {
@@ -91,83 +91,83 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
             trades: ticker.n,
             close: ticker.C,
             open: ticker.O,
-          };
+          }
 
-          const windowTicker = data.tickers[ticker.s]?.[interval];
-          if (windowTicker) newticker[interval] = windowTicker;
+          const windowTicker = data.tickers[ticker.s]?.[interval]
+          if (windowTicker) newticker[interval] = windowTicker
 
           return {
             ...prev,
             [ticker.s]: newticker,
-          };
-        });
+          }
+        })
       },
-    },
-  );
+    }
+  )
 
   const subscribeTickers = (
     ticks: string[],
-    method: "SUBSCRIBE" | "UNSUBSCRIBE",
+    method: "SUBSCRIBE" | "UNSUBSCRIBE"
   ) => {
-    sendMessage(JSON.stringify({ method, params: ticks, id: 1 }));
-  };
+    sendMessage(JSON.stringify({ method, params: ticks, id: 1 }))
+  }
 
   const syncTickers = () => {
     setTemp((prev) => {
-      const store = formatSymbols(prev, tformatter);
+      const store = formatSymbols(prev, tformatter)
       qc.setQueryData<StreamData>(["streams"], (cached) => {
-        const tickers = { ...cached.tickers, ...store };
+        const tickers = { ...cached.tickers, ...store }
 
         return {
           ...cached,
           tickers,
-        };
-      });
+        }
+      })
 
-      return {};
-    });
-  };
+      return {}
+    })
+  }
 
   useEffect(() => {
-    let intervalId;
+    let intervalId
     if (pathname == "/dashboard" && data.usyms > 0) {
-      intervalId = setInterval(syncTickers, 1000);
+      intervalId = setInterval(syncTickers, 1000)
     }
 
-    syncTickers();
+    syncTickers()
     return () => {
-      clearInterval(intervalId);
-    };
-  }, [pathname, data.usyms]);
+      clearInterval(intervalId)
+    }
+  }, [pathname, data.usyms])
 
   useEffect(() => {
-    const qparams = createSearchParams(window.location.search);
+    const qparams = createSearchParams(window.location.search)
     const [newticks, delticks] = [
       JSON.parse(qparams.get("newsyms")),
       JSON.parse(qparams.get("delsyms")),
-    ];
+    ]
 
     if (newticks?.length > 0) {
-      qparams.delete("newsyms");
-      subscribeTickers(newticks, "SUBSCRIBE");
+      qparams.delete("newsyms")
+      subscribeTickers(newticks, "SUBSCRIBE")
     }
 
     if (delticks?.length > 0) {
-      qparams.delete("delsyms");
-      subscribeTickers(delticks, "UNSUBSCRIBE");
+      qparams.delete("delsyms")
+      subscribeTickers(delticks, "UNSUBSCRIBE")
     }
 
     if (localStorage.getItem(local.expStreams)) {
-      notify("Your streams failed to be exported. Please try again", "error");
-      localStorage.removeItem(local.expStreams);
+      notify("Your streams failed to be exported. Please try again", "error")
+      localStorage.removeItem(local.expStreams)
     }
 
-    const strparams = qparams.size > 0 ? "?" + qparams.toString() : "";
+    const strparams = qparams.size > 0 ? "?" + qparams.toString() : ""
     const cleanURL = new URL(
-      window.location.origin + window.location.pathname + strparams,
-    );
-    history.replaceState(history.state, "", cleanURL);
-  }, [data.streams]);
+      window.location.origin + window.location.pathname + strparams
+    )
+    history.replaceState(history.state, "", cleanURL)
+  }, [data.streams])
 
   return (
     <main id={styles.streamPanel}>
@@ -190,7 +190,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
         return (
           <div className={styles.streamList} key={stream.id}>
             {stream.symbols.map((symbol) => {
-              const sym = data.tickers[symbol];
+              const sym = data.tickers[symbol]
               return (
                 <SymbolTicks
                   key={symbol}
@@ -203,7 +203,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
                     pchange: sym.pchange,
                   }}
                 />
-              );
+              )
             })}
 
             <div className={styles.streamButtons}>
@@ -258,10 +258,10 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
               )}
             </div>
           </div>
-        );
+        )
       })}
     </main>
-  );
+  )
 }
 
-export default memo(StreamList);
+export default memo(StreamList)

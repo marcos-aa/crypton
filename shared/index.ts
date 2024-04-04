@@ -1,4 +1,4 @@
 export interface ResMessage {
-  message: string;
-  status: number;
+  message: string
+  status: number
 }

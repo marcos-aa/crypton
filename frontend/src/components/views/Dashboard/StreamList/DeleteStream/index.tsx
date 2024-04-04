@@ -1,43 +1,43 @@
-import { QueryClient } from "@tanstack/react-query";
-import { Form as RouterForm, redirect, useLocation } from "react-router-dom";
+import { QueryClient } from "@tanstack/react-query"
+import { Form as RouterForm, redirect, useLocation } from "react-router-dom"
 
-import { Stream, StreamData, SymTracker } from "shared/streamtypes";
-import api from "../../../../../services/api";
+import { Stream, StreamData, SymTracker } from "shared/streamtypes"
+import api from "../../../../../services/api"
 import {
   delTicks,
   filterStreams,
   genTickUrl,
   local,
   queryTicks,
-} from "../../../../../utils/helpers";
-import CheckboxField from "../../../../AuthForm/CheckboxField";
-import ModalContainer from "../../../../ModalContainer";
-import CancellableAction from "../../CancellableAction";
-import SubmitAction from "../../SubmitAction";
-import { UserParams } from "../../UserSettings";
-import styles from "./styles.module.scss";
+} from "../../../../../utils/helpers"
+import CheckboxField from "../../../../AuthForm/CheckboxField"
+import ModalContainer from "../../../../ModalContainer"
+import CancellableAction from "../../CancellableAction"
+import SubmitAction from "../../SubmitAction"
+import { UserParams } from "../../UserSettings"
+import styles from "./styles.module.scss"
 
 export const deleteStream =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
-    const formData = await request.formData();
-    const noPrompt = formData.get("prompt") as string;
+    const formData = await request.formData()
+    const noPrompt = formData.get("prompt") as string
 
-    if (noPrompt) localStorage.setItem(local.delPrompt, "false");
-    let delstream: Stream;
-    let delticks: string[];
+    if (noPrompt) localStorage.setItem(local.delPrompt, "false")
+    let delstream: Stream
+    let delticks: string[]
 
     const { streams } = qc.setQueryData<StreamData>(
       ["streams"],
       (cached): StreamData => {
-        const symtracker: SymTracker = { ...cached.symtracker };
-        const { streams, oldstream } = filterStreams(params.id, cached.streams);
-        delstream = oldstream;
-        delticks = delTicks(oldstream?.symbols, symtracker);
+        const symtracker: SymTracker = { ...cached.symtracker }
+        const { streams, oldstream } = filterStreams(params.id, cached.streams)
+        delstream = oldstream
+        delticks = delTicks(oldstream?.symbols, symtracker)
 
-        const tstreams = cached.tstreams - 1;
-        const tsyms = cached.tsyms - oldstream.symbols.length;
-        const usyms = cached.usyms - delticks.length;
+        const tstreams = cached.tstreams - 1
+        const tsyms = cached.tsyms - oldstream.symbols.length
+        const usyms = cached.usyms - delticks.length
 
         return {
           streams,
@@ -46,16 +46,16 @@ export const deleteStream =
           tstreams,
           tsyms,
           usyms,
-        };
-      },
-    );
+        }
+      }
+    )
 
-    const isGuest = localStorage.getItem(local.token) === "guest";
-    const delparams = queryTicks(delticks, "?delsyms");
+    const isGuest = localStorage.getItem(local.token) === "guest"
+    const delparams = queryTicks(delticks, "?delsyms")
 
     if (isGuest) {
-      localStorage.setItem(local.streams, JSON.stringify(streams));
-      return redirect(`/dashboard` + delparams);
+      localStorage.setItem(local.streams, JSON.stringify(streams))
+      return redirect(`/dashboard` + delparams)
     }
 
     api
@@ -65,19 +65,19 @@ export const deleteStream =
         },
       })
       .catch(() => {
-        genTickUrl(delticks, "newsyms");
+        genTickUrl(delticks, "newsyms")
         qc.setQueryData<StreamData>(["streams"], (curr) => {
-          const streams = [...curr.streams];
-          streams.unshift(delstream);
-          return { ...curr, streams };
-        });
-      });
+          const streams = [...curr.streams]
+          streams.unshift(delstream)
+          return { ...curr, streams }
+        })
+      })
 
-    return redirect(`/dashboard` + delparams);
-  };
+    return redirect(`/dashboard` + delparams)
+  }
 
 export default function DeleteStream() {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
   return (
     <ModalContainer predecessor="/dashboard">
@@ -90,5 +90,5 @@ export default function DeleteStream() {
         </CancellableAction>
       </RouterForm>
     </ModalContainer>
-  );
+  )
 }

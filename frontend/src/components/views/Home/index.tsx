@@ -1,31 +1,31 @@
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router";
-import { Link } from "react-router-dom";
-import { Tickers } from "shared/streamtypes";
-import api from "../../../services/api";
-import { local } from "../../../utils/helpers";
-import Logo from "../../Logo";
-import SymbolTicks from "../Dashboard/StreamList/SymbolTicks";
-import streamStyles from "../Dashboard/StreamList/styles.module.scss";
-import styles from "./styles.module.scss";
+import { useEffect, useState } from "react"
+import { Outlet, useNavigate } from "react-router"
+import { Link } from "react-router-dom"
+import { Tickers } from "shared/streamtypes"
+import api from "../../../services/api"
+import { local } from "../../../utils/helpers"
+import Logo from "../../Logo"
+import SymbolTicks from "../Dashboard/StreamList/SymbolTicks"
+import streamStyles from "../Dashboard/StreamList/styles.module.scss"
+import styles from "./styles.module.scss"
 
 export default function Home() {
-  const [tickers, setTickers] = useState<Tickers>({});
-  const navigate = useNavigate();
+  const [tickers, setTickers] = useState<Tickers>({})
+  const navigate = useNavigate()
 
   const handleGuest = () => {
-    localStorage.setItem(local.token, "guest");
-    const prevJoin = localStorage.getItem(local.joined);
+    localStorage.setItem(local.token, "guest")
+    const prevJoin = localStorage.getItem(local.joined)
     if (!prevJoin)
-      localStorage.setItem(local.joined, JSON.stringify(new Date()));
-    navigate("/dashboard");
-  };
+      localStorage.setItem(local.joined, JSON.stringify(new Date()))
+    navigate("/dashboard")
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem(local.token);
-    if (token) return navigate("/dashboard");
+    const token = localStorage.getItem(local.token)
+    if (token) return navigate("/dashboard")
 
-    const controller = new AbortController();
+    const controller = new AbortController()
     api
       .get<Tickers>("/tickers", {
         signal: controller.signal,
@@ -43,11 +43,11 @@ export default function Home() {
         },
       })
       .then((res) => {
-        setTickers(res.data);
-      });
+        setTickers(res.data)
+      })
 
-    return () => controller.abort();
-  }, []);
+    return () => controller.abort()
+  }, [])
 
   return (
     <section className="page">
@@ -89,5 +89,5 @@ export default function Home() {
       </main>
       <Outlet />
     </section>
-  );
+  )
 }

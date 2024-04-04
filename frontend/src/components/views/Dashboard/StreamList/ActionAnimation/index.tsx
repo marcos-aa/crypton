@@ -1,15 +1,15 @@
-import { ReactNode } from "react";
-import { useNavigation } from "react-router";
-import Loading from "../../../../Loading";
+import { ReactNode } from "react"
+import { useNavigation } from "react-router"
+import Loading from "../../../../Loading"
 
 interface LoadingProps {
-  children: ReactNode;
-  small?: boolean;
-  actpath: string;
+  children: ReactNode
+  small?: boolean
+  actpath: string
 }
 
 export default function ActionAnimation({ children, actpath }: LoadingProps) {
-  const { state, location } = useNavigation();
+  const { state, location } = useNavigation()
   return (
     <>
       {state !== "idle" && location.pathname === actpath ? (
@@ -18,5 +18,5 @@ export default function ActionAnimation({ children, actpath }: LoadingProps) {
         children
       )}
     </>
-  );
+  )
 }

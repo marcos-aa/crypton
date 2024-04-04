@@ -1,26 +1,26 @@
-import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
+import { ReactNode, SyntheticEvent, useEffect, useState } from "react"
 import {
   useInputErrors,
   useLoadError,
   useUserInput,
-} from "../../utils/customHooks";
+} from "../../utils/customHooks"
 
-import { ResMessage } from "shared";
-import { InputData } from "../../utils/helpers";
-import LoadingError from "../LoadingError";
-import AuthButtons from "./AuthButtons";
-import CheckboxField from "./CheckboxField";
-import InputField from "./InputField";
-import styles from "./styles.module.scss";
+import { ResMessage } from "shared"
+import { InputData } from "../../utils/helpers"
+import LoadingError from "../LoadingError"
+import AuthButtons from "./AuthButtons"
+import CheckboxField from "./CheckboxField"
+import InputField from "./InputField"
+import styles from "./styles.module.scss"
 
 interface FormProps {
-  action: string;
-  submit(input: InputData): Promise<ResMessage | void>;
-  children?: ReactNode;
-  exfields?: string[];
+  action: string
+  submit(input: InputData): Promise<ResMessage | void>
+  children?: ReactNode
+  exfields?: string[]
 }
 
-type PassTypes = "text" | "password";
+type PassTypes = "text" | "password"
 
 export default function AuthForm({
   children,
@@ -28,37 +28,37 @@ export default function AuthForm({
   action,
   submit,
 }: FormProps) {
-  const { input, handleChange } = useUserInput();
-  const { warnings, updateWarnings } = useInputErrors();
-  const { error, isLoading } = useLoadError();
-  const [reveal, setReveal] = useState<PassTypes>("password");
+  const { input, handleChange } = useUserInput()
+  const { warnings, updateWarnings } = useInputErrors()
+  const { error, isLoading } = useLoadError()
+  const [reveal, setReveal] = useState<PassTypes>("password")
 
   const togglePass = () => {
-    setReveal((prev) => (prev === "text" ? "password" : "text"));
-  };
+    setReveal((prev) => (prev === "text" ? "password" : "text"))
+  }
 
   const handleSubmit = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    isLoading(true);
+    e.preventDefault()
+    isLoading(true)
 
     try {
-      await submit(input);
+      await submit(input)
     } catch (e) {
-      const message: string = e.response?.data?.message || e.message;
-      isLoading(false, message);
+      const message: string = e.response?.data?.message || e.message
+      isLoading(false, message)
     }
-  };
+  }
 
   useEffect(() => {
-    if (!input.path) return;
+    if (!input.path) return
     const timeoutID = setTimeout(() => {
-      updateWarnings(input);
-    }, 500);
+      updateWarnings(input)
+    }, 500)
 
     return () => {
-      clearTimeout(timeoutID);
-    };
-  }, [input]);
+      clearTimeout(timeoutID)
+    }
+  }, [input])
 
   return (
     <form onSubmit={handleSubmit} id={styles.authForm}>
@@ -74,7 +74,7 @@ export default function AuthForm({
             required
             warning={warnings?.[field]}
           />
-        );
+        )
       })}
 
       <InputField
@@ -92,12 +92,12 @@ export default function AuthForm({
 
       <AuthButtons
         invalid={Boolean(
-          warnings?.email || warnings?.password || warnings?.name,
+          warnings?.email || warnings?.password || warnings?.name
         )}
         action={action}
       >
         {children}
       </AuthButtons>
     </form>
-  );
+  )
 }

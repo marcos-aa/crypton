@@ -1,7 +1,7 @@
-import styles from "./styles.module.scss";
+import styles from "./styles.module.scss"
 
 interface LogoProps {
-  isError?: boolean;
+  isError?: boolean
 }
 
 export default function Logo({ isError }: LogoProps) {
@@ -10,5 +10,5 @@ export default function Logo({ isError }: LogoProps) {
       Crypt<span id={styles.cryptoSign}>₿</span>
       <span>n</span>
     </h1>
-  );
+  )
 }

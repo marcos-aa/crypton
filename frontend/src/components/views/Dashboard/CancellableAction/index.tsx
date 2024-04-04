@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import styles from "./styles.module.scss";
+import { ReactNode } from "react"
+import { Link } from "react-router-dom"
+import styles from "./styles.module.scss"
 
 interface CancelProps {
-  children: ReactNode;
+  children: ReactNode
 }
 export default function CancellableAction({ children }: CancelProps) {
   return (
@@ -14,5 +14,5 @@ export default function CancellableAction({ children }: CancelProps) {
 
       {children}
     </div>
-  );
+  )
 }

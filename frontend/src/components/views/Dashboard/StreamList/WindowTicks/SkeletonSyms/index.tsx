@@ -1,4 +1,4 @@
-import styles from "../styles.module.scss";
+import styles from "../styles.module.scss"
 
 export default function SkeletonSyms({ symbols }: { symbols: string[] }) {
   return symbols.map((symbol) => {
@@ -8,6 +8,6 @@ export default function SkeletonSyms({ symbols }: { symbols: string[] }) {
         <div className={`${styles.symValues} ${styles.skeleton}`}></div>
         <div className={`${styles.symValues} ${styles.skeleton}`}></div>
       </div>
-    );
-  });
+    )
+  })
 }

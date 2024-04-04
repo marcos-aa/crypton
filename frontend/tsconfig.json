@@ -8,12 +8,12 @@
     "allowJs": false,
     "moduleResolution": "node",
     "outDir": "./build/",
-    "rootDir": "./",
+    "rootDir": "./"
   },
   "include": [
     "src",
     "__tests__",
     "__mocks__",
-    "__tests__/Dashboard/SymbolList.spec.tsx",
-  ],
+    "__tests__/Dashboard/SymbolList.spec.tsx"
+  ]
 }

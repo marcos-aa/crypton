@@ -4,81 +4,83 @@ import {
   faSignOut,
   faUpload,
   faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { Link, redirect, useLoaderData } from "react-router-dom";
-import { StreamData } from "shared/streamtypes";
-import { UIUser } from "shared/usertypes";
-import { useLogout, useNotification } from "../../../utils/customHooks";
-import { saveHeader } from "../../../utils/datafetching";
-import { importGStreams, local } from "../../../utils/helpers";
-import Logo from "../../Logo";
-import Notification from "./Notification";
-import StreamList, { streamQuery } from "./StreamList";
-import UserInfo, { userQuery } from "./UserInfo";
-import styles from "./styles.module.scss";
+} from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { Link, redirect, useLoaderData } from "react-router-dom"
+import { StreamData } from "shared/streamtypes"
+import { UIUser } from "shared/usertypes"
+import { useLogout, useNotification } from "../../../utils/customHooks"
+import { saveHeader } from "../../../utils/datafetching"
+import { importGStreams, local } from "../../../utils/helpers"
+import Logo from "../../Logo"
+import Notification from "./Notification"
+import StreamList, { streamQuery } from "./StreamList"
+import UserInfo, { userQuery } from "./UserInfo"
+import styles from "./styles.module.scss"
 
 export interface DashLoader {
-  streamData: StreamData;
-  user: UIUser;
+  streamData: StreamData
+  user: UIUser
 }
 
 export const dashLoader =
   (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
-    const token = localStorage.getItem(local.token);
-    if (!token) return redirect("/home/register/signin");
+    const token = localStorage.getItem(local.token)
+    if (!token) return redirect("/home/register/signin")
 
-    const verified = token !== "guest";
-    if (verified) saveHeader(token);
+    const verified = token !== "guest"
+    if (verified) saveHeader(token)
 
-    const userConfig = userQuery(verified);
-    const streamConfig = streamQuery(verified);
-  
+    const userConfig = userQuery(verified)
+    const streamConfig = streamQuery(verified)
+
     let res: DashLoader = {
       user: null,
-      streamData: null
+      streamData: null,
     }
 
     const data = await Promise.all([
-     qc.ensureQueryData(userConfig),
-     qc.ensureQueryData(streamConfig),
-    ]);
+      qc.ensureQueryData(userConfig),
+      qc.ensureQueryData(streamConfig),
+    ])
 
-    res.user = data[0];
+    res.user = data[0]
     res.streamData = data[1]
 
-    if(!res.user || !res.streamData) {
-      const keyName = res.user ? "streamData" : "user"  
-      const data = await qc.ensureQueryData<UIUser | StreamData>(res.user ? streamConfig : userConfig)
+    if (!res.user || !res.streamData) {
+      const keyName = res.user ? "streamData" : "user"
+      const data = await qc.ensureQueryData<UIUser | StreamData>(
+        res.user ? streamConfig : userConfig
+      )
       res = Object.assign(res, { [keyName]: data })
     }
-    return res;
-  };
+    return res
+  }
 
 export default function Dashboard() {
-  const qc = useQueryClient();
-  const { user, streamData } = useLoaderData() as DashLoader;
-  const { notif, updateNotif, clearNotif } = useNotification();
-  const logout = useLogout(user.verified);
+  const qc = useQueryClient()
+  const { user, streamData } = useLoaderData() as DashLoader
+  const { notif, updateNotif, clearNotif } = useNotification()
+  const logout = useLogout(user.verified)
 
-  const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"]);
+  const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"])
 
   const handleLogout = async () => {
-    clearNotif();
-    await logout();
-  };
+    clearNotif()
+    await logout()
+  }
 
   const handleImport = () => {
     if (!localStorage.getItem(local.streams))
-      return updateNotif("No guest streams found", "loading");
+      return updateNotif("No guest streams found", "loading")
 
-    updateNotif("Your streams are being uploaded to the server", "loading");
+    updateNotif("Your streams are being uploaded to the server", "loading")
 
     importGStreams(qc, user.id).then((res) =>
-      updateNotif(res.message, res.type),
-    );
-  };
+      updateNotif(res.message, res.type)
+    )
+  }
 
   return (
     <div className="page" id={styles.dashboard}>
@@ -143,5 +145,5 @@ export default function Dashboard() {
         notify={updateNotif}
       />
     </div>
-  );
+  )
 }

@@ -3,16 +3,16 @@ import {
   faCircleExclamation,
   faCircleInfo,
   faXmark,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from "./styles.module.scss";
+} from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import styles from "./styles.module.scss"
 
-export type NotifType = "error" | "success" | "loading";
+export type NotifType = "error" | "success" | "loading"
 
 interface NotifProps {
-  message: string;
-  type: NotifType;
-  dismiss(): void;
+  message: string
+  type: NotifType
+  dismiss(): void
 }
 
 export default function Notification({ message, type, dismiss }: NotifProps) {
@@ -38,5 +38,5 @@ export default function Notification({ message, type, dismiss }: NotifProps) {
         <FontAwesomeIcon icon={faXmark} onClick={dismiss} />
       </button>
     </aside>
-  );
+  )
 }
