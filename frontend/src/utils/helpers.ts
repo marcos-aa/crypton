@@ -223,6 +223,7 @@ const importGStreams = async (
       data.tsyms += curr.tsyms
     }
     genTickUrl(subticks.syms, "newsyms")
+
     return {
       ...data,
       streams,
@@ -310,12 +311,6 @@ const revertStreams = (
   })
 }
 
-const genTickUrl = (ticks: string[], type: "newsyms" | "delsyms") => {
-  const url = new URL(window.location.origin + window.location.pathname)
-  url.searchParams.set(type, JSON.stringify(ticks))
-  history.replaceState(history.state, "", url)
-}
-
 const addTicks = (
   symbols: string[],
   symtracker: SymTracker,
@@ -359,9 +354,15 @@ const delTicks = (oldsymbols: string[], symtracker: SymTracker): string[] => {
   return delticks
 }
 
+const genTickUrl = (ticks: string[], type: "newsyms" | "delsyms") => {
+  const url = new URL(window.location.origin + window.location.pathname)
+  url.searchParams.set(type, JSON.stringify(ticks))
+  history.replaceState(history.state, "", url)
+}
+
 const queryTicks = (ticks: string[], key: string): string => {
+  if (ticks.length < 1) return ""
   const queryName = `${key}=`
-  if (ticks.length < 1) return queryName + "[]"
   const encoded = encodeURIComponent(JSON.stringify(ticks))
   const tickParam = `${queryName}${encoded}`
   return tickParam

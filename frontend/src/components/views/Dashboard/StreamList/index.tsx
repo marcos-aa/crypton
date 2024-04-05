@@ -105,7 +105,7 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
     }
   )
 
-  const subscribeTickers = (
+  const handleTickSub = (
     ticks: string[],
     method: "SUBSCRIBE" | "UNSUBSCRIBE"
   ) => {
@@ -149,12 +149,12 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
 
     if (newticks?.length > 0) {
       qparams.delete("newsyms")
-      subscribeTickers(newticks, "SUBSCRIBE")
+      handleTickSub(newticks, "SUBSCRIBE")
     }
 
     if (delticks?.length > 0) {
       qparams.delete("delsyms")
-      subscribeTickers(delticks, "UNSUBSCRIBE")
+      handleTickSub(delticks, "UNSUBSCRIBE")
     }
 
     if (localStorage.getItem(local.expStreams)) {
