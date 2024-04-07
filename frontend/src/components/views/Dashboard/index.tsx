@@ -34,7 +34,6 @@ export const dashLoader =
 
     const userConfig = userQuery(verified)
     const streamConfig = streamQuery(verified)
-
     let res: DashLoader = {
       user: null,
       streamData: null,

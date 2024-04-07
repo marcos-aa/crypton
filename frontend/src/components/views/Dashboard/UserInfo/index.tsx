@@ -22,7 +22,6 @@ function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
   const { data: user } = useQuery({
     ...userQuery(initialData.verified),
     initialData,
-    refetchOnWindowFocus: false,
     staleTime: 3600000,
   })
 

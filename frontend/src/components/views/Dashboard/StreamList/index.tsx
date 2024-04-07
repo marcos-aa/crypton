@@ -66,7 +66,6 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
   const { data } = useQuery({
     ...streamQuery(verified),
     initialData,
-    refetchOnWindowFocus: false,
     staleTime: 3600000,
   })
   const [, setTemp] = useState<Tickers>({})
