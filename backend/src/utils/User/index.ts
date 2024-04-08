@@ -82,7 +82,7 @@ export default class UserUtils {
     userId: string,
     email: string,
     type: "email" | "password" = "email",
-    hash: string | undefined = undefined
+    hash: string | null | undefined = undefined
   ) {
     const subschema = userSchema.extract("email")
     await Joi.object({
@@ -117,7 +117,7 @@ export default class UserUtils {
         clientId: OAUTH_CLIENTID,
         clientSecret: OAUTH_CLIENT_SECRET,
         refreshToken: OAUTH_REFRESH,
-        accessToken: accessToken as string,
+        accessToken,
       },
       tls: {
         rejectUnauthorized: false,
@@ -125,7 +125,7 @@ export default class UserUtils {
     })
 
     const mailOptions = {
-      from: "marcosandrade.it@gmail.com",
+      from: OAUTH_MAIL,
       to: email,
       subject: mailTypes[type].subject,
       html: mailTypes[type].html.replace("CODE_VARIABLE", code),
@@ -240,7 +240,7 @@ export default class UserUtils {
     if (!compareSync(password, users[0]?.hashpass))
       throw new CredError(m.invalidCredentials, 401)
 
-    await this.sendMail(id, newmail)
+    await this.sendMail(id, newmail, "email", null)
     return { status: 202, message: m.validate }
   }
 
