@@ -81,8 +81,8 @@ export default class UserUtils {
   async sendMail(
     userId: string,
     email: string,
-    hash: string | undefined = undefined,
-    type = "email"
+    type: "email" | "password" = "email",
+    hash: string | undefined = undefined
   ) {
     const subschema = userSchema.extract("email")
     await Joi.object({
@@ -212,7 +212,7 @@ export default class UserUtils {
 
     await userSchema.extract("pass").validateAsync(pass)
     const hashpass = hashSync(pass, 8)
-    await this.sendMail(userExists.id, email, hashpass, "password")
+    await this.sendMail(userExists.id, email, "password", hashpass)
     const atoken = this.signToken(userExists.id, JWT_SECRET, JWT_EXPIRY)
     return { status: 202, message: atoken }
   }

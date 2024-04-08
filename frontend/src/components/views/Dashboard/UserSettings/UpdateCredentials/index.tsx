@@ -29,10 +29,11 @@ export default function UpdateCredentials({ type }: CredProps) {
   const handleLogout = useLogout(user.verified)
   const navigate = useNavigate()
 
-  const toValidation = (email: string) => {
+  const toValidation = (email: string, type?: "email" | "password") => {
     navigate("/dashboard/settings/validate", {
       state: {
         email,
+        type,
       },
     })
   }
@@ -50,7 +51,7 @@ export default function UpdateCredentials({ type }: CredProps) {
         email: user.email,
         password: input.password,
       })
-      toValidation(user.email)
+      toValidation(user.email, "password")
     },
     delete: async (input: InputData) => {
       await api.delete<ResMessage>("/user", {

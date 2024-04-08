@@ -23,6 +23,7 @@ export default function ResetPassword() {
     navigate("/register/validate", {
       state: {
         email: input.email,
+        type: "password",
       },
     })
   }

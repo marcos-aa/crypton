@@ -35,8 +35,8 @@ export default class StreamHandler {
   }
 
   async createSendmail(req: Request, res: Response) {
-    const { email } = req.body
-    const result = await new UserUtils().sendMail(req.id, email)
+    const { email, type } = req.body
+    const result = await new UserUtils().sendMail(req.id, email, type)
     return res.status(result.status).json(result)
   }
 

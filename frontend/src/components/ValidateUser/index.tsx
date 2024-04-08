@@ -17,6 +17,7 @@ import styles from "./styles.module.scss"
 
 interface ValidationState {
   email: string
+  type?: "email" | "password"
 }
 
 interface ValidationProps {
@@ -34,9 +35,7 @@ export default function ValidateUser({ style }: ValidationProps) {
     isLoading(true)
 
     try {
-      const { data } = await api.post<ResMessage>("/user/code", {
-        email: state.email,
-      })
+      const { data } = await api.post<ResMessage>("/user/code", state)
       isLoading(false, data.message)
     } catch (e) {
       const message: string = e.response.data.message
