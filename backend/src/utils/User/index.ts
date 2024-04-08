@@ -10,6 +10,7 @@ import prisma from "../../../prisma/client"
 import { Prisma } from "../../../prisma/generated/client"
 import {
   CredError,
+  credSchema,
   messages as m,
   oidSchema,
   userSchema,
@@ -202,7 +203,14 @@ export default class UserUtils {
     return { status: 200, message: m.success }
   }
 
-  async updatePassword(email: string, pass: string): Promise<ResMessage> {
+  async updatePassword(
+    email: string,
+    pass: string,
+    id: string | null = null
+  ): Promise<ResMessage> {
+    console.log(id)
+    await Joi.object(credSchema).validateAsync({ email, pass })
+
     const userExists = await prisma.user.findUnique({
       where: { email },
       select: { id: true },
@@ -220,9 +228,10 @@ export default class UserUtils {
   async updateEmail(
     id: string,
     newmail: string,
-    password: string
+    pass: string
   ): Promise<ResMessage> {
-    await userSchema.extract("email").validateAsync(newmail)
+    await Joi.object(credSchema).validateAsync({ email: newmail, pass })
+
     const users = await prisma.user.findMany({
       where: {
         OR: [{ id }, { email: newmail }],
@@ -237,7 +246,7 @@ export default class UserUtils {
     const isDuplicate = users.filter((u) => u.email === newmail)[0]
     if (isDuplicate) throw new CredError(m.duplicateEmail, 403)
 
-    if (!compareSync(password, users[0]?.hashpass))
+    if (!compareSync(pass, users[0]?.hashpass))
       throw new CredError(m.invalidCredentials, 401)
 
     await this.sendMail(id, newmail, "email", null)

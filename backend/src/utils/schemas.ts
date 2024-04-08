@@ -6,7 +6,7 @@ const messages = {
   networkError: "Something went wrong. Verify your connection and try again.",
   duplicateEmail: "This email is already registered.",
   validate: "Pending email validation.",
-  verifyEmail: "Please validate your email first.",
+  verifyEmail: "Please validate this email.",
   expiredCode: "Code expired.",
   noCode: "No user code.",
   noUser: "This user doesn't exist.",
@@ -26,12 +26,7 @@ export class CredError extends Error {
 }
 
 const oidSchema = Joi.string().hex().length(24)
-
-const userSchema = Joi.object({
-  name: Joi.string().pattern(/\w/).required().messages({
-    "string.min": "Name must contain at least two characters",
-    "string.pattern.base": "Name must only contain word characters",
-  }),
+const credSchema = {
   email: Joi.string().email().required().messages({
     "string.email": "Email must contain a valid domain",
   }),
@@ -48,19 +43,15 @@ const userSchema = Joi.object({
       "string.pattern.invert.base":
         "Password must combine special, uppercase, lowercase and digit characters",
     }),
-})
-
-const symMessages = {
-  string: {
-    "string.pattern.base": "Symbol doesn't match available symbols",
-    "string.min": "Symbol must have at least 5 characters",
-    "string.max": "Symbols must have a maximum of 13 characters",
-  },
-  arr: {
-    "array.min": "A minimum of 1 symbol per stream is required",
-    "array.max": "A maximum of 5 symbols per stream is allowed",
-  },
 }
+
+const userSchema = Joi.object({
+  name: Joi.string().pattern(/\w/).required().messages({
+    "string.min": "Name must contain at least two characters",
+    "string.pattern.base": "Name must only contain word characters",
+  }),
+  ...credSchema,
+})
 
 const symbolsSchema = Joi.array()
   .items(
@@ -68,12 +59,19 @@ const symbolsSchema = Joi.array()
       .min(5)
       .max(13)
       .pattern(/^[0-9A-Z]{5,13}$/)
-      .messages(symMessages.string)
+      .messages({
+        "string.pattern.base": "Symbol doesn't match available symbols",
+        "string.min": "Symbol must have at least 5 characters",
+        "string.max": "Symbols must have a maximum of 13 characters",
+      })
   )
   .min(1)
   .max(5)
   .required()
-  .messages(symMessages.arr)
+  .messages({
+    "array.min": "A minimum of 1 symbol per stream is required",
+    "array.max": "A maximum of 5 symbols per stream is allowed",
+  })
 
 const streamSchema = Joi.object({
   userId: oidSchema,
@@ -91,4 +89,4 @@ const rawSchema = Joi.array()
   })
   .min(1)
 
-export { messages, oidSchema, rawSchema, streamSchema, symMessages, userSchema }
+export { credSchema, messages, oidSchema, rawSchema, streamSchema, userSchema }
