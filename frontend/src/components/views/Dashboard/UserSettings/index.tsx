@@ -54,7 +54,7 @@ export default function UserSettings() {
         <h1 id={styles.settingsTitle} className={styles.title}>
           Settings
         </h1>
-        <CloseModal predecessor="/dashboard" />{" "}
+        <CloseModal predecessor="/dashboard" />
       </header>
 
       <section className={styles.settingsList}>
@@ -64,13 +64,13 @@ export default function UserSettings() {
 
         <Form
           id={styles.directUpdate}
-          action={`/dashboard/settings/${user.id}`}
+          action="/dashboard/settings"
           method="put"
         >
           <label htmlFor="name">{user?.name}</label>
 
           <input type="text" name="name" title="name" />
-          <ActionAnimation actpath={`/dashboard/settings/${user.id}`}>
+          <ActionAnimation actpath="/dashboard/settings">
             <SubmitAction title="Update username">Update </SubmitAction>
           </ActionAnimation>
 

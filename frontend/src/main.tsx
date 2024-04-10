@@ -107,7 +107,7 @@ const router = createBrowserRouter([
         action: deleteStream(queryClient),
       },
       {
-        path: "settings/:id?",
+        path: "settings",
         element: <UserSettings />,
         action: nameAction(queryClient),
         children: [
