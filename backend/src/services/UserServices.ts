@@ -79,10 +79,12 @@ export default class UserServices {
       hashpass: true,
       verified: true,
     })
+    const uExists = res.user
 
-    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
-    if (!compareSync(pass, res.user.hashpass))
+    if (uExists && !compareSync(pass, uExists.hashpass))
       throw new CredError(m.invalidCredentials, 401)
+
+    if (!uExists?.verified) throw new CredError(res?.message, res?.status)
 
     const { id, verified } = res.user
 
@@ -98,7 +100,7 @@ export default class UserServices {
     const user = Object.assign(
       { id, verified },
       await prisma.user.update({
-        where: { email },
+        where: { id },
         data: {
           refreshToken,
         },
