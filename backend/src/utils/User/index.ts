@@ -7,7 +7,6 @@ import nodemailer from "nodemailer"
 import { ResMessage } from "shared"
 import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
-import { Prisma } from "../../../prisma/generated/client"
 import {
   CredError,
   credSchema,
@@ -58,25 +57,6 @@ const mailTypes: MailMessages = {
 }
 
 export default class UserUtils {
-  async isVerified(
-    key: "id" | "email",
-    value: string,
-    select: Prisma.UserSelect
-  ) {
-    const user = await prisma.user.findUnique({
-      where: { [key]: value } as { email: string; id: string },
-      select,
-    })
-
-    if (!user) return { status: 404, message: m.noUser }
-
-    const { status, message } = user?.verified
-      ? { status: 403, message: m.duplicateEmail }
-      : { status: 202, message: user.id }
-
-    return { status, message, user }
-  }
-
   async sendMail(
     userId: string,
     email: string,

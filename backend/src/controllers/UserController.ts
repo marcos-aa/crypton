@@ -4,12 +4,8 @@ import UserServices from "../services/UserServices"
 export class UserController {
   async create(req: Request, res: Response) {
     const { name, email, password } = req.body
-    const { status, message } = await new UserServices().create(
-      name,
-      email,
-      password
-    )
-    return res.status(status).json({ message })
+    const id = await new UserServices().create(name, email, password)
+    return res.status(202).send(id)
   }
 
   async read(req: Request, res: Response) {

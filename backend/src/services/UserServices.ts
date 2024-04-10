@@ -6,22 +6,27 @@ import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
 import {
   CredError,
+  credSchema,
   messages as m,
   oidSchema,
   userSchema,
 } from "../utils/schemas"
 
 export default class UserServices {
-  async create(name: string, email: string, pass: string): Promise<ResMessage> {
+  async create(name: string, email: string, pass: string) {
     await userSchema.validateAsync({ name, email, pass })
 
     const utils = new UserUtils()
-    const dup = await utils.isVerified("email", email, {
-      id: true,
-      verified: true,
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        verified: true,
+      },
     })
 
-    if (dup.user) return { status: dup.status, message: dup.message }
+    if (user?.verified) throw new CredError(m.duplicateEmail, 403)
+    if (user && !user.verified) return user.id
 
     pass = pass.replace(/\s/g, "")
     const hashpass = hashSync(pass, 8)
@@ -31,7 +36,6 @@ export default class UserServices {
         name,
         email,
         hashpass,
-        refreshToken: "",
       },
       select: {
         id: true,
@@ -39,78 +43,78 @@ export default class UserServices {
     })
 
     await utils.sendMail(id, email)
-    return { status: 202, message: id }
+    return id
   }
 
   async read(id: string): Promise<UserData> {
     await oidSchema.validateAsync(id)
 
     const utils = new UserUtils()
-    const res = await utils.isVerified("id", id, {
-      id: true,
-      name: true,
-      email: true,
-      verified: true,
-      createdAt: true,
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        verified: true,
+        createdAt: true,
+      },
     })
 
-    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
+    if (!user?.verified) throw new CredError(m.invalidCredentials, 403)
 
     const accessToken = utils.signToken(
-      res.user.id,
+      id,
       process.env.JWT_SECRET,
       process.env.JWT_EXPIRY
     )
-
-    return { user: res.user, accessToken }
+    return { user, accessToken }
   }
 
   async update(email: string, pass: string): Promise<UserTokens> {
-    await Joi.object({
-      email: userSchema.extract("email"),
-      pass: userSchema.extract("pass").messages({
-        "string.empty": "Invalid password",
-      }),
-    }).validateAsync({ email, pass })
+    await Joi.object(credSchema).validateAsync({ email, pass })
 
     const utils = new UserUtils()
-    const res = await utils.isVerified("email", email, {
-      id: true,
-      hashpass: true,
-      verified: true,
+    const uExists = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        hashpass: true,
+        verified: true,
+      },
     })
-    const uExists = res.user
 
-    if (uExists && !compareSync(pass, uExists.hashpass))
+    if (!uExists) throw new CredError(m.noUser, 404)
+    if (!compareSync(pass, uExists.hashpass))
       throw new CredError(m.invalidCredentials, 401)
-
-    if (!uExists?.verified) throw new CredError(res?.message, res?.status)
-
-    const { id, verified } = res.user
+    if (!uExists.verified) throw new CredError(m.validate, 202)
 
     const [accessToken, refreshToken] = await Promise.all([
-      utils.signToken(id, process.env.JWT_SECRET, process.env.JWT_EXPIRY),
       utils.signToken(
-        id,
+        uExists.id,
+        process.env.JWT_SECRET,
+        process.env.JWT_EXPIRY
+      ),
+      utils.signToken(
+        uExists.id,
         process.env.JWT_SECRET_REF,
         process.env.JWT_EXPIRY_REF
       ),
     ])
 
-    const user = Object.assign(
-      { id, verified },
-      await prisma.user.update({
-        where: { id },
-        data: {
-          refreshToken,
-        },
-        select: {
-          name: true,
-          email: true,
-          createdAt: true,
-        },
-      })
-    )
+    const user = await prisma.user.update({
+      where: { id: uExists.id },
+      data: {
+        refreshToken,
+      },
+      select: {
+        id: true,
+        verified: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    })
 
     return {
       user,
@@ -120,13 +124,12 @@ export default class UserServices {
   }
 
   async delete(id: string, pass: string): Promise<ResMessage> {
-    const res = await new UserUtils().isVerified("id", id, {
-      hashpass: true,
-      verified: true,
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { hashpass: true },
     })
 
-    if (!res.user?.verified) throw new CredError(res?.message, res?.status)
-    if (!compareSync(pass, res.user.hashpass))
+    if (!compareSync(pass, user?.hashpass || ""))
       throw new CredError(m.invalidCredentials, 401)
 
     await Promise.all([

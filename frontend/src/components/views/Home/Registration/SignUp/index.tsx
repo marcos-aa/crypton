@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
-import { ResMessage } from "shared"
 import api from "../../../../../services/api"
 import { InputData, local } from "../../../../../utils/helpers"
 import AuthForm from "../../../../AuthForm"
@@ -17,7 +16,7 @@ export default function SignUp({ isExport }: SignProps) {
   const navigate = useNavigate()
 
   const signUp = async (input: InputData) => {
-    const { data } = await api.post<ResMessage>("/user", {
+    const { data: id } = await api.post<string>("/user", {
       name: input.name,
       email: input.email,
       password: input.password,
@@ -27,7 +26,7 @@ export default function SignUp({ isExport }: SignProps) {
     const destination = `/${isExport ? "dashboard" : "register"}/validate`
 
     navigate(destination, {
-      state: { email: input.email, id: data.message },
+      state: { email: input.email, id },
     })
   }
 
