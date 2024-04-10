@@ -17,6 +17,7 @@ import styles from "./styles.module.scss"
 
 interface ValidationState {
   email: string
+  id: string
   type?: "email" | "password"
 }
 

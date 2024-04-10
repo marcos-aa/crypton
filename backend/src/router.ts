@@ -39,11 +39,7 @@ router.put(
   tryWrapper(new UserHandler().updateEmail)
 )
 router.put("/user/password", tryWrapper(new UserHandler().updatePassword))
-router.post(
-  "/user/code",
-  isAuthorized,
-  tryWrapper(new UserHandler().createSendmail)
-)
+router.post("/user/code", tryWrapper(new UserHandler().createSendmail))
 router.put("/user/validate", tryWrapper(new UserHandler().updateValidation))
 router.post("/user/token", tryWrapper(new UserHandler().createToken))
 router.get("/pairs", new StreamHandler().readPairs)

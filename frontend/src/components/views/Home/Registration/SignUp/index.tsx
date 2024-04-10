@@ -3,7 +3,6 @@ import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 import { ResMessage } from "shared"
 import api from "../../../../../services/api"
-import { saveHeader } from "../../../../../utils/datafetching"
 import { InputData, local } from "../../../../../utils/helpers"
 import AuthForm from "../../../../AuthForm"
 import CheckboxField from "../../../../AuthForm/CheckboxField"
@@ -27,9 +26,8 @@ export default function SignUp({ isExport }: SignProps) {
     if (saveStreams) localStorage.setItem(local.expStreams, "true")
     const destination = `/${isExport ? "dashboard" : "register"}/validate`
 
-    saveHeader(data.message)
     navigate(destination, {
-      state: { email: input.email },
+      state: { email: input.email, id: data.message },
     })
   }
 

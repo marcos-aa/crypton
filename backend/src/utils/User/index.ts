@@ -72,10 +72,8 @@ export default class UserUtils {
 
     const { status, message } = user?.verified
       ? { status: 403, message: m.duplicateEmail }
-      : {
-          status: 202,
-          message: this.signToken(user.id, JWT_SECRET, JWT_EXPIRY),
-        }
+      : { status: 202, message: user.id }
+
     return { status, message, user }
   }
 
@@ -203,12 +201,7 @@ export default class UserUtils {
     return { status: 200, message: m.success }
   }
 
-  async updatePassword(
-    email: string,
-    pass: string,
-    id: string | null = null
-  ): Promise<ResMessage> {
-    console.log(id)
+  async updatePassword(email: string, pass: string): Promise<ResMessage> {
     await Joi.object(credSchema).validateAsync({ email, pass })
 
     const userExists = await prisma.user.findUnique({
@@ -221,8 +214,7 @@ export default class UserUtils {
     await userSchema.extract("pass").validateAsync(pass)
     const hashpass = hashSync(pass, 8)
     await this.sendMail(userExists.id, email, "password", hashpass)
-    const atoken = this.signToken(userExists.id, JWT_SECRET, JWT_EXPIRY)
-    return { status: 202, message: atoken }
+    return { status: 202, message: userExists.id }
   }
 
   async updateEmail(

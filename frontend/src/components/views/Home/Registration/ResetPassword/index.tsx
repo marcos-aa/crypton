@@ -4,7 +4,6 @@ import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 import { ResMessage } from "shared"
 import api from "../../../../../services/api"
-import { saveHeader } from "../../../../../utils/datafetching"
 import { InputData } from "../../../../../utils/helpers"
 import AuthForm from "../../../../AuthForm"
 
@@ -19,11 +18,11 @@ export default function ResetPassword() {
       password: input.password,
     })
 
-    saveHeader(data.message)
     navigate("/register/validate", {
       state: {
         email: input.email,
         type: "password",
+        id: data.message,
       },
     })
   }

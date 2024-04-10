@@ -39,12 +39,7 @@ export default class UserServices {
     })
 
     await utils.sendMail(id, email)
-    const atoken = utils.signToken(
-      id,
-      process.env.JWT_SECRET,
-      process.env.JWT_EXPIRY
-    )
-    return { status: 202, message: atoken }
+    return { status: 202, message: id }
   }
 
   async read(id: string): Promise<UserData> {

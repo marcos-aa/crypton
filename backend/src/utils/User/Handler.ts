@@ -30,13 +30,16 @@ export default class StreamHandler {
 
   async updatePassword(req: Request, res: Response) {
     const { email, password } = req.body
-    const result = await new UserUtils().updatePassword(email, password)
-    return res.status(result.status).json(result)
+    const { status, message } = await new UserUtils().updatePassword(
+      email,
+      password
+    )
+    return res.status(status).json({ message })
   }
 
   async createSendmail(req: Request, res: Response) {
-    const { email, type } = req.body
-    const result = await new UserUtils().sendMail(req.id, email, type)
+    const { email, id, type } = req.body
+    const result = await new UserUtils().sendMail(id, email, type)
     return res.status(result.status).json(result)
   }
 

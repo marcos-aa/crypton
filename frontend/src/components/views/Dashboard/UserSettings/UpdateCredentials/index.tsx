@@ -32,6 +32,7 @@ export default function UpdateCredentials({ type }: CredProps) {
   const toValidation = (email: string, type?: "email" | "password") => {
     navigate("/dashboard/settings/validate", {
       state: {
+        id: user.id,
         email,
         type,
       },
