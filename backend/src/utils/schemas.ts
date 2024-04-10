@@ -1,8 +1,6 @@
 import Joi from "joi"
 
 const messages = {
-  success: "Success...",
-  codeSent: "Verification code sent.",
   networkError: "Something went wrong. Verify your connection and try again.",
   duplicateEmail: "This email is already registered.",
   validate: "Pending email validation.",

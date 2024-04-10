@@ -1,5 +1,4 @@
 import { useNavigate, useRouteLoaderData } from "react-router"
-import { ResMessage } from "shared"
 import { DashLoader } from "../.."
 import api from "../../../../../services/api"
 import { useLogout } from "../../../../../utils/customHooks"
@@ -41,21 +40,21 @@ export default function UpdateCredentials({ type }: CredProps) {
 
   const requests = {
     email: async (input: InputData) => {
-      await api.put<ResMessage>("/user/email", {
+      await api.put("/user/email", {
         newmail: input.email,
         password: input.password,
       })
       toValidation(input.email)
     },
     password: async (input: InputData) => {
-      await api.put<ResMessage>("/user/password", {
+      await api.put("/user/password", {
         email: user.email,
         password: input.password,
       })
       toValidation(user.email, "password")
     },
     delete: async (input: InputData) => {
-      await api.delete<ResMessage>("/user", {
+      await api.delete("/user", {
         data: {
           password: input.password,
         },

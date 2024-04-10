@@ -8,7 +8,7 @@ export default async function isAuthorized(
   next: NextFunction
 ) {
   const token = req.headers.authorization?.split(" ")[1]
-  if (!token) return res.status(403).json({ message: messages.invalidToken })
+  if (!token) return res.status(403).send(messages.invalidToken)
 
   try {
     const { id } = verify(token, process.env.JWT_SECRET) as JwtPayload

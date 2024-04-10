@@ -33,10 +33,6 @@ export class UserController {
   async delete(req: Request, res: Response) {
     const { password } = req.body
     const result = await new UserServices().delete(req.id, password)
-    return res
-      .clearCookie("access_token")
-      .clearCookie("r_token")
-      .status(result.status)
-      .json(result)
+    return res.clearCookie("r_token").send(result)
   }
 }

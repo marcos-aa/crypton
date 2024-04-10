@@ -11,7 +11,7 @@ export class StreamController {
   async createMany(req: Request, res: Response) {
     const { streams } = req.body
     const result = await new StreamServices().createMany(streams)
-    return res.status(200).json(result)
+    return res.json(result)
   }
 
   async read(req: Request, res: Response) {

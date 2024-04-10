@@ -44,7 +44,7 @@ export default function AuthForm({
     try {
       await submit(input)
     } catch (e) {
-      const message: string = e.response?.data?.message || e.message
+      const message: string = e.response?.data || e.message
       isLoading(false, message)
     }
   }

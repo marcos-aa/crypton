@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query"
 import { SyntheticEvent, useState } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { Link } from "react-router-dom"
-import { ResMessage } from "shared"
 import { UIUser, UserData } from "shared/usertypes"
 import api from "../../services/api"
 import { useLoadError } from "../../utils/customHooks"
@@ -36,10 +35,10 @@ export default function ValidateUser({ style }: ValidationProps) {
     isLoading(true)
 
     try {
-      const { data } = await api.post<ResMessage>("/user/code", state)
-      isLoading(false, data.message)
+      const { data } = await api.post<string>("/user/code", state)
+      isLoading(false, data)
     } catch (e) {
-      const message: string = e.response.data.message
+      const message: string = e.response.data
       isLoading(false, message)
     }
   }
@@ -62,7 +61,7 @@ export default function ValidateUser({ style }: ValidationProps) {
 
       navigate("/dashboard")
     } catch (e) {
-      const message: string = e.response.data.message
+      const message: string = e.response.data
       isLoading(false, message)
     }
   }

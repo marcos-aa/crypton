@@ -2,7 +2,6 @@ import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 import AuthForm from "../../../../AuthForm"
 
-import { ResMessage } from "shared"
 import { UserData } from "shared/usertypes"
 import api from "../../../../../services/api"
 import { saveHeader } from "../../../../../utils/datafetching"
@@ -12,16 +11,16 @@ export default function SignIn() {
   const navigate = useNavigate()
 
   const signIn = async (input: InputData) => {
-    const { data } = await api.put<UserData | ResMessage>("/user", {
+    const { data } = await api.put<UserData | string>("/user", {
       email: input.email,
       password: input.password,
     })
 
-    if ("message" in data) {
+    if (typeof data === "string") {
       return navigate("/register/validate", {
         state: {
           email: input.email,
-          id: data.message,
+          id: data,
         },
       })
     }

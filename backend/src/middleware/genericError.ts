@@ -9,10 +9,7 @@ export default function genericError(
   next: NextFunction
 ) {
   const status = (e as CredError).status
-  if (e instanceof ValidationError)
-    return res.status(422).json({ message: e.message })
-
-  if (status) return res.status(status).json({ message: e.message })
-
-  return res.status(500).json({ message: "Something went wrong" })
+  if (e instanceof ValidationError) return res.status(422).send(e.message)
+  if (status) return res.status(status).json(e.message)
+  return res.status(500).send("Something went wrong")
 }

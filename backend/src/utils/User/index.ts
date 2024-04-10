@@ -4,7 +4,6 @@ import Joi from "joi"
 import { JwtPayload, sign, verify } from "jsonwebtoken"
 import crypto from "node:crypto"
 import nodemailer from "nodemailer"
-import { ResMessage } from "shared"
 import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
 import {
@@ -126,7 +125,7 @@ export default class UserUtils {
     })
 
     transporter.sendMail(mailOptions)
-    return { status: 200, message: m.codeSent }
+    return "Verification code sent."
   }
 
   async validateUser(code: string, email: string): Promise<UserTokens> {
@@ -177,11 +176,9 @@ export default class UserUtils {
         name,
       },
     })
-
-    return { status: 200, message: m.success }
   }
 
-  async updatePassword(email: string, pass: string): Promise<ResMessage> {
+  async updatePassword(email: string, pass: string) {
     await Joi.object(credSchema).validateAsync({ email, pass })
 
     const userExists = await prisma.user.findUnique({
@@ -191,17 +188,12 @@ export default class UserUtils {
 
     if (!userExists) throw new CredError(m.noUser, 404)
 
-    await userSchema.extract("pass").validateAsync(pass)
     const hashpass = hashSync(pass, 8)
     await this.sendMail(userExists.id, email, "password", hashpass)
-    return { status: 202, message: userExists.id }
+    return userExists.id
   }
 
-  async updateEmail(
-    id: string,
-    newmail: string,
-    pass: string
-  ): Promise<ResMessage> {
+  async updateEmail(id: string, newmail: string, pass: string) {
     await Joi.object(credSchema).validateAsync({ email: newmail, pass })
 
     const users = await prisma.user.findMany({
@@ -222,7 +214,6 @@ export default class UserUtils {
       throw new CredError(m.invalidCredentials, 401)
 
     await this.sendMail(id, newmail, "email", null)
-    return { status: 202, message: m.validate }
   }
 
   signToken(id: string, secret: string, expiration: string) {

@@ -1,6 +1,5 @@
 import { compareSync, hashSync } from "bcryptjs"
 import Joi from "joi"
-import { ResMessage } from "shared"
 import { UserData, UserTokens } from "shared/usertypes"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
@@ -123,7 +122,7 @@ export default class UserServices {
     }
   }
 
-  async delete(id: string, pass: string): Promise<ResMessage> {
+  async delete(id: string, pass: string) {
     const user = await prisma.user.findUnique({
       where: { id },
       select: { hashpass: true },
@@ -145,6 +144,6 @@ export default class UserServices {
       }),
     ])
 
-    return { status: 204, message: m.success }
+    return null
   }
 }

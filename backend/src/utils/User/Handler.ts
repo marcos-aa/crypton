@@ -18,29 +18,26 @@ export default class StreamHandler {
 
   async updateName(req: Request, res: Response) {
     const { name } = req.body
-    const result = await new UserUtils().updateName(req.id, name)
-    return res.status(result.status).json(result)
+    await new UserUtils().updateName(req.id, name)
+    return res.sendStatus(200)
   }
 
   async updateEmail(req: Request, res: Response) {
     const { newmail, password } = req.body
-    const result = await new UserUtils().updateEmail(req.id, newmail, password)
-    return res.status(result.status).json(result)
+    await new UserUtils().updateEmail(req.id, newmail, password)
+    return res.sendStatus(202)
   }
 
   async updatePassword(req: Request, res: Response) {
     const { email, password } = req.body
-    const { status, message } = await new UserUtils().updatePassword(
-      email,
-      password
-    )
-    return res.status(status).json({ message })
+    const id = await new UserUtils().updatePassword(email, password)
+    return res.send(id)
   }
 
   async createSendmail(req: Request, res: Response) {
     const { email, id, type } = req.body
-    const result = await new UserUtils().sendMail(id, email, type)
-    return res.status(result.status).json(result)
+    const message = await new UserUtils().sendMail(id, email, type)
+    return res.send(message)
   }
 
   async updateValidation(req: Request, res: Response) {
