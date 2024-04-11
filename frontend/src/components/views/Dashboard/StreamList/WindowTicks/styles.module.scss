@@ -17,8 +17,19 @@
   }
 
   .timeOptions {
+    .timeActions button,
+    h2 > button {
+      padding: 0;
+      width: 40px;
+      height: 100%;
+      border: none;
+
+      svg {
+        font-size: 1.2rem;
+      }
+    }
+
     #timeActions {
-      display: flex;
       position: fixed;
       right: 50%;
       width: 80px;
@@ -26,15 +37,6 @@
       flex-shrink: 0;
       height: var(--ctitle-h);
       background-color: white;
-
-      button {
-        padding: 0;
-        width: 40px;
-        height: 100%;
-        svg {
-          font-size: 1.2rem;
-        }
-      }
 
       #editWindows {
         border: none;

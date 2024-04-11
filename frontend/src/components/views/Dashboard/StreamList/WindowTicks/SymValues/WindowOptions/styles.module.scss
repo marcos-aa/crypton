@@ -1,8 +1,8 @@
 #timeWindow {
   position: absolute;
+  top: var(--ctitle-h);
+  left: 0;
   z-index: 3;
-  top: 40px;
-  right: 1px;
   max-width: 100%;
   min-height: 160px;
   padding: 0px 10px;

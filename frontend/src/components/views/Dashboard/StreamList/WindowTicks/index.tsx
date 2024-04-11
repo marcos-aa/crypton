@@ -1,4 +1,6 @@
-import { QueryClient } from "@tanstack/react-query"
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { MouseEvent, Suspense, useState } from "react"
 import { Await, defer, useLoaderData } from "react-router-dom"
 import { StreamData, Ticker } from "shared/streamtypes"
@@ -8,6 +10,7 @@ import ModalContainer from "../../../../ModalContainer"
 import CloseModal from "../../../../ModalContainer/CloseModal"
 import SkeletonSyms from "./SkeletonSyms"
 import SymValues from "./SymValues"
+import WindowOptions from "./SymValues/WindowOptions"
 import styles from "./styles.module.scss"
 
 interface WindowReq {
@@ -36,8 +39,7 @@ interface WindowResponse {
 export const saveWindow = async (
   qc: QueryClient,
   symbols: string[],
-  interval: string,
-  includeBase: boolean = false
+  interval: string
 ): Promise<WindowData> => {
   let uncached: string[] = []
   let tickers = {
@@ -46,28 +48,27 @@ export const saveWindow = async (
 
   const data = symbols.reduce(
     (store: WindowData, sym: string) => {
-      const itvTicker = tickers[sym][interval]
+      const ticker = tickers[sym]
+      const itvTicker = ticker[interval]
       if (!itvTicker) uncached.push(sym)
+
       store[interval][sym] = itvTicker
-      if (includeBase) {
-        const ticker = tickers[sym]
-        store["1s"][sym] = {
-          average: ticker.average,
-          last: ticker.last,
-          change: ticker.change,
-          pchange: ticker.pchange,
-          volume: ticker.volume,
-          qvolume: ticker.qvolume,
-          trades: ticker.trades,
-          open: ticker.open,
-          close: ticker.close,
-        }
+      store["1s"][sym] = {
+        average: ticker.average,
+        last: ticker.last,
+        change: ticker.change,
+        pchange: ticker.pchange,
+        volume: ticker.volume,
+        qvolume: ticker.qvolume,
+        trades: ticker.trades,
+        open: ticker.open,
+        close: ticker.close,
       }
 
       return store
     },
     {
-      "1s": includeBase ? {} : null,
+      "1s": {},
       [interval]: {},
     }
   )
@@ -96,7 +97,7 @@ export const windowLoader =
 
     return {
       deferred: defer({
-        result: saveWindow(qc, symbols, interval, true),
+        result: saveWindow(qc, symbols, interval),
       }),
       symbols,
       interval,
@@ -109,8 +110,12 @@ export default function WindowTicks() {
     symbols,
     interval: initInterval,
   } = useLoaderData() as WindowResponse
+  const qc = useQueryClient()
+  const [data, setData] = useState<WindowData>(null)
   const [interval, updateInterval] = useState(initInterval)
   const [expanded, setExpanded] = useState<string>()
+  const [edit, setEdit] = useState(false)
+  const showWindowOptions = () => setEdit((prev) => !prev)
 
   const expandSymbol = (e: MouseEvent<HTMLHeadingElement>) => {
     const value = e.currentTarget.innerText
@@ -123,13 +128,36 @@ export default function WindowTicks() {
     updateInterval(newitv)
   }
 
+  const updateWindow = async (newitv: string) => {
+    setEdit(false)
+    const data = await saveWindow(qc, symbols, newitv)
+    localStorage.setItem(local.window, newitv)
+    changeInterval(newitv)
+    setData(data)
+  }
+
   return (
     <ModalContainer predecessor="/dashboard">
       <div id={expanded ? styles.expTick : styles.compareTicks}>
         <div className={styles.timeOptions}>
           <h2 className={styles.rowTitle}> Symbols </h2>
           <h2 className={styles.colTitle}> 1s </h2>
-          <h2 className={styles.colTitle}>{interval}</h2>
+          <h2 className={styles.colTitle} id={styles.intervalTooltip}>
+            {interval}
+            <button
+              type="button"
+              title="Show window options"
+              onClick={showWindowOptions}
+            >
+              <FontAwesomeIcon
+                style={{
+                  rotate: edit ? "180deg" : "0deg",
+                }}
+                icon={faCaretDown}
+              />
+            </button>
+            {edit && <WindowOptions updateWindow={updateWindow} />}
+          </h2>
 
           <div id={styles.timeActions}>
             <CloseModal predecessor="/dashboard" />
@@ -138,15 +166,15 @@ export default function WindowTicks() {
 
         <Suspense fallback={<SkeletonSyms symbols={symbols} />}>
           <Await resolve={deferred.data.result} errorElement={<p>Error!</p>}>
-            {(data: WindowData) => {
+            {(windata: WindowData) => {
+              windata = data ?? windata
               return (
                 <SymValues
                   symbols={symbols}
-                  initialData={data}
+                  data={windata}
                   interval={interval}
                   expanded={expanded}
                   expandSymbol={expandSymbol}
-                  changeInterval={changeInterval}
                 />
               )
             }}

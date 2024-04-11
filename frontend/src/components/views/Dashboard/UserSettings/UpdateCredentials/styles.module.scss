@@ -1,12 +1,12 @@
 header#credHeader {
-  column-gap: 10px;
-  position: relative;
   display: flex;
   align-items: center;
+  column-gap: 10px;
+  flex-wrap: wrap-reverse;
   width: 100%;
   font-size: 1.2rem;
   padding: 0;
-  margin: 10px 0;
+  margin-bottom: 10px;
 
   button {
     display: flex;

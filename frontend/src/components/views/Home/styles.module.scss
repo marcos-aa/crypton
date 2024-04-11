@@ -4,6 +4,10 @@
   overflow: hidden;
 }
 
+#mainTitle {
+  padding: 0 10px;
+}
+
 .content {
   display: flex;
   align-items: center;
@@ -15,12 +19,16 @@
   padding: 0 10px;
   overflow-y: auto;
   padding-bottom: 50px;
+
+  .logo {
+    padding: 0 10px;
+  }
 }
 
-.title,
 #ctaTitle {
   text-transform: uppercase;
 }
+
 #hero,
 #cta {
   display: flex;
