@@ -53,7 +53,7 @@ export default function AuthForm({
     if (!input.path) return
     const timeoutID = setTimeout(() => {
       updateWarnings(input)
-    }, 500)
+    }, 350)
 
     return () => {
       clearTimeout(timeoutID)
