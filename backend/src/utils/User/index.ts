@@ -1,12 +1,10 @@
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import { hashSync } from "bcryptjs"
-import FormData from "form-data"
 import Joi from "joi"
 import { JwtPayload, verify } from "jsonwebtoken"
-import Mailgun from "mailgun.js"
 import crypto from "node:crypto"
 import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
-
 import {
   CredError,
   credSchema,
@@ -35,13 +33,13 @@ const mailTypes: MailMessages = {
     html: `<p> Thank you for subscribing to CryptON!<br>
     To finish your registration and validate your account, please paste or type the following 
     code in the registration page: </p>
-    <code> CODE_VARIABLE </code>
+    <code><CODE></code>
     <p> This code expires in one hour. </p>`,
   },
   password: {
     subject: "Password change - Crypto Watcher",
     html: `<p> Use the following code to confirm your password update: </p>
-    <code> CODE_VARIABLE </code>
+    <code><CODE></code>
     <p> This code expires in one hour. </p>`,
   },
 }
@@ -66,12 +64,6 @@ export default class UserUtils {
     let expiresAt = new Date()
     expiresAt.setHours(expiresAt.getHours() + 1)
 
-    const mailgun = new Mailgun(FormData)
-    const mailclient = mailgun.client({
-      username: "api",
-      key: process.env.MAILGUN_KEY,
-    })
-
     await prisma.ucodes.upsert({
       where: { userId },
       update: {
@@ -87,15 +79,36 @@ export default class UserUtils {
       },
     })
 
-    mailclient.messages.create(
-      "sandboxa94dc4c62eb24c96bed5cefb9cfe9016.mailgun.org",
-      {
-        from: process.env.APP_MAIL,
-        to: email,
-        subject: mailTypes[type].subject,
-        html: mailTypes[type].html.replace("CODE_VARIABLE", code),
-      }
-    )
+    const ses = new SESClient({
+      region: process.env.SES_REGION,
+      credentials: {
+        accessKeyId: process.env.SES_ACCESS,
+        secretAccessKey: process.env.SES_SECRET,
+      },
+    })
+    const params = {
+      Source: process.env.APP_MAIL,
+      Destination: {
+        ToAddresses: [process.env.APP_MAIL],
+      },
+      ReplyToAddresses: [],
+      Message: {
+        Body: {
+          Html: {
+            Data: mailTypes[type].html.replace("<CODE>", code),
+          },
+        },
+        Subject: {
+          Data: mailTypes[type].subject,
+        },
+      },
+    }
+    const sendEmail = new SendEmailCommand(params)
+    try {
+      await ses.send(sendEmail)
+    } catch (e) {
+      console.log(e)
+    }
 
     return "Verification code sent."
   }
