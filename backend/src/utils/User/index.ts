@@ -1,7 +1,7 @@
-import { compareSync, hashSync } from "bcryptjs"
+import { hashSync } from "bcryptjs"
 import FormData from "form-data"
 import Joi from "joi"
-import { JwtPayload, sign, verify } from "jsonwebtoken"
+import { JwtPayload, verify } from "jsonwebtoken"
 import Mailgun from "mailgun.js"
 import crypto from "node:crypto"
 import { UserTokens } from "shared/usertypes"
@@ -14,6 +14,7 @@ import {
   oidSchema,
   userSchema,
 } from "../../utils/schemas"
+import { checkPassword, signToken } from "../helpers"
 
 type Tokens = Pick<UserTokens, "accessToken" | "refreshToken">
 
@@ -112,8 +113,8 @@ export default class UserUtils {
       throw new CredError(m.expiredCode, 403)
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(ucode.userId, JWT_SECRET, JWT_EXPIRY),
-      this.signToken(ucode.userId, JWT_SECRET_REF, JWT_EXPIRY_REF),
+      signToken(ucode.userId, JWT_SECRET, JWT_EXPIRY),
+      signToken(ucode.userId, JWT_SECRET_REF, JWT_EXPIRY_REF),
     ])
 
     const [user] = await Promise.all([
@@ -180,19 +181,8 @@ export default class UserUtils {
 
     const isDuplicate = users.filter((u) => u.email === newmail)[0]
     if (isDuplicate) throw new CredError(m.duplicateEmail, 403)
-
-    if (!compareSync(pass, users[0]?.hashpass))
-      throw new CredError(m.invalidCredentials, 401)
-
+    checkPassword(pass, users[0].hashpass)
     await this.sendMail(id, newmail, "email", null)
-  }
-
-  signToken(id: string, secret: string, expiration: string) {
-    const token = sign({ id }, secret, {
-      expiresIn: expiration,
-    })
-
-    return token
   }
 
   async refreshToken(refToken: string): Promise<Tokens> {
@@ -212,8 +202,8 @@ export default class UserUtils {
       throw new CredError(m.invalidToken, 403)
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(user.id, JWT_SECRET, JWT_EXPIRY),
-      this.signToken(user.id, JWT_SECRET_REF, JWT_EXPIRY_REF),
+      signToken(user.id, JWT_SECRET, JWT_EXPIRY),
+      signToken(user.id, JWT_SECRET_REF, JWT_EXPIRY_REF),
     ])
 
     await prisma.user.update({

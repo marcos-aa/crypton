@@ -1,8 +1,9 @@
-import { compareSync, hashSync } from "bcryptjs"
+import { hashSync } from "bcryptjs"
 import Joi from "joi"
 import { UserData, UserTokens } from "shared/usertypes"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
+import { checkPassword, signToken } from "../utils/helpers"
 import {
   CredError,
   credSchema,
@@ -62,7 +63,7 @@ export default class UserServices {
 
     if (!user?.verified) throw new CredError(m.invalidCredentials, 403)
 
-    const accessToken = utils.signToken(
+    const accessToken = signToken(
       id,
       process.env.JWT_SECRET,
       process.env.JWT_EXPIRY
@@ -73,7 +74,6 @@ export default class UserServices {
   async update(email: string, pass: string): Promise<UserTokens> {
     await Joi.object(credSchema).validateAsync({ email, pass })
 
-    const utils = new UserUtils()
     const uExists = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -84,17 +84,12 @@ export default class UserServices {
     })
 
     if (!uExists) throw new CredError(m.noUser, 404)
-    if (!compareSync(pass, uExists.hashpass))
-      throw new CredError(m.invalidCredentials, 401)
+    checkPassword(pass, uExists.hashpass)
     if (!uExists.verified) throw new CredError(uExists.id, 202)
 
     const [accessToken, refreshToken] = await Promise.all([
-      utils.signToken(
-        uExists.id,
-        process.env.JWT_SECRET,
-        process.env.JWT_EXPIRY
-      ),
-      utils.signToken(
+      signToken(uExists.id, process.env.JWT_SECRET, process.env.JWT_EXPIRY),
+      signToken(
         uExists.id,
         process.env.JWT_SECRET_REF,
         process.env.JWT_EXPIRY_REF
@@ -128,8 +123,7 @@ export default class UserServices {
       select: { hashpass: true },
     })
 
-    if (!compareSync(pass, user?.hashpass || ""))
-      throw new CredError(m.invalidCredentials, 401)
+    checkPassword(pass, user?.hashpass || "")
 
     await Promise.all([
       prisma.user.delete({
