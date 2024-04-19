@@ -1,11 +1,12 @@
 import { compareSync, hashSync } from "bcryptjs"
-import { google } from "googleapis"
+import FormData from "form-data"
 import Joi from "joi"
 import { JwtPayload, sign, verify } from "jsonwebtoken"
+import Mailgun from "mailgun.js"
 import crypto from "node:crypto"
-import nodemailer from "nodemailer"
 import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
+
 import {
   CredError,
   credSchema,
@@ -24,19 +25,8 @@ interface MailMessages {
 }
 
 let code: string = ""
-const OAuth2 = google.auth.OAuth2
 
-const {
-  JWT_SECRET,
-  JWT_EXPIRY,
-  JWT_SECRET_REF,
-  JWT_EXPIRY_REF,
-  OAUTH_CLIENTID,
-  OAUTH_CLIENT_SECRET,
-  OAUTH_REFRESH,
-  OAUTH_MAIL,
-  OAUTH_PASSWORD,
-} = process.env
+const { JWT_SECRET, JWT_EXPIRY, JWT_SECRET_REF, JWT_EXPIRY_REF } = process.env
 
 const mailTypes: MailMessages = {
   email: {
@@ -71,43 +61,15 @@ export default class UserUtils {
       email,
     })
 
-    const oauth2Client = new OAuth2(
-      OAUTH_CLIENTID,
-      OAUTH_CLIENT_SECRET,
-      "https://developers.google.com/oauthplayground"
-    )
-
-    oauth2Client.setCredentials({
-      refresh_token: OAUTH_REFRESH,
-    })
-
-    const accessToken = await oauth2Client.getAccessToken()
     code = crypto.randomBytes(3).toString("hex")
     let expiresAt = new Date()
     expiresAt.setHours(expiresAt.getHours() + 1)
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: OAUTH_MAIL,
-        pass: OAUTH_PASSWORD,
-        clientId: OAUTH_CLIENTID,
-        clientSecret: OAUTH_CLIENT_SECRET,
-        refreshToken: OAUTH_REFRESH,
-        accessToken,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
+    const mailgun = new Mailgun(FormData)
+    const mailclient = mailgun.client({
+      username: "api",
+      key: process.env.MAILGUN_KEY,
     })
-
-    const mailOptions = {
-      from: OAUTH_MAIL,
-      to: email,
-      subject: mailTypes[type].subject,
-      html: mailTypes[type].html.replace("CODE_VARIABLE", code),
-    }
 
     await prisma.ucodes.upsert({
       where: { userId },
@@ -124,7 +86,16 @@ export default class UserUtils {
       },
     })
 
-    transporter.sendMail(mailOptions)
+    mailclient.messages.create(
+      "sandboxa94dc4c62eb24c96bed5cefb9cfe9016.mailgun.org",
+      {
+        from: process.env.APP_MAIL,
+        to: email,
+        subject: mailTypes[type].subject,
+        html: mailTypes[type].html.replace("CODE_VARIABLE", code),
+      }
+    )
+
     return "Verification code sent."
   }
 

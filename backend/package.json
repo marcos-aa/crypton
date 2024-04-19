@@ -18,11 +18,11 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "googleapis": "^101.0.0",
+    "form-data": "^4.0.0",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
+    "mailgun.js": "^10.2.1",
     "node-cache": "^5.1.2",
-    "nodemailer": "6.4.14",
     "shared": "workspace:^"
   },
   "devDependencies": {
