@@ -86,7 +86,7 @@ export default class UserServices {
     if (!uExists) throw new CredError(m.noUser, 404)
     if (!compareSync(pass, uExists.hashpass))
       throw new CredError(m.invalidCredentials, 401)
-    if (!uExists.verified) throw new CredError(m.validate, 202)
+    if (!uExists.verified) throw new CredError(uExists.id, 202)
 
     const [accessToken, refreshToken] = await Promise.all([
       utils.signToken(
