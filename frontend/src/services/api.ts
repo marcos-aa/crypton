@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios"
 import { saveHeader } from "../utils/datafetching"
 
-const baseURL = "http://localhost:3000"
+const baseURL = "https://crypton-olive.vercel.app"
 const api = axios.create({
   baseURL,
   withCredentials: true,
