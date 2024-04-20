@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios"
 import { saveHeader } from "../utils/datafetching"
 
-const baseURL = "https://crypton-olive.vercel.app"
+const baseURL = "https://crypton-pks4.onrender.com"
 const api = axios.create({
   baseURL,
   withCredentials: true,

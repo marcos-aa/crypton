@@ -11,9 +11,6 @@
     "rootDir": "./"
   },
   "include": [
-    "src",
-    "__tests__",
-    "__mocks__",
-    "__tests__/Dashboard/SymbolList.spec.tsx"
+    "src"
   ]
 }
