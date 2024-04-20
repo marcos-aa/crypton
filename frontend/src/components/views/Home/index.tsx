@@ -33,12 +33,12 @@ export default function Home() {
           symbols: [
             "BTCBUSD",
             "ETHBTC",
+            "BNBBTC",
             "SOLETH",
-            "DOGEBUSD",
-            "SUIUSDT",
-            "BTCFDUSD",
+            "BTCUSDT",
             "ETHBUSD",
-            "AAVEBNB",
+            "BCHUSDT",
+            "SHIBUSDT",
           ],
         },
       })
@@ -76,14 +76,14 @@ export default function Home() {
           <div className={`${styles.stream} ${streamStyles.streamList}`}>
             <SymbolTicks symbol="BTCBUSD" prices={tickers.BTCBUSD} />
             <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
+            <SymbolTicks symbol="BNBBTC" prices={tickers.BNBBTC} />
             <SymbolTicks symbol="SOLETH" prices={tickers.SOLETH} />
-            <SymbolTicks symbol="DOGEBUSD" prices={tickers.DOGEBUSD} />
           </div>
           <div className={`${styles.stream} ${streamStyles.streamList}`}>
-            <SymbolTicks symbol="SUIUSDT" prices={tickers.SUIUSDT} />
-            <SymbolTicks symbol="BTCFDUSD" prices={tickers.BTCFDUSD} />
+            <SymbolTicks symbol="BTCUSDT" prices={tickers.BTCUSDT} />
+            <SymbolTicks symbol="SHIBUSDT" prices={tickers.SHIBUSDT} />
             <SymbolTicks symbol="ETHBUSD" prices={tickers.ETHBUSD} />
-            <SymbolTicks symbol="AAVEBNB" prices={tickers.AAVEBNB} />
+            <SymbolTicks symbol="BCHUSDT" prices={tickers.BCHUSDT} />
           </div>
         </div>
       </main>
