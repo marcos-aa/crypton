@@ -8,8 +8,8 @@ namespace NodeJS {
     SES_ACCESS: string
     SES_SECRET: string
     SES_REGION: string
-    TEST_ENV: string
     APP_MAIL: string
+    DOMAIN: string
     MAX_REFRESH: number
     MAX_ACCESS: number
     PORT: number
