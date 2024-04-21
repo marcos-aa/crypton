@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { CookieOptions, Request, Response } from "express"
 import UserServices from "../services/UserServices"
 
 export class UserController {
@@ -22,14 +22,16 @@ export class UserController {
     )
 
     const isProd = process.env.NODE_ENV === "production"
+    const cookieConfig: CookieOptions = {
+      httpOnly: true,
+      maxAge: Number(process.env.MAX_REFRESH),
+      secure: isProd,
+      sameSite: "lax",
+    }
+
+    if (isProd) cookieConfig.domain = "." + process.env.DOMAIN.substring(8)
     return res
-      .cookie("r_token", refreshToken, {
-        domain: "." + process.env.DOMAIN.substring(isProd ? 8 : 7),
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: isProd,
-        sameSite: "lax",
-      })
+      .cookie("r_token", refreshToken, cookieConfig)
       .json({ user, accessToken })
   }
 
