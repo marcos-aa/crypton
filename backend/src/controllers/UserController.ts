@@ -27,7 +27,7 @@ export class UserController {
         httpOnly: true,
         maxAge: Number(process.env.MAX_REFRESH),
         secure: isProd,
-        sameSite: isProd,
+        sameSite: isProd ? "none" : "lax",
       })
       .json({ user, accessToken })
   }
