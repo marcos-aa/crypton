@@ -1,7 +1,10 @@
 import axios, { AxiosError } from "axios"
 import { saveHeader } from "../utils/datafetching"
 
-const baseURL = "https://crypton-pks4.onrender.com"
+const baseURL =
+  import.meta.env.MODE === "production"
+    ? "https://api.crypton.icu"
+    : "http://localhost:3000"
 const api = axios.create({
   baseURL,
   withCredentials: true,

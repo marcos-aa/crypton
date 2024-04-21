@@ -24,10 +24,11 @@ export class UserController {
     const isProd = process.env.NODE_ENV === "production"
     return res
       .cookie("r_token", refreshToken, {
+        domain: "." + process.env.DOMAIN.substring(isProd ? 8 : 7),
         httpOnly: true,
         maxAge: Number(process.env.MAX_REFRESH),
         secure: isProd,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "lax",
       })
       .json({ user, accessToken })
   }
