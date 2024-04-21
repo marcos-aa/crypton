@@ -8,3 +8,4 @@ node_modules
 .pnp.*
 backend/dist/prisma/generated
 backend/prisma/generated/
+.vercel
