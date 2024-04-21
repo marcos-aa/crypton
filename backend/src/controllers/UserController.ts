@@ -21,11 +21,13 @@ export class UserController {
       password
     )
 
+    const isProd = process.env.NODE_ENV === "production"
     return res
       .cookie("r_token", refreshToken, {
         httpOnly: true,
         maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
+        secure: isProd,
+        sameSite: isProd,
       })
       .json({ user, accessToken })
   }
