@@ -89,7 +89,7 @@ export default class UserUtils {
     const params = {
       Source: process.env.APP_MAIL,
       Destination: {
-        ToAddresses: [process.env.APP_MAIL],
+        ToAddresses: [email],
       },
       ReplyToAddresses: [],
       Message: {
@@ -107,7 +107,7 @@ export default class UserUtils {
     try {
       await ses.send(sendEmail)
     } catch (e) {
-      console.log(e)
+      return "Fail to deliver email. Please verify your address and try again"
     }
 
     return "Verification code sent."
