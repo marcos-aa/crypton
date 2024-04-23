@@ -36,11 +36,11 @@ export default class StreamHandler {
   async createBounce(req: Request, res: Response) {
     const { Message } = req.body
     const { bounce }: MessageBounce = JSON.parse(Message)
-    const result = await new UserUtils().handleBounce(
+    await new UserUtils().handleBounce(
       bounce.bouncedRecipients[0].emailAddress,
       bounce.bounceType
     )
-    return res.json(result)
+    return res.sendStatus(200)
   }
 
   async updateEmail(req: Request, res: Response) {

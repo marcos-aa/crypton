@@ -64,20 +64,15 @@ export default class UserUtils {
     let expiresAt = new Date()
     expiresAt.setHours(expiresAt.getHours() + 1)
 
-    await prisma.ucodes.upsert({
-      where: { userId },
-      update: {
-        code,
-        expiresAt,
-        hash,
-      },
-      create: {
-        userId,
-        code,
-        expiresAt,
-        hash,
+    const blacklistMail = await prisma.blacklist.findUnique({
+      where: { email },
+      select: {
+        count: true,
       },
     })
+
+    const count = blacklistMail?.count
+    if (count && count > 4) return "Too many failed attempts to send email"
 
     const ses = new SESClient({
       region: process.env.SES_REGION,
@@ -105,7 +100,23 @@ export default class UserUtils {
     }
     const sendEmail = new SendEmailCommand(params)
     try {
-      await ses.send(sendEmail)
+      await Promise.all([
+        prisma.ucodes.upsert({
+          where: { userId },
+          update: {
+            code,
+            expiresAt,
+            hash,
+          },
+          create: {
+            userId,
+            code,
+            expiresAt,
+            hash,
+          },
+        }),
+        ses.send(sendEmail),
+      ])
     } catch (e) {
       return "Fail to deliver email. Please verify your address and try again"
     }
@@ -154,7 +165,17 @@ export default class UserUtils {
   }
 
   async handleBounce(email: string, type: "Transient" | "Permanent") {
-    return {}
+    const newcount = type === "Permanent" ? 5 : 1
+    await prisma.blacklist.update({
+      where: {
+        email,
+      },
+      data: {
+        count: {
+          increment: newcount,
+        },
+      },
+    })
   }
 
   async updateName(id: string, name: string) {

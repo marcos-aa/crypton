@@ -35,5 +35,5 @@ model Stream {
 model Blacklist {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
-  count    Int   
+  count      Int      
 }
