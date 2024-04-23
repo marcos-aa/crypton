@@ -170,11 +170,15 @@ export default class UserUtils {
 
   async handleBounce(email: string, type: "Transient" | "Permanent") {
     const newcount = type === "Permanent" ? 5 : 1
-    await prisma.blacklist.update({
+    await prisma.blacklist.upsert({
       where: {
         email,
       },
-      data: {
+      create: {
+        email,
+        count: 1,
+      },
+      update: {
         count: {
           increment: newcount,
         },
