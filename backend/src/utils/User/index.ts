@@ -153,6 +153,10 @@ export default class UserUtils {
     return { user, accessToken, refreshToken }
   }
 
+  async handleBounce(email: string, type: "Transient" | "Permanent") {
+    return {}
+  }
+
   async updateName(id: string, name: string) {
     await userSchema.extract("name").validateAsync(name)
     await prisma.user.update({

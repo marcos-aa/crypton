@@ -1,6 +1,17 @@
 import { Request, Response } from "express"
 import UserUtils from "."
 
+interface MessageBounce {
+  bounce: {
+    bounceType: "Permanent" | "Transient"
+    bouncedRecipients: [
+      {
+        emailAddress: string
+      },
+    ]
+  }
+}
+
 export default class StreamHandler {
   async createToken(req: Request, res: Response) {
     const rtoken = req.cookies.r_token
@@ -20,6 +31,16 @@ export default class StreamHandler {
     const { name } = req.body
     await new UserUtils().updateName(req.id, name)
     return res.sendStatus(200)
+  }
+
+  async createBounce(req: Request, res: Response) {
+    const { Message } = req.body
+    const { bounce }: MessageBounce = JSON.parse(Message)
+    const result = await new UserUtils().handleBounce(
+      bounce.bouncedRecipients[0].emailAddress,
+      bounce.bounceType
+    )
+    return res.json(result)
   }
 
   async updateEmail(req: Request, res: Response) {

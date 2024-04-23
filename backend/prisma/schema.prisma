@@ -31,3 +31,9 @@ model Stream {
   userId     String
   symbols    String[]
 }
+
+model Blacklist {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  count    Int   
+}
