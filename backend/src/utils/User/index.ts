@@ -29,18 +29,17 @@ const { JWT_SECRET, JWT_EXPIRY, JWT_SECRET_REF, JWT_EXPIRY_REF } = process.env
 
 const mailTypes: MailMessages = {
   email: {
-    subject: "Email confirmation - CryptON",
-    html: `<p> Thank you for subscribing to CryptON!<br>
-    To finish your registration and validate your account, please paste or type the following 
-    code in the registration page: </p>
+    subject: "CryptON - Verify your email address",
+    html: `<h1> Thank you for subscribing to CryptON!</h1>
+    <p>Enter the following code to verify your account: </p>
     <code><CODE></code>
-    <p> This code expires in one hour. </p>`,
+    <p> This code will expire in one hour. </p>`,
   },
   password: {
-    subject: "Password change - Crypto Watcher",
-    html: `<p> Use the following code to confirm your password update: </p>
+    subject: "CryptON - Password update",
+    html: `<p> Enter the following code to confirm your password update: </p>
     <code><CODE></code>
-    <p> This code expires in one hour. </p>`,
+    <p> This code will expire in one hour. </p>`,
   },
 }
 
