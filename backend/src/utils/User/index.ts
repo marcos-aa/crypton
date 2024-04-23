@@ -175,7 +175,7 @@ export default class UserUtils {
       },
       create: {
         email,
-        count: 1,
+        count: newcount,
       },
       update: {
         count: {
