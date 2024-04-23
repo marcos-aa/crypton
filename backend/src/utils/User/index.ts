@@ -72,7 +72,8 @@ export default class UserUtils {
     })
 
     const count = blacklistMail?.count
-    if (count && count > 4) return "Too many failed attempts to send email"
+    if (count && count > 4)
+      throw new CredError("Too many failed attempts to send email", 403)
 
     const ses = new SESClient({
       region: process.env.SES_REGION,
@@ -118,7 +119,10 @@ export default class UserUtils {
         ses.send(sendEmail),
       ])
     } catch (e) {
-      return "Fail to deliver email. Please verify your address and try again"
+      throw new CredError(
+        "Fail to deliver email. Please verify your address and try again",
+        403
+      )
     }
 
     return "Verification code sent."
