@@ -1,14 +1,22 @@
 import { Request, Response } from "express"
 import UserUtils from "."
 
-interface MessageBounce {
+type SESRecipients = [
+  {
+    emailAddress: string
+  },
+]
+
+interface BounceMessage {
   bounce: {
     bounceType: "Permanent" | "Transient"
-    bouncedRecipients: [
-      {
-        emailAddress: string
-      },
-    ]
+    bouncedRecipients: SESRecipients
+  }
+}
+
+interface ComplaintMessage {
+  complaint: {
+    complainedRecipients: SESRecipients
   }
 }
 
@@ -35,10 +43,20 @@ export default class StreamHandler {
 
   async createBounce(req: Request, res: Response) {
     const { Message } = req.body
-    const { bounce }: MessageBounce = JSON.parse(Message)
-    await new UserUtils().handleBounce(
+    const { bounce }: BounceMessage = JSON.parse(Message)
+    await new UserUtils().blacklistEmail(
       bounce.bouncedRecipients[0].emailAddress,
       bounce.bounceType
+    )
+    return res.sendStatus(200)
+  }
+
+  async createComplaint(req: Request, res: Response) {
+    const { Message } = req.body
+    const { complaint }: ComplaintMessage = JSON.parse(Message)
+    await new UserUtils().blacklistEmail(
+      complaint.complainedRecipients[0].emailAddress,
+      "Permanent"
     )
     return res.sendStatus(200)
   }

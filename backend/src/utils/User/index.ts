@@ -168,7 +168,7 @@ export default class UserUtils {
     return { user, accessToken, refreshToken }
   }
 
-  async handleBounce(email: string, type: "Transient" | "Permanent") {
+  async blacklistEmail(email: string, type: "Transient" | "Permanent") {
     const newcount = type === "Permanent" ? 5 : 1
     await prisma.blacklist.upsert({
       where: {
