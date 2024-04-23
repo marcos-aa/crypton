@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import UserUtils from "."
+import { setProdCookie } from "../helpers"
 
 type SESRecipients = [
   {
@@ -26,12 +27,9 @@ export default class StreamHandler {
     const { accessToken, refreshToken } = await new UserUtils().refreshToken(
       rtoken
     )
+    const cookieConfig = setProdCookie()
     return res
-      .cookie("r_token", refreshToken, {
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
-      })
+      .cookie("r_token", refreshToken, cookieConfig)
       .json({ accessToken })
   }
 

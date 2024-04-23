@@ -1,5 +1,6 @@
-import { CookieOptions, Request, Response } from "express"
+import { Request, Response } from "express"
 import UserServices from "../services/UserServices"
+import { setProdCookie } from "../utils/helpers"
 
 export class UserController {
   async create(req: Request, res: Response) {
@@ -21,15 +22,8 @@ export class UserController {
       password
     )
 
-    const isProd = process.env.NODE_ENV === "production"
-    const cookieConfig: CookieOptions = {
-      httpOnly: true,
-      maxAge: Number(process.env.MAX_REFRESH),
-      secure: isProd,
-      sameSite: "lax",
-    }
+    const cookieConfig = setProdCookie()
 
-    if (isProd) cookieConfig.domain = "." + process.env.DOMAIN.substring(8)
     return res
       .cookie("r_token", refreshToken, cookieConfig)
       .json({ user, accessToken })
