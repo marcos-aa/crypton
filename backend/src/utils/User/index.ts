@@ -120,12 +120,12 @@ export default class UserUtils {
       ])
     } catch (e) {
       throw new CredError(
-        "Fail to deliver email. Please verify your address and try again",
+        "We couldn't send you an email. Please verify your email address and try again",
         403
       )
     }
 
-    return "Verification code sent."
+    return "We sent a verification code to your email address"
   }
 
   async validateUser(code: string, email: string): Promise<UserTokens> {
@@ -140,10 +140,10 @@ export default class UserUtils {
     if (new Date().getTime() > ucode.expiresAt.getTime())
       throw new CredError(m.expiredCode, 403)
 
-    const [accessToken, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = [
       signToken(ucode.userId, JWT_SECRET, JWT_EXPIRY),
       signToken(ucode.userId, JWT_SECRET_REF, JWT_EXPIRY_REF),
-    ])
+    ]
 
     const [user] = await Promise.all([
       prisma.user.update({
@@ -243,10 +243,10 @@ export default class UserUtils {
     if (user?.refreshToken !== refToken)
       throw new CredError(m.invalidToken, 403)
 
-    const [accessToken, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = [
       signToken(user.id, JWT_SECRET, JWT_EXPIRY),
       signToken(user.id, JWT_SECRET_REF, JWT_EXPIRY_REF),
-    ])
+    ]
 
     await prisma.user.update({
       where: { id },
