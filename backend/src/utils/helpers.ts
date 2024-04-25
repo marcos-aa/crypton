@@ -28,4 +28,86 @@ const signToken = (id: string, secret: string, expiration: string) => {
   return token
 }
 
-export { checkPassword, setProdCookie, signToken }
+const genMailHtml = (subject: string, code: string) => {
+  const stringfied = `
+  <div
+   style="
+    width: 100%;
+    height: 600px;
+    max-height: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #f0f2f4;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+  "
+  >
+    <div
+      style="
+        background-color: white;
+        border-radius: 3px;
+        padding: 5px 10px;
+        margin: auto;
+        width: 600px;
+        height: fit-content;
+        max-height: 90%;
+        max-width: 100%;
+        min-height: 250px;
+        gap: 5px;
+        font-family: &quot;Lucida Sans&quot;, &quot;Lucida Sans Regular&quot;,
+          &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Geneva,
+          Verdana, sans-serif;
+      "
+    >
+      <a
+        href="https://crypton.icu"
+        style="
+          display: block;
+          color: black;
+          text-decoration: none;
+          font-size: xx-large;
+          width: 100%;
+          font-weight: bold;
+          max-width: 100%;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        "
+      >
+        CRYPT<span style="color: green">ON </span>
+      </a>
+  
+      <p style="margin: 10px 0; width: 100%">
+        Use the following code on our app to ${subject.charAt(0).toLowerCase() + subject.slice(1)}:
+      </p>
+      <code
+        style="
+          display: block;
+          background-color: #f4f4f4;
+          padding: 10px;
+          margin: 5px 0;
+          width: 100%;
+          box-sizing: border-box;
+        "
+      >
+        ${code}
+      </code>
+      <a href="https://crypton.icu/user/unsubscribe"> </a>
+      <p>This code will expire in one hour.</p>
+      <p style="color: #8898aa; margin: 10px 0">
+        You can
+        <a
+          style="color: inherit; text-decoration: underline"
+          href="https://crypton.icu/user/"
+        >
+          unsubscribe
+        </a>
+        to stop crypton from sending you emails and delete all your data from our
+        servers.
+      </p>
+    </div>
+  </div>
+
+  `
+  return stringfied
+}
+export { checkPassword, genMailHtml, setProdCookie, signToken }

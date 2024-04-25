@@ -12,35 +12,22 @@ import {
   oidSchema,
   userSchema,
 } from "../../utils/schemas"
-import { checkPassword, signToken } from "../helpers"
+import { checkPassword, genMailHtml, signToken } from "../helpers"
 
 type Tokens = Pick<UserTokens, "accessToken" | "refreshToken">
 
-interface MailMessages {
-  [key: string]: {
-    subject: string
-    html: string
-  }
+interface MailSubjects {
+  email: string
+  password: string
 }
 
 let code: string = ""
 
 const { JWT_SECRET, JWT_EXPIRY, JWT_SECRET_REF, JWT_EXPIRY_REF } = process.env
 
-const mailTypes: MailMessages = {
-  email: {
-    subject: "CryptON - Verify your email address",
-    html: `<h1> Thank you for subscribing to CryptON!</h1>
-    <p>Enter the following code to verify your account: </p>
-    <code><CODE></code>
-    <p> This code will expire in one hour. </p>`,
-  },
-  password: {
-    subject: "CryptON - Password update",
-    html: `<p> Enter the following code to confirm your password update: </p>
-    <code><CODE></code>
-    <p> This code will expire in one hour. </p>`,
-  },
+const mailSubjects: MailSubjects = {
+  email: "Verify your email address",
+  password: "Reset your password",
 }
 
 export default class UserUtils {
@@ -90,14 +77,15 @@ export default class UserUtils {
       Message: {
         Body: {
           Html: {
-            Data: mailTypes[type].html.replace("<CODE>", code),
+            Data: genMailHtml(mailSubjects[type], code),
           },
         },
         Subject: {
-          Data: mailTypes[type].subject,
+          Data: mailSubjects[type],
         },
       },
     }
+
     const sendEmail = new SendEmailCommand(params)
     try {
       await Promise.all([
