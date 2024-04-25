@@ -53,7 +53,7 @@ const genMailHtml = (subject: string, code: string) => {
         height: fit-content;
         max-height: 90%;
         max-width: 100%;
-        min-height: 250px;
+        min-height: 200px;
         gap: 5px;
         font-family: &quot;Lucida Sans&quot;, &quot;Lucida Sans Regular&quot;,
           &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Geneva,
@@ -91,22 +91,9 @@ const genMailHtml = (subject: string, code: string) => {
       >
         ${code}
       </code>
-      <a href="https://crypton.icu/user/unsubscribe"> </a>
-      <p>This code will expire in one hour.</p>
-      <p style="color: #8898aa; margin: 10px 0">
-        You can
-        <a
-          style="color: inherit; text-decoration: underline"
-          href="https://crypton.icu/user/"
-        >
-          unsubscribe
-        </a>
-        to stop crypton from sending you emails and delete all your data from our
-        servers.
-      </p>
+      <p style="color: #8898aa; margin: 10px 0">This code will expire in one hour.</p>
     </div>
   </div>
-
   `
   return stringfied
 }
