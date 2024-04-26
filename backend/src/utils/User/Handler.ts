@@ -81,12 +81,10 @@ export default class StreamHandler {
     const { code, email } = req.body
     const { user, accessToken, refreshToken } =
       await new UserUtils().validateUser(code, email)
+
+    const cookieConfig = setProdCookie()
     return res
-      .cookie("r_token", refreshToken, {
-        httpOnly: true,
-        maxAge: Number(process.env.MAX_REFRESH),
-        secure: process.env.NODE_ENV === "production",
-      })
+      .cookie("r_token", refreshToken, cookieConfig)
       .json({ user, accessToken })
   }
 }
