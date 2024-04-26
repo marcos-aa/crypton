@@ -21,7 +21,7 @@ import UserSettings, {
 } from "./components/views/Dashboard/UserSettings"
 import UpdateCredentials from "./components/views/Dashboard/UserSettings/UpdateCredentials"
 import ValidationModal from "./components/views/Dashboard/ValidationModal"
-import Home from "./components/views/Home"
+import Home, { homeLoader } from "./components/views/Home"
 import Registration from "./components/views/Home/Registration"
 import ResetPassword from "./components/views/Home/Registration/ResetPassword"
 import SignIn from "./components/views/Home/Registration/SignIn"
@@ -46,6 +46,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    loader: homeLoader,
     errorElement: <ErrorBoundary />,
     children: [
       {
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
     id: "dash",
+
     errorElement: <ErrorBoundary />,
     loader: dashLoader(queryClient),
     shouldRevalidate: () => false,

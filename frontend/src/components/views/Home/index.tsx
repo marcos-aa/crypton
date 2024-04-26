@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-import { Outlet, useNavigate } from "react-router"
+import { Outlet, redirect, useLoaderData, useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 import { Tickers } from "shared/streamtypes"
 import api from "../../../services/api"
@@ -9,8 +8,29 @@ import SymbolTicks from "../Dashboard/StreamList/SymbolTicks"
 import streamStyles from "../Dashboard/StreamList/styles.module.scss"
 import styles from "./styles.module.scss"
 
+export const homeLoader = async () => {
+  const token = localStorage.getItem(local.token)
+  if (token) redirect("/dashboard")
+
+  const { data: tickers } = await api.get<Tickers>("/tickers", {
+    params: {
+      symbols: [
+        "BTCBUSD",
+        "ETHBTC",
+        "BNBBTC",
+        "SOLETH",
+        "BTCUSDT",
+        "ETHBUSD",
+        "BCHUSDT",
+        "SHIBUSDT",
+      ],
+    },
+  })
+
+  return tickers
+}
 export default function Home() {
-  const [tickers, setTickers] = useState<Tickers>({})
+  const tickers = useLoaderData() as Tickers
   const navigate = useNavigate()
 
   const handleGuest = () => {
@@ -20,34 +40,6 @@ export default function Home() {
       localStorage.setItem(local.joined, JSON.stringify(new Date()))
     navigate("/dashboard")
   }
-
-  useEffect(() => {
-    const token = localStorage.getItem(local.token)
-    if (token) return navigate("/dashboard")
-
-    const controller = new AbortController()
-    api
-      .get<Tickers>("/tickers", {
-        signal: controller.signal,
-        params: {
-          symbols: [
-            "BTCBUSD",
-            "ETHBTC",
-            "BNBBTC",
-            "SOLETH",
-            "BTCUSDT",
-            "ETHBUSD",
-            "BCHUSDT",
-            "SHIBUSDT",
-          ],
-        },
-      })
-      .then((res) => {
-        setTickers(res.data)
-      })
-
-    return () => controller.abort()
-  }, [])
 
   return (
     <section className="page">
