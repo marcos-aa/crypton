@@ -18,7 +18,6 @@ import useWebSocket from "react-use-websocket"
 import { StreamData, Tickers } from "shared/streamtypes"
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching"
 import { formatSymbols, local, queryTicks } from "../../../../utils/helpers"
-import { NotifType } from "../Notification"
 import SymbolTicks from "./SymbolTicks"
 import styles from "./styles.module.scss"
 
@@ -43,7 +42,7 @@ const tformatter = Intl.NumberFormat("en-us", {
 interface StreamsProps {
   initialData: StreamData
   verified: boolean
-  notify(message: string, type: NotifType): void
+  updateTotals(streams: number, syms: number, usyms: number): void
 }
 
 interface WSTIcker {
@@ -60,13 +59,14 @@ interface WSTIcker {
   result?: string
 }
 
-function StreamList({ initialData, verified, notify }: StreamsProps) {
+function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
   const qc = useQueryClient()
   const fetcher = useFetcher()
   const { data } = useQuery({
     ...streamQuery(verified),
     initialData,
     staleTime: 3600000,
+    gcTime: 0,
   })
   const [, setTemp] = useState<Tickers>({})
   const { pathname } = useLocation()
@@ -156,15 +156,11 @@ function StreamList({ initialData, verified, notify }: StreamsProps) {
       handleTickSub(delticks, "UNSUBSCRIBE")
     }
 
-    if (localStorage.getItem(local.expStreams)) {
-      notify("Your streams failed to be exported. Please try again", "error")
-      localStorage.removeItem(local.expStreams)
-    }
-
     const strparams = qparams.size > 0 ? "?" + qparams.toString() : ""
     const cleanURL = new URL(
       window.location.origin + window.location.pathname + strparams
     )
+    updateTotals(data.tstreams, data.tsyms, data.usyms)
     history.replaceState(history.state, "", cleanURL)
   }, [data.streams])
 

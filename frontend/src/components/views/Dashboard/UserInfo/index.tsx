@@ -15,13 +15,13 @@ export const userQuery = (verified: boolean) => ({
 })
 
 interface InfoProps extends Pick<StreamData, "tstreams" | "tsyms" | "usyms"> {
-  initialData: UIUser
+  initialUser: UIUser
 }
 
-function UserInfo({ initialData, tsyms, tstreams, usyms }: InfoProps) {
+function UserInfo({ initialUser, tsyms, tstreams, usyms }: InfoProps) {
   const { data: user } = useQuery({
-    ...userQuery(initialData.verified),
-    initialData,
+    ...userQuery(initialUser.verified),
+    initialData: initialUser,
     staleTime: 3600000,
   })
 

@@ -74,7 +74,6 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
     id: "dash",
-
     errorElement: <ErrorBoundary />,
     loader: dashLoader(queryClient),
     shouldRevalidate: () => false,

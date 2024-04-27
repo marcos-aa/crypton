@@ -10,7 +10,7 @@ import styles from "./styles.module.scss"
 
 export const homeLoader = async () => {
   const token = localStorage.getItem(local.token)
-  if (token) redirect("/dashboard")
+  if (token) return redirect("/dashboard")
 
   const { data: tickers } = await api.get<Tickers>("/tickers", {
     params: {

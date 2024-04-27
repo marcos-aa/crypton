@@ -1618,10 +1618,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.36.1":
-  version: 4.36.1
-  resolution: "@tanstack/query-core@npm:4.36.1"
-  checksum: 10c0/f286529dbd4c9cdb237ef0bfa72d785c74b5d0958290e8d85c343043ba7be4bbc6cb771167d8c13ca12bd4f37412a3d8b69331f57daa375b2071fd4752aed66a
+"@tanstack/query-core@npm:5.32.0":
+  version: 5.32.0
+  resolution: "@tanstack/query-core@npm:5.32.0"
+  checksum: 10c0/58e7b053579a23dba36189a1fd87261819b31b344648f693fd613c722260066e11ad8c82dc07f5e5af2e276bde1b9f6a1dd6da3bf93cdd3583d128a2b373fce0
   languageName: node
   linkType: hard
 
@@ -1632,7 +1632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query-devtools@npm:^5.12.2":
+"@tanstack/react-query-devtools@npm:^5.32.0":
   version: 5.32.0
   resolution: "@tanstack/react-query-devtools@npm:5.32.0"
   dependencies:
@@ -1644,22 +1644,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^4.29.25":
-  version: 4.36.1
-  resolution: "@tanstack/react-query@npm:4.36.1"
+"@tanstack/react-query@npm:^5.32.0":
+  version: 5.32.0
+  resolution: "@tanstack/react-query@npm:5.32.0"
   dependencies:
-    "@tanstack/query-core": "npm:4.36.1"
-    use-sync-external-store: "npm:^1.2.0"
+    "@tanstack/query-core": "npm:5.32.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 10c0/15d9c98269d52fbdd49f4eb4b077b5d70346f904ea2ae51fd0400949d731afde658919a1143dd849fb50d4c5b6d0ab072e7b313a098ef316dd1c24089653f626
+    react: ^18.0.0
+  checksum: 10c0/0b55b4f9d91e0f72cf12298c1659ee6520723eed16b7d523bc69269331544af8b62699b72d89840dc8ae75076144ac121ed1373d4f8e7d4cd48f5e0eb1d73d80
   languageName: node
   linkType: hard
 
@@ -3362,8 +3354,8 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.2.0"
     "@fortawesome/free-solid-svg-icons": "npm:^6.2.0"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
-    "@tanstack/react-query": "npm:^4.29.25"
-    "@tanstack/react-query-devtools": "npm:^5.12.2"
+    "@tanstack/react-query": "npm:^5.32.0"
+    "@tanstack/react-query-devtools": "npm:^5.32.0"
     "@types/axios": "npm:^0.14.0"
     "@types/react": "npm:^18.2.43"
     "@types/uuid": "npm:^8.3.4"
@@ -5460,15 +5452,6 @@ __metadata:
   bin:
     update-browserslist-db: cli.js
   checksum: 10c0/e52b8b521c78ce1e0c775f356cd16a9c22c70d25f3e01180839c407a5dc787fb05a13f67560cbaf316770d26fa99f78f1acd711b1b54a4f35d4820d4ea7136e6
-  languageName: node
-  linkType: hard
-
-"use-sync-external-store@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "use-sync-external-store@npm:1.2.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/ac4814e5592524f242921157e791b022efe36e451fe0d4fd4d204322d5433a4fc300d63b0ade5185f8e0735ded044c70bcf6d2352db0f74d097a238cebd2da02
   languageName: node
   linkType: hard
 

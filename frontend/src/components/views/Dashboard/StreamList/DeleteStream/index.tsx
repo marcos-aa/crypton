@@ -6,9 +6,9 @@ import api from "../../../../../services/api"
 import {
   delTicks,
   filterStreams,
-  genTickUrl,
   local,
   queryTicks,
+  setPageState,
 } from "../../../../../utils/helpers"
 import CheckboxField from "../../../../AuthForm/CheckboxField"
 import ModalContainer from "../../../../ModalContainer"
@@ -21,23 +21,23 @@ export const deleteStream =
   (qc: QueryClient) =>
   async ({ request, params }: UserParams) => {
     const formData = await request.formData()
-    const noPrompt = formData.get("prompt") as string
+    const noPrompt = formData.get("prompt")
 
     if (noPrompt) localStorage.setItem(local.delPrompt, "false")
-    let delstream: Stream
-    let delticks: string[]
+    let deletedStream: Stream
+    let uniqueTicks: string[]
 
     const { streams } = qc.setQueryData<StreamData>(
       ["streams"],
       (cached): StreamData => {
         const symtracker: SymTracker = { ...cached.symtracker }
         const { streams, oldstream } = filterStreams(params.id, cached.streams)
-        delstream = oldstream
-        delticks = delTicks(oldstream?.symbols, symtracker)
+        deletedStream = oldstream
+        uniqueTicks = delTicks(oldstream?.symbols, symtracker)
 
         const tstreams = cached.tstreams - 1
         const tsyms = cached.tsyms - oldstream.symbols.length
-        const usyms = cached.usyms - delticks.length
+        const usyms = cached.usyms - uniqueTicks.length
 
         return {
           streams,
@@ -51,11 +51,11 @@ export const deleteStream =
     )
 
     const isGuest = localStorage.getItem(local.token) === "guest"
-    const delparams = queryTicks(delticks, "?delsyms")
+    const ticksParam = queryTicks(uniqueTicks, "?delsyms")
 
     if (isGuest) {
       localStorage.setItem(local.streams, JSON.stringify(streams))
-      return redirect(`/dashboard` + delparams)
+      return redirect("/dashboard" + ticksParam)
     }
 
     api
@@ -65,15 +65,22 @@ export const deleteStream =
         },
       })
       .catch(() => {
-        genTickUrl(delticks, "newsyms")
+        setPageState(uniqueTicks, "newsyms")
         qc.setQueryData<StreamData>(["streams"], (curr) => {
           const streams = [...curr.streams]
-          streams.unshift(delstream)
-          return { ...curr, streams }
+          streams.unshift(deletedStream)
+
+          return {
+            ...curr,
+            streams,
+            tstreams: streams.length,
+            tsyms: curr.tsyms + deletedStream.symbols.length,
+            usyms: curr.usyms + uniqueTicks.length,
+          }
         })
       })
 
-    return redirect(`/dashboard` + delparams)
+    return redirect("/dashboard" + ticksParam)
   }
 
 export default function DeleteStream() {

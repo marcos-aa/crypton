@@ -1,7 +1,6 @@
 import { QueryClient } from "@tanstack/react-query"
 import { AxiosError, AxiosResponse } from "axios"
 import { SyntheticEvent } from "react"
-import { ResMessage } from "shared"
 import {
   NewIds,
   RawStream,
@@ -198,7 +197,7 @@ const importGStreams = async (
   uid: string
 ): Promise<NotifReturn> => {
   let rawstreams: RawStream[]
-  let subticks: Newticks
+  let paramTicks: Newticks
   let gtsyms: number = 0
 
   qc.setQueryData<StreamData>(["streams"], (curr) => {
@@ -214,7 +213,7 @@ const importGStreams = async (
     })
 
     rawstreams = rstreams
-    subticks = newticks
+    paramTicks = newticks
 
     if (createdBy != "guest") {
       gtsyms = data.tsyms
@@ -222,7 +221,7 @@ const importGStreams = async (
       data.tstreams += curr.tstreams
       data.tsyms += curr.tsyms
     }
-    genTickUrl(subticks.syms, "newsyms")
+    setPageState(paramTicks.syms, "newsyms")
 
     return {
       ...data,
@@ -258,14 +257,13 @@ const importGStreams = async (
         type: "success",
       }
     })
-    .catch((e: AxiosError<ResMessage>): NotifReturn => {
+    .catch((e: AxiosError<string>): NotifReturn => {
       const rawstart = rawstreams[0]._id.$oid
-      revertStreams(qc, rawstart, rawstreams.length, gtsyms, subticks.syms)
-      localStorage.setItem(local.expStreams, "failure")
+      revertStreams(qc, rawstart, rawstreams.length, gtsyms, paramTicks.syms)
 
       return {
         message:
-          e.response?.data?.message ||
+          e.response?.data ||
           "Your streams failed to be exported. Please try again",
         type: "error",
       }
@@ -294,7 +292,7 @@ const revertStreams = (
         usyms -= 1
       }
     })
-    genTickUrl(delsyms, "delsyms")
+    setPageState(delsyms, "delsyms")
 
     const streams = [...data.streams]
     const rawstart = data.streams.findIndex((stream) => stream.id === rawid)
@@ -354,7 +352,7 @@ const delTicks = (oldsymbols: string[], symtracker: SymTracker): string[] => {
   return delticks
 }
 
-const genTickUrl = (ticks: string[], type: "newsyms" | "delsyms") => {
+const setPageState = (ticks: string[], type: "newsyms" | "delsyms") => {
   const url = new URL(window.location.origin + window.location.pathname)
   url.searchParams.set(type, JSON.stringify(ticks))
   history.replaceState(history.state, "", url)
@@ -384,9 +382,9 @@ export {
   formatSymbols,
   formatTicker,
   genGStreamData,
-  genTickUrl,
   importGStreams,
   queryTicks,
+  setPageState,
   stopPropagation,
   validateField,
   validateForm,

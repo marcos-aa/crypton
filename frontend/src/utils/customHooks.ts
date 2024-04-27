@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { useNavigate } from "react-router"
 import { NotifType } from "../components/views/Dashboard/Notification"
 import api from "../services/api"
@@ -27,7 +27,7 @@ const useNotification = () => {
     })
   }
 
-  const updateNotif = useCallback((message: string, type: NotifType) => {
+  const updateNotif = (message: string, type: NotifType) => {
     const timeoutId = window.setTimeout(() => {
       clearNotif()
     }, 2000)
@@ -35,7 +35,7 @@ const useNotification = () => {
     setNotif({ type, message, expires: timeoutId })
 
     return timeoutId
-  }, [])
+  }
 
   return { notif, updateNotif, clearNotif }
 }
@@ -90,8 +90,9 @@ const useLogout = (verified: boolean) => {
     delete api.defaults.headers.common.authorization
     if (verified) await api.delete("/session")
 
-    qc.removeQueries(["streams"])
-    qc.removeQueries(["user"])
+    qc.removeQueries({ queryKey: ["streams"] })
+    qc.removeQueries({ queryKey: ["user"] })
+
     localStorage.removeItem(local.token)
 
     navigate("/")

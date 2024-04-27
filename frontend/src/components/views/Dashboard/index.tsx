@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { useCallback, useState } from "react"
 import { Link, redirect, useLoaderData } from "react-router-dom"
 import { StreamData } from "shared/streamtypes"
 import { UIUser } from "shared/usertypes"
@@ -27,7 +28,7 @@ export interface DashLoader {
 export const dashLoader =
   (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
     const token = localStorage.getItem(local.token)
-    if (!token) return redirect("/home/register/signin")
+    if (!token) return redirect("/register/signin")
 
     const verified = token !== "guest"
     if (verified) saveHeader(token)
@@ -61,9 +62,19 @@ export default function Dashboard() {
   const qc = useQueryClient()
   const { user, streamData } = useLoaderData() as DashLoader
   const { notif, updateNotif, clearNotif } = useNotification()
+  const [totals, setTotals] = useState({
+    streams: streamData.tstreams,
+    syms: streamData.tsyms,
+    usyms: streamData.usyms,
+  })
   const logout = useLogout(user.verified)
 
-  const { tsyms, tstreams, usyms } = qc.getQueryData<StreamData>(["streams"])
+  const updateTotals = useCallback(
+    (streams: number, syms: number, usyms: number) => {
+      setTotals({ streams, syms, usyms })
+    },
+    [streamData]
+  )
 
   const handleLogout = async () => {
     clearNotif()
@@ -132,16 +143,16 @@ export default function Dashboard() {
       </header>
 
       <UserInfo
-        initialData={user}
-        tsyms={tsyms}
-        usyms={usyms}
-        tstreams={tstreams}
+        initialUser={user}
+        tstreams={totals.streams}
+        tsyms={totals.syms}
+        usyms={totals.usyms}
       />
 
       <StreamList
         initialData={streamData}
         verified={user.verified}
-        notify={updateNotif}
+        updateTotals={updateTotals}
       />
     </div>
   )
