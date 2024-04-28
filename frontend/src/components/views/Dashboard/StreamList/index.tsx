@@ -181,7 +181,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
         </div>
       )}
 
-      {data.streams?.map((stream) => {
+      {data.streams.map((stream) => {
         return (
           <div className={styles.streamList} key={stream.id}>
             {stream.symbols.map((symbol) => {

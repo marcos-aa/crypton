@@ -1,4 +1,13 @@
-import { Outlet, redirect, useLoaderData, useNavigate } from "react-router"
+import { AxiosResponse } from "axios"
+import { Suspense } from "react"
+import {
+  Await,
+  Outlet,
+  defer,
+  redirect,
+  useLoaderData,
+  useNavigate,
+} from "react-router"
 import { Link } from "react-router-dom"
 import { Tickers } from "shared/streamtypes"
 import api from "../../../services/api"
@@ -6,13 +15,13 @@ import { local } from "../../../utils/helpers"
 import Logo from "../../Logo"
 import SymbolTicks from "../Dashboard/StreamList/SymbolTicks"
 import streamStyles from "../Dashboard/StreamList/styles.module.scss"
+import SkeletonHero from "./Hero/Skeleton"
 import styles from "./styles.module.scss"
-
 export const homeLoader = async () => {
   const token = localStorage.getItem(local.token)
   if (token) return redirect("/dashboard")
 
-  const { data: tickers } = await api.get<Tickers>("/tickers", {
+  const tickersPromise = api.get<Tickers>("/tickers", {
     params: {
       symbols: [
         "BTCBUSD",
@@ -27,10 +36,17 @@ export const homeLoader = async () => {
     },
   })
 
-  return tickers
+  return defer({
+    tickersPromise,
+  })
 }
+
+interface DeferredTickers {
+  tickersPromise: Promise<AxiosResponse<Tickers>>
+}
+
 export default function Home() {
-  const tickers = useLoaderData() as Tickers
+  const data = useLoaderData() as DeferredTickers
   const navigate = useNavigate()
 
   const handleGuest = () => {
@@ -65,18 +81,50 @@ export default function Home() {
         </section>
 
         <div id={styles.hero}>
-          <div className={`${styles.stream} ${streamStyles.streamList}`}>
-            <SymbolTicks symbol="BTCBUSD" prices={tickers.BTCBUSD} />
-            <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
-            <SymbolTicks symbol="BNBBTC" prices={tickers.BNBBTC} />
-            <SymbolTicks symbol="SOLETH" prices={tickers.SOLETH} />
-          </div>
-          <div className={`${styles.stream} ${streamStyles.streamList}`}>
-            <SymbolTicks symbol="BTCUSDT" prices={tickers.BTCUSDT} />
-            <SymbolTicks symbol="SHIBUSDT" prices={tickers.SHIBUSDT} />
-            <SymbolTicks symbol="ETHBUSD" prices={tickers.ETHBUSD} />
-            <SymbolTicks symbol="BCHUSDT" prices={tickers.BCHUSDT} />
-          </div>
+          <Suspense fallback={<SkeletonHero />}>
+            {
+              <Await resolve={data.tickersPromise}>
+                {(res: AxiosResponse<Tickers>) => {
+                  const tickers = res.data
+                  return (
+                    <>
+                      <div
+                        className={`${styles.stream} ${streamStyles.streamList}`}
+                      >
+                        <SymbolTicks
+                          symbol="BTCBUSD"
+                          prices={tickers.BTCBUSD}
+                        />
+                        <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
+                        <SymbolTicks symbol="BNBBTC" prices={tickers.BNBBTC} />
+                        <SymbolTicks symbol="SOLETH" prices={tickers.SOLETH} />
+                      </div>
+                      <div
+                        className={`${styles.stream} ${streamStyles.streamList}`}
+                      >
+                        <SymbolTicks
+                          symbol="BTCUSDT"
+                          prices={tickers.BTCUSDT}
+                        />
+                        <SymbolTicks
+                          symbol="SHIBUSDT"
+                          prices={tickers.SHIBUSDT}
+                        />
+                        <SymbolTicks
+                          symbol="ETHBUSD"
+                          prices={tickers.ETHBUSD}
+                        />
+                        <SymbolTicks
+                          symbol="BCHUSDT"
+                          prices={tickers.BCHUSDT}
+                        />
+                      </div>
+                    </>
+                  )
+                }}
+              </Await>
+            }
+          </Suspense>
         </div>
       </main>
       <Outlet />
