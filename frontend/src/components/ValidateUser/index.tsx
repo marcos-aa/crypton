@@ -45,7 +45,7 @@ export default function ValidateUser({ style }: ValidationProps) {
 
   const handleValidation = async (e: SyntheticEvent) => {
     e.preventDefault()
-    isLoading(false)
+    isLoading(true)
 
     try {
       const { data } = await api.put<UserData>("/user/validate", {
