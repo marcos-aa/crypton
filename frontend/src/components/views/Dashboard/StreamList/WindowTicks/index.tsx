@@ -42,9 +42,9 @@ export const saveWindow = async (
   interval: string
 ): Promise<WindowData> => {
   let uncached: string[] = []
-  let tickers = {
-    ...qc.getQueryData<StreamData>(["streams"]).tickers,
-  }
+  let { tickers } = await qc.ensureQueryData<StreamData>({
+    queryKey: ["streams"],
+  })
 
   const data = symbols.reduce(
     (store: WindowData, sym: string) => {
