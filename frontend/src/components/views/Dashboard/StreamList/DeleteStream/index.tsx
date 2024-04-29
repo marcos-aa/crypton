@@ -4,10 +4,10 @@ import { Form as RouterForm, redirect, useLocation } from "react-router-dom"
 import { Stream, StreamData, SymTracker } from "shared/streamtypes"
 import api from "../../../../../services/api"
 import {
+  createTicksParameter,
   delTicks,
   filterStreams,
   local,
-  queryTicks,
   setPageState,
 } from "../../../../../utils/helpers"
 import CheckboxField from "../../../../AuthForm/CheckboxField"
@@ -51,7 +51,7 @@ export const deleteStream =
     )
 
     const isGuest = localStorage.getItem(local.token) === "guest"
-    const ticksParam = queryTicks(uniqueTicks, "?delsyms")
+    const ticksParam = createTicksParameter(uniqueTicks, "?delsyms")
 
     if (isGuest) {
       localStorage.setItem(local.streams, JSON.stringify(streams))

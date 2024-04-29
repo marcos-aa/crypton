@@ -339,7 +339,7 @@ const setPageState = (ticks: string[], type: "newsyms" | "delsyms") => {
   history.replaceState(history.state, "", url)
 }
 
-const queryTicks = (ticks: string[], key: string): string => {
+const createTicksParameter = (ticks: string[], key: string): string => {
   if (ticks.length < 1) return ""
   const queryName = `${key}=`
   const encoded = encodeURIComponent(JSON.stringify(ticks))
@@ -358,13 +358,13 @@ const filterStreams = (id: string, streams: Stream[]): FilteredStreams => {
 
 export {
   addTicks,
+  createTicksParameter,
   delTicks,
   filterStreams,
   formatSymbols,
   formatTicker,
   genGuestStreams,
   impGuestStreams,
-  queryTicks,
   setPageState,
   stopPropagation,
   validateField,

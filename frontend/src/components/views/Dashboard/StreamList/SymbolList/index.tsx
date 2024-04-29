@@ -16,10 +16,10 @@ import api from "../../../../../services/api"
 import { getPairs } from "../../../../../utils/datafetching"
 import {
   addTicks,
+  createTicksParameter,
   delTicks,
   filterStreams,
   local,
-  queryTicks,
 } from "../../../../../utils/helpers"
 import ModalContainer from "../../../../ModalContainer"
 import CancellableAction from "../../CancellableAction"
@@ -111,8 +111,8 @@ export const upsertStream =
     })
 
     const [sub, unsub] = [
-      queryTicks(newsyms, "newsyms"),
-      queryTicks(delsyms, "delsyms"),
+      createTicksParameter(newsyms, "newsyms"),
+      createTicksParameter(delsyms, "delsyms"),
     ]
 
     return redirect(`/dashboard?${sub}&${unsub}`)

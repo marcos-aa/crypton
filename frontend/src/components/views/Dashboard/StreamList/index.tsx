@@ -17,7 +17,11 @@ import {
 import useWebSocket from "react-use-websocket"
 import { StreamData, Tickers } from "shared/streamtypes"
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching"
-import { formatSymbols, local, queryTicks } from "../../../../utils/helpers"
+import {
+  createTicksParameter,
+  formatSymbols,
+  local,
+} from "../../../../utils/helpers"
 import SymbolTicks from "./SymbolTicks"
 import styles from "./styles.module.scss"
 
@@ -205,7 +209,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
               <Link
                 to={
                   `/dashboard/streams/window?` +
-                  queryTicks(stream.symbols, "symbols")
+                  createTicksParameter(stream.symbols, "symbols")
                 }
               >
                 <FontAwesomeIcon
