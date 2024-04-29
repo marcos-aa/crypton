@@ -1,5 +1,6 @@
-import { useNavigate, useRouteLoaderData } from "react-router"
-import { DashLoader } from "../.."
+import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "react-router"
+import { UIUser } from "shared/usertypes"
 import api from "../../../../../services/api"
 import { useLogout } from "../../../../../utils/customHooks"
 import { InputData } from "../../../../../utils/helpers"
@@ -24,7 +25,8 @@ const formMessages: formMessages = {
 }
 
 export default function UpdateCredentials({ type }: CredProps) {
-  const { user } = useRouteLoaderData("dash") as DashLoader
+  const qc = useQueryClient()
+  const user = qc.getQueryData<UIUser>(["user"])
   const handleLogout = useLogout(user.verified)
   const navigate = useNavigate()
 
