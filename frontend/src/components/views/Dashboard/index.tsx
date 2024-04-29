@@ -13,7 +13,7 @@ import { StreamData } from "shared/streamtypes"
 import { UIUser } from "shared/usertypes"
 import { useLogout, useNotification } from "../../../utils/customHooks"
 import { saveHeader } from "../../../utils/datafetching"
-import { importGStreams, local } from "../../../utils/helpers"
+import { impGuestStreams, local } from "../../../utils/helpers"
 import Logo from "../../Logo"
 import Notification from "./Notification"
 import StreamList, { streamQuery } from "./StreamList"
@@ -93,7 +93,7 @@ export default function Dashboard() {
 
     updateNotif("Your streams are being uploaded to the server", "loading")
     const uid = qc.getQueryData<UIUser>(["user"]).id
-    importGStreams(qc, uid).then((res) => updateNotif(res.message, res.type))
+    impGuestStreams(qc, uid).then((res) => updateNotif(res.message, res.type))
   }
 
   return (

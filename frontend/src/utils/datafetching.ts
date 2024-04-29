@@ -1,7 +1,7 @@
 import { StreamData, Tickers } from "shared/streamtypes"
 import { UIUser, UserData } from "shared/usertypes"
 import api from "../services/api"
-import { genGStreamData, local } from "./helpers"
+import { genGuestStreams, local } from "./helpers"
 
 export const saveHeader = (token: string) => {
   localStorage.setItem(local.token, token)
@@ -33,9 +33,10 @@ const getStreams = async (): Promise<StreamData> => {
 }
 
 const getGuestStreams = async (): Promise<StreamData> => {
-  const { data, symbols } = genGStreamData("guest")
-  let tickers: Tickers = {}
-  if (data.streams.length > 0) {
+  const { queriable, symbols } = genGuestStreams("guest")
+  let tickers: Tickers
+
+  if (queriable.streams.length > 0) {
     const { data } = await api.get<Tickers>("/tickers", {
       params: {
         symbols: symbols,
@@ -43,8 +44,8 @@ const getGuestStreams = async (): Promise<StreamData> => {
     })
     tickers = data
   }
-  const streamData = Object.assign(data, { tickers })
-  return streamData
+
+  return { ...queriable, tickers }
 }
 
 const getPairs = async (): Promise<string[]> => {

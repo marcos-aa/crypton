@@ -13,15 +13,16 @@ import * as yup from "yup"
 import { NotifType } from "../components/views/Dashboard/Notification"
 import api from "../services/api"
 
-interface SymcountData {
-  count: TotalCount
-  rawstreams: RawStream[]
-  symbols: string[]
-  newticks: Newticks
+interface Newticks {
+  syms: string[]
+  tickers: Tickers
 }
 
-interface GStreamData extends Omit<SymcountData, "count"> {
-  data: TotalCount & { streams: Stream[] }
+interface GuestStreamData {
+  queriable: Omit<StreamData, "tickers">
+  symbols: string[]
+  rawstreams: RawStream[]
+  newticks: Newticks
 }
 
 interface FilteredStreams {
@@ -38,17 +39,6 @@ export interface InputData {
 interface NotifReturn {
   message: string
   type: Exclude<NotifType, "loading">
-}
-
-interface Newticks {
-  syms: string[]
-  tickers: Tickers
-}
-export type TotalCount = {
-  tsyms: number
-  usyms: number
-  tstreams: number
-  symtracker: SymTracker
 }
 
 export const local = {
@@ -148,51 +138,42 @@ const validateField = (
   }
 }
 
-const genSymcount = (
+const genGuestStreams = (
   uid: string,
-  streams: Stream[],
-  tracker: SymTracker
-): SymcountData => {
+  tracker: SymTracker = {}
+): GuestStreamData => {
   const allsyms: string[] = []
+  const streams: Stream[] =
+    JSON.parse(localStorage.getItem(local.streams)) || []
   const rawstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols)
     stream.userId = uid
-    return { _id: { $oid: stream.id }, userId: uid, symbols: stream.symbols }
+    return {
+      _id: { $oid: stream.id },
+      userId: uid,
+      symbols: stream.symbols,
+    }
   })
 
   const newticks = addTicks(allsyms, tracker)
-
   const symbols = Object.keys(tracker)
-  const usyms = symbols.length
-  const tsyms = allsyms.length
   const tstreams = streams.length
 
   return {
-    count: {
+    queriable: {
+      streams,
       tstreams,
-      tsyms,
-      usyms,
+      tsyms: allsyms.length,
+      usyms: symbols.length,
       symtracker: tracker,
     },
-    rawstreams,
     symbols,
+    rawstreams,
     newticks,
   }
 }
 
-const genGStreamData = (uid: string, tracker: SymTracker = {}): GStreamData => {
-  const streams: Stream[] =
-    JSON.parse(localStorage.getItem(local.streams)) || []
-  const { count, rawstreams, newticks, symbols } = genSymcount(
-    uid,
-    streams,
-    tracker
-  )
-  const data = Object.assign(count, { streams })
-  return { data, rawstreams, newticks, symbols }
-}
-
-const importGStreams = async (
+const impGuestStreams = async (
   qc: QueryClient,
   uid: string
 ): Promise<NotifReturn> => {
@@ -205,10 +186,10 @@ const importGStreams = async (
     const createdBy = curr.streams[0]?.userId
 
     const {
-      data,
+      queriable,
       rawstreams: rstreams,
       newticks,
-    } = genGStreamData(uid, {
+    } = genGuestStreams(uid, {
       ...curr.symtracker,
     })
 
@@ -216,15 +197,15 @@ const importGStreams = async (
     paramTicks = newticks
 
     if (createdBy != "guest") {
-      gtsyms = data.tsyms
-      streams = streams.concat(data.streams)
-      data.tstreams += curr.tstreams
-      data.tsyms += curr.tsyms
+      gtsyms = queriable.tsyms
+      streams = streams.concat(queriable.streams)
+      queriable.tstreams += curr.tstreams
+      queriable.tsyms += curr.tsyms
     }
     setPageState(paramTicks.syms, "newsyms")
 
     return {
-      ...data,
+      ...queriable,
       streams,
       tickers: curr?.tickers,
     }
@@ -381,8 +362,8 @@ export {
   filterStreams,
   formatSymbols,
   formatTicker,
-  genGStreamData,
-  importGStreams,
+  genGuestStreams,
+  impGuestStreams,
   queryTicks,
   setPageState,
   stopPropagation,
