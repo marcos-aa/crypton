@@ -89,10 +89,6 @@ const router = createBrowserRouter([
         element: <Signwall />,
       },
       {
-        path: "signwall",
-        element: <Signwall />,
-      },
-      {
         path: "validate",
         element: <ValidationModal origin="/dashboard/export" />,
       },

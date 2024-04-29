@@ -8,12 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { memo, useEffect, useState } from "react"
 import { Outlet } from "react-router"
-import {
-  Link,
-  createSearchParams,
-  useFetcher,
-  useLocation,
-} from "react-router-dom"
+import { Link, createSearchParams, useFetcher } from "react-router-dom"
 import useWebSocket from "react-use-websocket"
 import { StreamData, Tickers } from "shared/streamtypes"
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching"
@@ -73,7 +68,6 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
     gcTime: 0,
   })
   const [, setTemp] = useState<Tickers>({})
-  const { pathname } = useLocation()
 
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symtracker)),
@@ -133,7 +127,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
 
   useEffect(() => {
     let intervalId
-    if (pathname == "/dashboard" && data.usyms > 0) {
+    if (window.location.pathname == "/dashboard" && data.usyms > 0) {
       intervalId = setInterval(syncTickers, 1000)
     }
 
@@ -141,7 +135,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
     return () => {
       clearInterval(intervalId)
     }
-  }, [pathname, data.usyms])
+  }, [window.location.pathname, data.usyms])
 
   useEffect(() => {
     const qparams = createSearchParams(window.location.search)

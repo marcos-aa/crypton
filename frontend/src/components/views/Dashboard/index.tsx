@@ -8,7 +8,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useCallback, useState } from "react"
-import { Await, Link, defer, redirect, useLoaderData } from "react-router-dom"
+import {
+  Await,
+  Link,
+  Outlet,
+  defer,
+  redirect,
+  useLoaderData,
+} from "react-router-dom"
 import { StreamData } from "shared/streamtypes"
 import { UIUser } from "shared/usertypes"
 import { useLogout, useNotification } from "../../../utils/customHooks"
@@ -26,13 +33,9 @@ interface DashPromise {
   streamData: StreamData
   userPromise: Promise<UIUser>
 }
+
 export interface DashLoader {
-  deferred: {
-    data: {
-      dashPromise: Promise<DashPromise>
-    }
-  }
-  verified: boolean
+  dashPromise: Promise<DashPromise>
 }
 
 interface StreamTotals {
@@ -40,6 +43,7 @@ interface StreamTotals {
   syms: number
   usyms: number
 }
+
 export const dashLoader = (qc: QueryClient) => () => {
   const token = localStorage.getItem(local.token)
   if (!token) return redirect("/register/signin")
@@ -56,30 +60,28 @@ export const dashLoader = (qc: QueryClient) => () => {
       return { streamData, userPromise: qc.ensureQueryData(userConfig) }
     })
 
-  return {
-    verified,
-    deferred: defer({
-      dashPromise,
-    }),
-  }
+  return defer({
+    dashPromise,
+  })
 }
 
 export default function Dashboard() {
   const qc = useQueryClient()
-  const { deferred, verified } = useLoaderData() as DashLoader
+  const { dashPromise } = useLoaderData() as DashLoader
   const { notif, updateNotif, clearNotif } = useNotification()
   const [totals, setTotals] = useState<StreamTotals>({
     streams: 0,
     syms: 0,
     usyms: 0,
   })
+  const verified = localStorage.getItem(local.token) != "guest"
   const logout = useLogout(verified)
 
   const updateTotals = useCallback(
     (streams: number, syms: number, usyms: number) => {
       setTotals({ streams, syms, usyms })
     },
-    [deferred.data.dashPromise]
+    [dashPromise]
   )
 
   const handleLogout = async () => {
@@ -145,11 +147,10 @@ export default function Dashboard() {
           />
         )}
       </header>
+      <Outlet />
 
       <Suspense fallback={<UserSkeleton />}>
-        <Await
-          resolve={deferred.data.dashPromise.then((data) => data.userPromise)}
-        >
+        <Await resolve={dashPromise.then((data) => data.userPromise)}>
           {(user: UIUser) => {
             return (
               <UserInfo
@@ -164,7 +165,7 @@ export default function Dashboard() {
       </Suspense>
 
       <Suspense fallback={<PanelSkeleton />}>
-        <Await resolve={deferred.data.dashPromise}>
+        <Await resolve={dashPromise}>
           {(data: DashPromise) => (
             <StreamList
               initialData={data.streamData}
