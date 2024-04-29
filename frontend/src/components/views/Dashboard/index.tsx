@@ -7,8 +7,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
-import { useCallback, useState } from "react"
-import { Link, redirect, useLoaderData } from "react-router-dom"
+import { Suspense, useCallback, useState } from "react"
+import { Await, Link, defer, redirect, useLoaderData } from "react-router-dom"
 import { StreamData } from "shared/streamtypes"
 import { UIUser } from "shared/usertypes"
 import { useLogout, useNotification } from "../../../utils/customHooks"
@@ -17,63 +17,69 @@ import { importGStreams, local } from "../../../utils/helpers"
 import Logo from "../../Logo"
 import Notification from "./Notification"
 import StreamList, { streamQuery } from "./StreamList"
+import PanelSkeleton from "./StreamList/PanelSkeleton"
 import UserInfo, { userQuery } from "./UserInfo"
+import UserSkeleton from "./UserInfo/UserSkeleton"
 import styles from "./styles.module.scss"
 
-export interface DashLoader {
+interface DashPromise {
   streamData: StreamData
-  user: UIUser
+  userPromise: Promise<UIUser>
+}
+export interface DashLoader {
+  deferred: {
+    data: {
+      dashPromise: Promise<DashPromise>
+    }
+  }
+  verified: boolean
 }
 
-export const dashLoader =
-  (qc: QueryClient) => async (): Promise<DashLoader | Response> => {
-    const token = localStorage.getItem(local.token)
-    if (!token) return redirect("/register/signin")
+interface StreamTotals {
+  streams: number
+  syms: number
+  usyms: number
+}
+export const dashLoader = (qc: QueryClient) => () => {
+  const token = localStorage.getItem(local.token)
+  if (!token) return redirect("/register/signin")
 
-    const verified = token !== "guest"
-    if (verified) saveHeader(token)
+  const verified = token !== "guest"
+  if (verified) saveHeader(token)
 
-    const userConfig = userQuery(verified)
-    const streamConfig = streamQuery(verified)
-    let res: DashLoader = {
-      user: null,
-      streamData: null,
-    }
+  const userConfig = userQuery(verified)
+  const streamConfig = streamQuery(verified)
 
-    const data = await Promise.all([
-      qc.ensureQueryData(userConfig),
-      qc.ensureQueryData(streamConfig),
-    ])
+  const dashPromise = qc
+    .ensureQueryData(streamConfig)
+    .then((streamData: StreamData) => {
+      return { streamData, userPromise: qc.ensureQueryData(userConfig) }
+    })
 
-    res.user = data[0]
-    res.streamData = data[1]
-
-    if (!res.user || !res.streamData) {
-      const keyName = res.user ? "streamData" : "user"
-      const data = await qc.ensureQueryData<UIUser | StreamData>(
-        res.user ? streamConfig : userConfig
-      )
-      res = Object.assign(res, { [keyName]: data })
-    }
-    return res
+  return {
+    verified,
+    deferred: defer({
+      dashPromise,
+    }),
   }
+}
 
 export default function Dashboard() {
   const qc = useQueryClient()
-  const { user, streamData } = useLoaderData() as DashLoader
+  const { deferred, verified } = useLoaderData() as DashLoader
   const { notif, updateNotif, clearNotif } = useNotification()
-  const [totals, setTotals] = useState({
-    streams: streamData.tstreams,
-    syms: streamData.tsyms,
-    usyms: streamData.usyms,
+  const [totals, setTotals] = useState<StreamTotals>({
+    streams: 0,
+    syms: 0,
+    usyms: 0,
   })
-  const logout = useLogout(user.verified)
+  const logout = useLogout(verified)
 
   const updateTotals = useCallback(
     (streams: number, syms: number, usyms: number) => {
       setTotals({ streams, syms, usyms })
     },
-    [streamData]
+    [deferred.data.dashPromise]
   )
 
   const handleLogout = async () => {
@@ -86,10 +92,8 @@ export default function Dashboard() {
       return updateNotif("No guest streams found", "loading")
 
     updateNotif("Your streams are being uploaded to the server", "loading")
-
-    importGStreams(qc, user.id).then((res) =>
-      updateNotif(res.message, res.type)
-    )
+    const uid = qc.getQueryData<UIUser>(["user"]).id
+    importGStreams(qc, uid).then((res) => updateNotif(res.message, res.type))
   }
 
   return (
@@ -104,12 +108,12 @@ export default function Dashboard() {
           <div id={styles.dropList}>
             <Link
               className={styles.dropAction}
-              to={user.verified ? "/dashboard/settings" : "/dashboard/export"}
+              to={verified ? "/dashboard/settings" : "/dashboard/export"}
             >
               <FontAwesomeIcon icon={faCog} /> Settings
             </Link>
 
-            {user.verified ? (
+            {verified ? (
               <button
                 type="button"
                 className={styles.dropAction}
@@ -142,18 +146,34 @@ export default function Dashboard() {
         )}
       </header>
 
-      <UserInfo
-        initialUser={user}
-        tstreams={totals.streams}
-        tsyms={totals.syms}
-        usyms={totals.usyms}
-      />
+      <Suspense fallback={<UserSkeleton />}>
+        <Await
+          resolve={deferred.data.dashPromise.then((data) => data.userPromise)}
+        >
+          {(user: UIUser) => {
+            return (
+              <UserInfo
+                initialUser={user}
+                tstreams={totals.streams}
+                tsyms={totals.syms}
+                usyms={totals.usyms}
+              />
+            )
+          }}
+        </Await>
+      </Suspense>
 
-      <StreamList
-        initialData={streamData}
-        verified={user.verified}
-        updateTotals={updateTotals}
-      />
+      <Suspense fallback={<PanelSkeleton />}>
+        <Await resolve={deferred.data.dashPromise}>
+          {(data: DashPromise) => (
+            <StreamList
+              initialData={data.streamData}
+              verified={verified}
+              updateTotals={updateTotals}
+            />
+          )}
+        </Await>
+      </Suspense>
     </div>
   )
 }

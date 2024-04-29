@@ -1,0 +1,60 @@
+#userSkeleton {
+  width: var(--modal-width);
+  max-width: 100%;
+
+  span {
+    display: block;
+    margin: 10px;
+    background-color: #e3e3e3;
+  }
+
+  span:after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 5px;
+    background-color: white;
+    box-shadow: 0 5px 10px white;
+    margin-left: 0;
+    animation: move 1s infinite ease;
+
+    @keyframes move {
+      to {
+        margin-left: 100%;
+      }
+    }
+  }
+
+  span:first-of-type {
+    width: 80px;
+    height: 20px;
+    animation-duration: 300ms;
+  }
+
+  span:last-of-type {
+    height: 30px;
+    width: 600px;
+    max-width: 100%;
+    background: linear-gradient(
+      to right,
+      #e3e3e3 22%,
+      white 22%,
+      white 24%,
+      #e3e3e3 24%,
+      #e3e3e3 44%,
+      white 44%,
+      white 46%,
+      #e3e3e3 46%,
+      #e3e3e3 66%,
+      white 66%,
+      white 68%,
+      #e3e3e3 68%,
+      #e3e3e3 88%,
+      white 88%
+    );
+  }
+
+  @media (max-width: 400px) {
+    display: none;
+  }
+}

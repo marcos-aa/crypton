@@ -1,0 +1,9 @@
+#panelSkeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px 20px;
+  width: var(--modal-width);
+  max-width: 100%;
+  flex-wrap: wrap;
+  padding: 10px;
+}

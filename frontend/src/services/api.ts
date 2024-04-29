@@ -10,20 +10,13 @@ const api = axios.create({
   withCredentials: true,
 })
 
-let refreshing = false
 api.interceptors.response.use(null, async (error: AxiosError) => {
   if (error.response.data !== "TokenExpiredError") return Promise.reject(error)
 
-  if (refreshing) {
-    return Promise.resolve({ data: null })
-  }
-
-  refreshing = true
   const { data } = await api.post("/user/token")
   const config = error.config
   config.headers.authorization = `Bearer ${data.accessToken}`
   saveHeader(data.accessToken)
-  refreshing = false
   return axios.request(config)
 })
 

@@ -49,7 +49,6 @@ export default class UserServices {
   async read(id: string): Promise<UserData> {
     await oidSchema.validateAsync(id)
 
-    const utils = new UserUtils()
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
