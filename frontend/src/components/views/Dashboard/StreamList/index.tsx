@@ -224,7 +224,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
                     to={
                       verified
                         ? `/dashboard/streams/${stream.id}`
-                        : "/dashboard/signwall"
+                        : "/dashboard/export"
                     }
                     state={{
                       symbols: stream.symbols,
