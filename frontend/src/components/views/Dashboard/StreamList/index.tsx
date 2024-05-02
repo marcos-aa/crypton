@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect } from "react"
 import { Outlet } from "react-router"
 import { Link, createSearchParams, useFetcher } from "react-router-dom"
 import useWebSocket from "react-use-websocket"
@@ -58,6 +58,8 @@ interface WSTIcker {
   result?: string
 }
 
+let store: Tickers = {}
+
 function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
   const qc = useQueryClient()
   const fetcher = useFetcher()
@@ -67,7 +69,6 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
     staleTime: 3600000,
     gcTime: 0,
   })
-  const [, setTemp] = useState<Tickers>({})
 
   const { sendMessage } = useWebSocket(
     generateURL(Object.keys(initialData.symtracker)),
@@ -77,28 +78,24 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
         const ticker: WSTIcker = JSON.parse(item.data)
         if (ticker.result === null) return
 
-        setTemp((prev) => {
-          const newticker = {
-            average: ticker.w,
-            change: ticker.p,
-            pchange: ticker.P,
-            last: ticker.c,
-            volume: Number(ticker.v),
-            qvolume: Number(ticker.q),
-            trades: ticker.n,
-            close: ticker.C,
-            open: ticker.O,
-          }
+        const newticker = {
+          average: ticker.w,
+          change: ticker.p,
+          pchange: ticker.P,
+          last: ticker.c,
+          volume: Number(ticker.v),
+          qvolume: Number(ticker.q),
+          trades: ticker.n,
+          close: ticker.C,
+          open: ticker.O,
+        }
 
-          const windowTicker = data.tickers[ticker.s]?.[interval]
-          if (windowTicker) newticker[interval] = windowTicker
+        const windowTicker = data.tickers[ticker.s]?.[interval]
+        if (windowTicker) newticker[interval] = windowTicker
 
-          return {
-            ...prev,
-            [ticker.s]: newticker,
-          }
-        })
+        store[ticker.s] = newticker
       },
+      filter: () => false,
     }
   )
 
@@ -110,19 +107,16 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
   }
 
   const syncTickers = () => {
-    setTemp((prev) => {
-      const store = formatSymbols(prev, tformatter)
-      qc.setQueryData<StreamData>(["streams"], (cached) => {
-        const tickers = { ...cached.tickers, ...store }
+    const formatted = formatSymbols(store, tformatter)
+    qc.setQueryData<StreamData>(["streams"], (cached) => {
+      const tickers = { ...cached.tickers, ...formatted }
 
-        return {
-          ...cached,
-          tickers,
-        }
-      })
-
-      return {}
+      return {
+        ...cached,
+        tickers,
+      }
     })
+    store = {}
   }
 
   useEffect(() => {
@@ -133,6 +127,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
 
     syncTickers()
     return () => {
+      store = {}
       clearInterval(intervalId)
     }
   }, [window.location.pathname, data.usyms])
