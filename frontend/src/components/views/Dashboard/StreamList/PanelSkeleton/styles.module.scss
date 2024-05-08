@@ -1,9 +1,29 @@
 #panelSkeleton {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 10px 20px;
+  h1 {
+    font-size: 1.5rem;
+  }
+
   width: var(--modal-width);
   max-width: 100%;
-  flex-wrap: wrap;
   padding: 10px;
+
+  div {
+    max-width: 100%;
+  }
+  #skeletonSettings {
+    margin-bottom: 20px;
+
+    span {
+      margin: 10px 0;
+      height: 30px;
+    }
+  }
+
+  .skeletonStreams {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px 20px;
+    width: inherit;
+    flex-wrap: wrap;
+  }
 }

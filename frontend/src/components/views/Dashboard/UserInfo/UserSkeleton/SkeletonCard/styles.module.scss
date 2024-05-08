@@ -1,0 +1,25 @@
+.skeletonCard {
+  display: block;
+  width: 80px;
+  height: 20px;
+  background-color: #e3e3e3;
+  animation-duration: 300ms;
+  margin: 5px 0;
+
+  &:after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 5px;
+    background-color: white;
+    box-shadow: 0 5px 10px white;
+    margin-left: 0;
+    animation: move 1s infinite ease;
+
+    @keyframes move {
+      to {
+        margin-left: 100%;
+      }
+    }
+  }
+}
