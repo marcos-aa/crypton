@@ -1,6 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "react-router"
-import { UIUser } from "shared/usertypes"
+import { useLocation, useNavigate } from "react-router"
 import api from "../../../../../services/api"
 import { useLogout } from "../../../../../utils/customHooks"
 import { InputData } from "../../../../../utils/helpers"
@@ -24,9 +22,13 @@ const formMessages: formMessages = {
   delete: "This will permanently delete all your data from our servers.",
 }
 
+interface CredentialsState {
+  id: string
+  email: string
+  verified: boolean
+}
 export default function UpdateCredentials({ type }: CredProps) {
-  const qc = useQueryClient()
-  const user = qc.getQueryData<UIUser>(["user"])
+  const { state: user }: { state: CredentialsState } = useLocation()
   const handleLogout = useLogout(user.verified)
   const navigate = useNavigate()
 

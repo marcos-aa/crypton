@@ -46,6 +46,7 @@ export default function UserSettings() {
   const verified = localStorage.getItem(local.token) !== "guest"
   const { data: user } = useQuery(userQuery(verified))
   const error = useActionData()
+  const credState = { id: user?.id, email: user?.email, verified }
 
   return (
     <ModalContainer predecessor="/dashboard">
@@ -82,9 +83,10 @@ export default function UserSettings() {
             Email address <span> {user?.email} </span>
           </p>
           <Link
-            title="Update user email"
+            title="Update email"
             className="action"
             to="/dashboard/settings/email"
+            state={credState}
           >
             Change
           </Link>
@@ -95,9 +97,10 @@ export default function UserSettings() {
             Password <span> {messages.pass} </span>
           </p>
           <Link
-            title="Update user email"
+            title="Update password"
             className="action"
             to="/dashboard/settings/password"
+            state={credState}
           >
             Change
           </Link>
@@ -106,7 +109,7 @@ export default function UserSettings() {
         <div id={styles.deleteUser}>
           <Link
             className={styles.deleteAction}
-            title="Delete user account"
+            title="Delete account"
             to="/dashboard/settings/delete"
           >
             Delete account
