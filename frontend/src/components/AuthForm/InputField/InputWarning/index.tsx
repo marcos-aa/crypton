@@ -4,7 +4,7 @@ interface Props {
 
 export default function InputWarning({ message }: Props) {
   return (
-    <span aria-label="Invalid input" aria-live="assertive" className="warning">
+    <span aria-live="assertive" className="warning">
       {message}
     </span>
   )

@@ -196,10 +196,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
 
             <div className={styles.streamButtons}>
               <Link
-                to={
-                  `/dashboard/streams/window?` +
-                  createTicksParameter(stream.symbols, "symbols")
-                }
+                to={`/dashboard/streams/window?${createTicksParameter(stream.symbols, "symbols")}`}
               >
                 <FontAwesomeIcon
                   title="Expand stream"
@@ -216,6 +213,7 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
                 <>
                   <Link
                     replace
+                    title="Edit stream"
                     to={
                       verified
                         ? `/dashboard/streams/${stream.id}`
@@ -233,12 +231,15 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
                       method="delete"
                       action={`/dashboard/streams/delete/${stream.id}`}
                     >
-                      <button type="submit">
+                      <button type="submit" title="Delete stream">
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </fetcher.Form>
                   ) : (
-                    <Link to={`streams/delete/${stream.id}`}>
+                    <Link
+                      to={`streams/delete/${stream.id}`}
+                      title="Delete stream"
+                    >
                       <FontAwesomeIcon icon={faTrash} />
                     </Link>
                   )}

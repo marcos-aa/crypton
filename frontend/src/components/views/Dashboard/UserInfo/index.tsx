@@ -27,14 +27,10 @@ function UserInfo({ initialUser, tsyms, tstreams, usyms }: InfoProps) {
 
   return (
     <section className={`${styles.userData} ${styles.panel}`}>
-      <h2
-        role="listitem"
-        className={`${styles.infoItem} ${styles.name}`}
-        aria-label="name"
-      >
+      <h2 className={`${styles.infoItem} ${styles.name}`} aria-label="name">
         {user?.name}
       </h2>
-      <div className={styles.userInfo} role="list">
+      <div className={styles.userInfo}>
         <FullDate
           hour={false}
           title="Joined at"
@@ -42,13 +38,13 @@ function UserInfo({ initialUser, tsyms, tstreams, usyms }: InfoProps) {
           date={user.createdAt}
         />
 
-        <p role="listitem" className={styles.infoItem}>
+        <p className={styles.infoItem}>
           Total streams: <span> {tstreams} </span>
         </p>
-        <p role="listitem" className={styles.infoItem}>
+        <p className={styles.infoItem}>
           Total symbols: <span> {tsyms} </span>
         </p>
-        <p role="listitem" className={styles.infoItem}>
+        <p className={styles.infoItem}>
           Unique symbols: <span> {usyms} </span>
         </p>
       </div>

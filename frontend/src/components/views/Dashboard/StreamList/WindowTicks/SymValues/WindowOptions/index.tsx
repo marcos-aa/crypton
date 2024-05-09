@@ -72,6 +72,7 @@ export default function WindowOptions({ updateWindow }: TimeProps) {
       <div id={styles.customWindow}>
         <label htmlFor="window"> Select a custom window </label>
         <input
+          id="window"
           name="window"
           type="number"
           max={maxUnits[cwindow.unit]}

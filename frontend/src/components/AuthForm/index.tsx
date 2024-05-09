@@ -77,6 +77,16 @@ export default function AuthForm({
         )
       })}
 
+      {exfields.length < 1 && (
+        <input
+          hidden
+          title="hidden username"
+          type="text"
+          name="username"
+          autoComplete="email"
+        />
+      )}
+
       <InputField
         autoComplete={"new-password"}
         onChange={handleChange}

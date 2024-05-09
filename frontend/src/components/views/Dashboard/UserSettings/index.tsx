@@ -70,7 +70,7 @@ export default function UserSettings() {
         >
           <label htmlFor="name">{user?.name}</label>
 
-          <input type="text" name="name" title="name" />
+          <input type="text" name="name" id="name" autoComplete="name" />
           <ActionAnimation actpath="/dashboard/settings">
             <SubmitAction title="Update username">Update </SubmitAction>
           </ActionAnimation>
