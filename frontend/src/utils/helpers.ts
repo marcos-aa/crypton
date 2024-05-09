@@ -204,10 +204,12 @@ const impGuestStreams = async (
     }
     setPageState(paramTicks.syms, "newsyms")
 
+    const tickers = { ...curr.tickers, ...newticks.tickers }
+
     return {
       ...queriable,
       streams,
-      tickers: curr?.tickers,
+      tickers,
     }
   })
 
