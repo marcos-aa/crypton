@@ -22,13 +22,14 @@ import UserInfo, { userQuery } from "./UserInfo"
 import UserSkeleton from "./UserInfo/UserSkeleton"
 import styles from "./styles.module.scss"
 
-interface DashPromise {
-  streamData: StreamData
+export interface DashLoader {
+  streamPromise: Promise<StreamData>
   userPromise: Promise<UIUser>
 }
 
-export interface DashLoader {
-  dashPromise: Promise<DashPromise>
+interface DashData {
+  streamData: StreamData
+  userPromise: Promise<UIUser>
 }
 
 interface StreamTotals {
@@ -47,20 +48,22 @@ export const dashLoader = (qc: QueryClient) => () => {
   const userConfig = userQuery(verified)
   const streamConfig = streamQuery(verified)
 
-  const dashPromise = qc
+  const streamPromise = qc
     .ensureQueryData(streamConfig)
     .then((streamData: StreamData) => {
       return { streamData, userPromise: qc.ensureQueryData(userConfig) }
     })
 
+  const userPromise = streamPromise.then((data) => data.userPromise)
   return defer({
-    dashPromise,
+    streamPromise,
+    userPromise,
   })
 }
 
 export default function Dashboard() {
   const qc = useQueryClient()
-  const { dashPromise } = useLoaderData() as DashLoader
+  const { streamPromise, userPromise } = useLoaderData() as DashLoader
   const { notif, updateNotif, clearNotif } = useNotification()
   const [totals, setTotals] = useState<StreamTotals>({
     streams: 0,
@@ -74,7 +77,7 @@ export default function Dashboard() {
     (streams: number, syms: number, usyms: number) => {
       setTotals({ streams, syms, usyms })
     },
-    [dashPromise]
+    [streamPromise]
   )
 
   const handleLogout = async () => {
@@ -142,7 +145,7 @@ export default function Dashboard() {
       </header>
 
       <Suspense fallback={<UserSkeleton />}>
-        <Await resolve={dashPromise.then((data) => data.userPromise)}>
+        <Await resolve={userPromise}>
           {(user: UIUser) => {
             return (
               <UserInfo
@@ -157,8 +160,8 @@ export default function Dashboard() {
       </Suspense>
 
       <Suspense fallback={<PanelSkeleton />}>
-        <Await resolve={dashPromise}>
-          {(data: DashPromise) => (
+        <Await resolve={streamPromise}>
+          {(data: DashData) => (
             <StreamList
               initialData={data.streamData}
               verified={verified}
