@@ -45,10 +45,9 @@
 .streamList {
   --btn-width: 30px;
   position: relative;
-  display: flex;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   column-gap: 5px;
-  flex-wrap: wrap;
   max-width: 100%;
   box-shadow: 0 0 3px 0 black;
   border-radius: 5px;
@@ -60,7 +59,6 @@
     flex-wrap: wrap;
     flex-direction: column;
     max-width: 100%;
-    min-width: 140px;
   }
 
   .streamButtons {
@@ -75,6 +73,7 @@
     justify-content: flex-start;
     padding-top: 10px;
     gap: 5px;
+    overflow-x: auto;
 
     button,
     a {
@@ -84,7 +83,7 @@
       height: 20px;
       max-height: 20px;
       min-width: 30px;
-      border: none !important;
+      border: none;
       font-size: 18px;
       padding: 0;
     }
