@@ -8,14 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useCallback, useState } from "react"
-import {
-  Await,
-  Link,
-  Outlet,
-  defer,
-  redirect,
-  useLoaderData,
-} from "react-router-dom"
+import { Await, Link, defer, redirect, useLoaderData } from "react-router-dom"
 import { StreamData } from "shared/streamtypes"
 import { UIUser } from "shared/usertypes"
 import { useLogout, useNotification } from "../../../utils/customHooks"
@@ -147,7 +140,6 @@ export default function Dashboard() {
           />
         )}
       </header>
-      <Outlet />
 
       <Suspense fallback={<UserSkeleton />}>
         <Await resolve={dashPromise.then((data) => data.userPromise)}>
