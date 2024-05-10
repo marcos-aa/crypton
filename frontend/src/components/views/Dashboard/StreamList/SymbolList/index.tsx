@@ -157,6 +157,7 @@ export default function SymbolList() {
             type="text"
             placeholder="Search"
             value={search}
+            autoFocus
             onChange={handleSearch}
           />
         </label>
