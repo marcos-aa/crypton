@@ -8,7 +8,7 @@ const checkPassword = (pass: string, hash: string) => {
     throw new CredError(messages.invalidCredentials, 401)
 }
 
-const setProdCookie = () => {
+const genCookie = () => {
   const isProd = process.env.NODE_ENV === "production"
   const cookieConfig: CookieOptions = {
     httpOnly: true,
@@ -97,4 +97,4 @@ const genMailHtml = (subject: string, code: string) => {
   `
   return stringfied
 }
-export { checkPassword, genMailHtml, setProdCookie, signToken }
+export { checkPassword, genCookie, genMailHtml, signToken }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import UserUtils from "."
-import { setProdCookie } from "../helpers"
+import { genCookie } from "../helpers"
 
 type SESRecipients = [
   {
@@ -27,7 +27,7 @@ export default class StreamHandler {
     const { accessToken, refreshToken } = await new UserUtils().refreshToken(
       rtoken
     )
-    const cookieConfig = setProdCookie()
+    const cookieConfig = genCookie()
     return res
       .cookie("r_token", refreshToken, cookieConfig)
       .json({ accessToken })
@@ -82,7 +82,7 @@ export default class StreamHandler {
     const { user, accessToken, refreshToken } =
       await new UserUtils().validateUser(code, email)
 
-    const cookieConfig = setProdCookie()
+    const cookieConfig = genCookie()
     return res
       .cookie("r_token", refreshToken, cookieConfig)
       .json({ user, accessToken })

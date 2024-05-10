@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import UserServices from "../services/UserServices"
-import { setProdCookie } from "../utils/helpers"
+import { genCookie } from "../utils/helpers"
 
 export class UserController {
   async create(req: Request, res: Response) {
@@ -22,7 +22,7 @@ export class UserController {
       password
     )
 
-    const cookieConfig = setProdCookie()
+    const cookieConfig = genCookie()
 
     return res
       .cookie("r_token", refreshToken, cookieConfig)
