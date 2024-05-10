@@ -51,6 +51,7 @@ export const dashLoader = (qc: QueryClient) => () => {
   const streamPromise = qc
     .ensureQueryData(streamConfig)
     .then((streamData: StreamData) => {
+      streamData.streams.reverse()
       return { streamData, userPromise: qc.ensureQueryData(userConfig) }
     })
 

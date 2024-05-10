@@ -198,7 +198,7 @@ const impGuestStreams = async (
 
     if (createdBy != "guest") {
       gtsyms = queriable.tsyms
-      streams = streams.concat(queriable.streams)
+      streams = queriable.streams.concat(streams)
       queriable.tstreams += curr.tstreams
       queriable.tsyms += curr.tsyms
     }
