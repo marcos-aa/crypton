@@ -76,7 +76,8 @@
     overflow-x: auto;
 
     button,
-    a {
+    a,
+    #waitWarning {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -86,6 +87,10 @@
       border: none;
       font-size: 18px;
       padding: 0;
+    }
+
+    #waitWarning {
+      cursor: not-allowed;
     }
   }
 

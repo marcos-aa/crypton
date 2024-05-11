@@ -164,6 +164,7 @@ export default function Dashboard() {
         <Await resolve={streamPromise}>
           {(data: DashData) => (
             <StreamList
+              isImporting={notif.type === "loading"}
               initialData={data.streamData}
               verified={verified}
               updateTotals={updateTotals}

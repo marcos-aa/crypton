@@ -1,5 +1,5 @@
 import {
-  faHourglass,
+  faHourglassStart,
   faPencil,
   faTrash,
   faUpRightAndDownLeftFromCenter,
@@ -17,6 +17,7 @@ import {
   formatSymbols,
   local,
 } from "../../../../utils/helpers"
+import IconLink from "../IconLink"
 import SymbolTicks from "./SymbolTicks"
 import styles from "./styles.module.scss"
 
@@ -41,6 +42,7 @@ const tformatter = Intl.NumberFormat("en-us", {
 interface StreamsProps {
   initialData: StreamData
   verified: boolean
+  isImporting: boolean
   updateTotals(streams: number, syms: number, usyms: number): void
 }
 
@@ -60,7 +62,12 @@ interface WSTIcker {
 
 let store: Tickers = {}
 
-function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
+function StreamList({
+  initialData,
+  verified,
+  isImporting,
+  updateTotals,
+}: StreamsProps) {
   const qc = useQueryClient()
   const fetcher = useFetcher()
   const { data } = useQuery({
@@ -195,37 +202,30 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
             })}
 
             <div className={styles.streamButtons}>
-              <Link
+              <IconLink
                 to={`/dashboard/streams/window?${createTicksParameter(stream.symbols, "symbols")}`}
-              >
-                <FontAwesomeIcon
-                  title="Expand stream"
-                  icon={faUpRightAndDownLeftFromCenter}
-                />
-              </Link>
-              {stream.userId === "guest" &&
-              localStorage.getItem(local.expStreams) == "exporting" ? (
+                icon={faUpRightAndDownLeftFromCenter}
+                title="Expand stream"
+              />
+
+              {stream.userId === "guest" && isImporting ? (
                 <FontAwesomeIcon
                   title="Please wait until stream is fully imported"
-                  icon={faHourglass}
+                  icon={faHourglassStart}
+                  id={styles.waitWarning}
                 />
               ) : (
                 <>
-                  <Link
-                    replace
+                  <IconLink
+                    to={`/dashboard/${verified ? `streams/${stream.id}` : "/export"}`}
                     title="Edit stream"
-                    to={
-                      verified
-                        ? `/dashboard/streams/${stream.id}`
-                        : "/dashboard/export"
-                    }
+                    icon={faPencil}
                     state={{
                       symbols: stream.symbols,
                       verified,
                     }}
-                  >
-                    <FontAwesomeIcon icon={faPencil} />
-                  </Link>
+                  />
+
                   {localStorage.getItem(local.delPrompt) ? (
                     <fetcher.Form
                       method="delete"
@@ -236,12 +236,11 @@ function StreamList({ initialData, verified, updateTotals }: StreamsProps) {
                       </button>
                     </fetcher.Form>
                   ) : (
-                    <Link
+                    <IconLink
                       to={`streams/delete/${stream.id}`}
                       title="Delete stream"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </Link>
+                      icon={faTrash}
+                    />
                   )}
                 </>
               )}

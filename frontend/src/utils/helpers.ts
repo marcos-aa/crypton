@@ -147,7 +147,6 @@ const genGuestStreams = (
     JSON.parse(localStorage.getItem(local.streams)) || []
   const rawstreams: RawStream[] = streams.map((stream) => {
     allsyms.push(...stream.symbols)
-    stream.userId = uid
     return {
       _id: { $oid: stream.id },
       userId: uid,
