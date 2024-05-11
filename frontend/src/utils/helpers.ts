@@ -220,19 +220,19 @@ const impGuestStreams = async (
     })
     .then((res: AxiosResponse<NewIds>): NotifReturn => {
       localStorage.removeItem(local.streams)
+      const dupids = Object.keys(res.data)
 
-      qc.setQueryData<StreamData>(["streams"], (curr) => {
-        const dupids = Object.keys(res.data)
+      if (dupids.length > 0)
+        qc.setQueryData<StreamData>(["streams"], (curr) => {
+          const streams = curr.streams.map<Stream>((stream) => {
+            const id = dupids.includes(stream.id)
+              ? res.data[stream.id]
+              : stream.id
 
-        const streams = curr.streams.map<Stream>((stream) => {
-          const id = dupids.includes(stream.id)
-            ? res.data[stream.id]
-            : stream.id
-
-          return { id, userId: stream.userId, symbols: stream.symbols }
+            return { id, userId: stream.userId, symbols: stream.symbols }
+          })
+          return { streams, ...curr }
         })
-        return { streams, ...curr }
-      })
 
       return {
         message: "Data exported successfully",
