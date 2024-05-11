@@ -16,6 +16,7 @@ import api from "../services/api"
 interface Newticks {
   syms: string[]
   tickers: Tickers
+  uniquesCount: SymTracker
 }
 
 interface GuestStreamData {
@@ -155,8 +156,8 @@ const genGuestStreams = (
   })
 
   const newticks = addTicks(allsyms, tracker)
-  const symbols = Object.keys(tracker)
   const tstreams = streams.length
+  const symbols = Object.keys(tracker)
 
   return {
     queriable: {
@@ -178,7 +179,7 @@ const impGuestStreams = async (
 ): Promise<NotifReturn> => {
   let rawstreams: RawStream[]
   let paramTicks: Newticks
-  let gtsyms: number = 0
+  let guestSymTotal: number = 0
 
   qc.setQueryData<StreamData>(["streams"], (curr) => {
     let streams: Stream[] = [...curr.streams]
@@ -196,7 +197,7 @@ const impGuestStreams = async (
     paramTicks = newticks
 
     if (createdBy != "guest") {
-      gtsyms = queriable.tsyms
+      guestSymTotal = queriable.tsyms
       streams = queriable.streams.concat(streams)
       queriable.tstreams += curr.tstreams
       queriable.tsyms += curr.tsyms
@@ -240,9 +241,38 @@ const impGuestStreams = async (
       }
     })
     .catch((e: AxiosError<string>): NotifReturn => {
-      const rawstart = rawstreams[0]._id.$oid
-      revertStreams(qc, rawstart, rawstreams.length, gtsyms, paramTicks.syms)
+      const rawId = rawstreams[0]._id.$oid
 
+      qc.setQueryData<StreamData>(["streams"], (data) => {
+        const symtracker = { ...data.symtracker }
+        let { tsyms, usyms } = data
+
+        const delsyms = []
+        paramTicks.syms.forEach((tick) => {
+          const key = tick.split("@")[0].toUpperCase()
+          const count = symtracker[key] - 1 || 0
+
+          if (count < paramTicks.uniquesCount[key]) {
+            delete symtracker[key]
+            delsyms.push(tick)
+            usyms -= 1
+          }
+        })
+        setPageState(delsyms, "delsyms")
+
+        const streams = [...data.streams]
+        const rawstart = data.streams.findIndex((stream) => stream.id === rawId)
+        streams.splice(rawstart, rawstart + rawstreams.length)
+
+        return {
+          ...data,
+          symtracker,
+          streams,
+          tstreams: streams.length,
+          tsyms: tsyms - guestSymTotal,
+          usyms,
+        }
+      })
       return {
         message:
           e.response?.data ||
@@ -250,45 +280,6 @@ const impGuestStreams = async (
         type: "error",
       }
     })
-}
-
-const revertStreams = (
-  qc: QueryClient,
-  rawid: string,
-  rawlength: number,
-  rawtsyms: number,
-  newticks: string[]
-) => {
-  qc.setQueryData<StreamData>(["streams"], (data) => {
-    const symtracker = { ...data.symtracker }
-    let { tsyms, usyms } = data
-
-    const delsyms = []
-    newticks.forEach((symbol) => {
-      const key = symbol.split("@")[0].toUpperCase()
-      const count = symtracker[key] - 1 || 0
-
-      if (count < 1) {
-        delete symtracker[key]
-        delsyms.push(symbol)
-        usyms -= 1
-      }
-    })
-    setPageState(delsyms, "delsyms")
-
-    const streams = [...data.streams]
-    const rawstart = data.streams.findIndex((stream) => stream.id === rawid)
-    streams.splice(rawstart, rawstart + rawlength)
-
-    return {
-      ...data,
-      symtracker,
-      streams,
-      tstreams: streams.length,
-      tsyms: tsyms - rawtsyms,
-      usyms,
-    }
-  })
 }
 
 const addTicks = (
@@ -299,6 +290,8 @@ const addTicks = (
   const newticks = symbols.reduce<Newticks>(
     (store, sym) => {
       symtracker[sym] = symtracker[sym] + 1 || 1
+      store.uniquesCount[sym] = symtracker[sym]
+
       if (symtracker[sym] == 1) {
         store.syms.push(formatTicker(sym))
         const tickstamp = new Date().getTime()
@@ -316,7 +309,7 @@ const addTicks = (
       }
       return store
     },
-    { syms: [], tickers: {} }
+    { syms: [], tickers: {}, uniquesCount: {} }
   )
   return newticks
 }

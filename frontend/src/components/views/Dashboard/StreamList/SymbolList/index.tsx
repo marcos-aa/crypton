@@ -88,8 +88,12 @@ export const upsertStream =
       const symtracker: SymTracker = { ...cached.symtracker }
       const tstreams = streams.unshift(stream)
 
-      const newticks = addTicks(stream.symbols, symtracker, cached.tickers)
-      newsyms = newticks.syms
+      const { syms, tickers: newtickers } = addTicks(
+        stream.symbols,
+        symtracker,
+        cached.tickers
+      )
+      newsyms = syms
 
       if (method === "put") {
         delsyms = delTicks(oldstream.symbols, symtracker)
@@ -98,7 +102,7 @@ export const upsertStream =
       const usyms = cached.usyms + newsyms.length - delsyms.length
       const tsyms =
         cached.tsyms - (oldstream?.symbols?.length || 0) + stream.symbols.length
-      const tickers = Object.assign(cached.tickers, newticks.tickers)
+      const tickers = Object.assign(cached.tickers, newtickers)
 
       return {
         streams,
