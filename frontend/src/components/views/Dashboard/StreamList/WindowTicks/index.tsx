@@ -6,6 +6,7 @@ import { Await, defer, useLoaderData } from "react-router-dom"
 import { StreamData, Ticker } from "shared/streamtypes"
 import { getWindowTicks } from "../../../../../utils/datafetching"
 import { local } from "../../../../../utils/helpers"
+import Loading from "../../../../Loading"
 import ModalContainer from "../../../../ModalContainer"
 import CloseModal from "../../../../ModalContainer/CloseModal"
 import SkeletonSyms from "./SkeletonSyms"
@@ -114,8 +115,9 @@ export default function WindowTicks() {
   const [data, setData] = useState<WindowData>(null)
   const [interval, updateInterval] = useState(initInterval)
   const [expanded, setExpanded] = useState<string>()
-  const [edit, setEdit] = useState(false)
-  const showWindowOptions = () => setEdit((prev) => !prev)
+  const [editing, setEditing] = useState<boolean | "loading">(false)
+
+  const showWindowOptions = () => setEditing((prev) => !prev)
 
   const expandSymbol = (e: MouseEvent<HTMLHeadingElement>) => {
     const value = e.currentTarget.innerText
@@ -124,15 +126,12 @@ export default function WindowTicks() {
     })
   }
 
-  const changeInterval = (newitv: string) => {
-    updateInterval(newitv)
-  }
-
   const updateWindow = async (newitv: string) => {
-    setEdit(false)
+    setEditing("loading")
     const data = await saveWindow(qc, symbols, newitv)
     localStorage.setItem(local.window, newitv)
-    changeInterval(newitv)
+    updateInterval(newitv)
+    setEditing(false)
     setData(data)
   }
 
@@ -143,20 +142,26 @@ export default function WindowTicks() {
           <h2 className={styles.rowTitle}> Symbols </h2>
           <h2 className={styles.colTitle}> 1s </h2>
           <h2 className={styles.colTitle} id={styles.intervalTooltip}>
-            {interval}
-            <button
-              type="button"
-              title="Show window options"
-              onClick={showWindowOptions}
-            >
-              <FontAwesomeIcon
-                style={{
-                  rotate: edit ? "180deg" : "0deg",
-                }}
-                icon={faCaretDown}
-              />
-            </button>
-            {edit && <WindowOptions updateWindow={updateWindow} />}
+            {editing === "loading" ? (
+              <Loading />
+            ) : (
+              <>
+                {interval}
+                <button
+                  type="button"
+                  title="Show window options"
+                  onClick={showWindowOptions}
+                >
+                  <FontAwesomeIcon
+                    style={{
+                      rotate: editing ? "180deg" : "0deg",
+                    }}
+                    icon={faCaretDown}
+                  />
+                </button>
+                {editing && <WindowOptions updateWindow={updateWindow} />}
+              </>
+            )}
           </h2>
 
           <div id={styles.timeActions}>

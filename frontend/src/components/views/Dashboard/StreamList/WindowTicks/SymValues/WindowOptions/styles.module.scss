@@ -29,7 +29,7 @@
     .prewindow {
       text-transform: uppercase;
       text-align: center;
-      width: 40px;
+      min-width: 50px;
       padding: 5px;
       color: white;
       background-color: var(--button-color);
