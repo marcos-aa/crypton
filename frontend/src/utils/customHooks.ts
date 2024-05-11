@@ -27,7 +27,7 @@ const useNotification = () => {
     })
   }
 
-  const updateNotif = (message: string, type: NotifType) => {
+  const updateNotif = (message: string, type: NotifType = null) => {
     const timeoutId = window.setTimeout(() => {
       clearNotif()
     }, 2000)
