@@ -7,7 +7,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { memo, useEffect } from "react"
-import { Outlet } from "react-router"
 import { Link, createSearchParams, useFetcher } from "react-router-dom"
 import useWebSocket from "react-use-websocket"
 import { StreamData, Tickers } from "shared/streamtypes"
@@ -166,8 +165,6 @@ function StreamList({
 
   return (
     <main id={styles.streamPanel}>
-      <Outlet />
-
       <div className={styles.streamSettings}>
         <h1> Your streams </h1>
         <Link className="action" to="streams">
@@ -217,7 +214,7 @@ function StreamList({
               ) : (
                 <>
                   <IconLink
-                    to={`/dashboard/${verified ? `streams/${stream.id}` : "/export"}`}
+                    to={`/dashboard/${verified ? `streams/${stream.id}` : "export"}`}
                     title="Edit stream"
                     icon={faPencil}
                     state={{
