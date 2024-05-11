@@ -4,7 +4,7 @@
   "main": "src/app.js",
   "license": "MIT",
   "scripts": {
-    "build": "PRISMA_OUTPUT=./generated/client pnpify prisma generate && tsc && pnpify prisma generate",
+    "build": "PRISMA_OUTPUT=./generated/client pnpify prisma generate && tsc && PRISMA_OUTPUT=../dist/prisma/generated/client pnpify prisma generate",
     "start": "node ./dist/src/app.js",
     "setup": "PRISMA_OUTPUT=./generated/client pnpify prisma generate & PRISMA_OUTPUT=./generated/client pnpify prisma db push",
     "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts"

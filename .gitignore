@@ -3,7 +3,6 @@ node_modules
 */dist
 */build
 .env
-.env.*
 .yarn
 .pnp.*
 backend/dist/prisma/generated
