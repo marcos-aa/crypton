@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query"
 import { Form as RouterForm, redirect, useLocation } from "react-router-dom"
 
-import { Stream, StreamData, SymTracker } from "shared/streamtypes"
+import { Stream, StreamData, SymTracker } from "@shared/types"
 import api from "../../../../../services/api"
 import {
   createTicksParameter,

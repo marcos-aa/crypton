@@ -77,7 +77,9 @@ const genMailHtml = (subject: string, code: string) => {
       </a>
   
       <p style="margin: 10px 0; width: 100%">
-        Use the following code on our app to ${subject.charAt(0).toLowerCase() + subject.slice(1)}:
+        Use the following code on our app to ${
+          subject.charAt(0).toLowerCase() + subject.slice(1)
+        }:
       </p>
       <code
         style="

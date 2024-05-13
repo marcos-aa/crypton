@@ -1,4 +1,4 @@
-namespace NodeJS {
+declare namespace NodeJS {
   interface ProcessEnv {
     DATABASE_URL: string
     DOMAIN: string
@@ -10,6 +10,6 @@ namespace NodeJS {
     JWT_SECRET_REF: string
     JWT_EXPIRY: string
     JWT_EXPIRY_REF: string
-    MAX_REFRESH: number
+    MAX_REFRESH: string
   }
 }

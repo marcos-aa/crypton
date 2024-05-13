@@ -6,6 +6,7 @@ import {
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { StreamData, UIUser } from "@shared/types"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useCallback, useState } from "react"
 import {
@@ -16,8 +17,6 @@ import {
   redirect,
   useLoaderData,
 } from "react-router-dom"
-import { StreamData } from "shared/streamtypes"
-import { UIUser } from "shared/usertypes"
 import { useLogout, useNotification } from "../../../utils/customHooks"
 import { saveHeader } from "../../../utils/datafetching"
 import { impGuestStreams, local } from "../../../utils/helpers"

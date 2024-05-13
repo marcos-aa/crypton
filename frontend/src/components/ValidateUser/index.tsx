@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { UIUser, UserData } from "@shared/types"
 import { useQueryClient } from "@tanstack/react-query"
 import { SyntheticEvent, useState } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { Link } from "react-router-dom"
-import { UIUser, UserData } from "shared/usertypes"
 import api from "../../services/api"
 import { useLoadError } from "../../utils/customHooks"
 import { saveHeader } from "../../utils/datafetching"

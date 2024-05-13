@@ -4,7 +4,3 @@ node_modules
 */build
 .env
 .yarn
-.pnp.*
-backend/dist/prisma/generated
-backend/prisma/generated/
-.vercel

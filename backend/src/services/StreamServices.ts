@@ -1,4 +1,3 @@
-import ObjectID from "bson-objectid"
 import {
   NewIds,
   RawId,
@@ -6,7 +5,9 @@ import {
   Stream,
   StreamData,
   SymTracker,
-} from "shared/streamtypes"
+} from "@shared/types"
+import ObjectID from "bson-objectid"
+
 import prisma from "../../prisma/client"
 import StreamUtils from "../utils/Stream"
 import { oidSchema, rawSchema, streamSchema } from "../utils/schemas"

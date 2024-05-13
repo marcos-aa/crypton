@@ -1,6 +1,3 @@
-import { QueryClient } from "@tanstack/react-query"
-import { AxiosError, AxiosResponse } from "axios"
-import { SyntheticEvent } from "react"
 import {
   NewIds,
   RawStream,
@@ -8,7 +5,10 @@ import {
   StreamData,
   SymTracker,
   Tickers,
-} from "shared/streamtypes"
+} from "@shared/types"
+import { QueryClient } from "@tanstack/react-query"
+import { AxiosError, AxiosResponse } from "axios"
+import { SyntheticEvent } from "react"
 import * as yup from "yup"
 import { NotifType } from "../components/views/Dashboard/Notification"
 import api from "../services/api"

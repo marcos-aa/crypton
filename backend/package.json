@@ -4,14 +4,13 @@
   "main": "src/app.js",
   "license": "MIT",
   "scripts": {
-    "build": "PRISMA_OUTPUT=./generated/client pnpify prisma generate && tsc && PRISMA_OUTPUT=../dist/prisma/generated/client pnpify prisma generate",
+    "build": "tsc",
     "start": "node ./dist/src/app.js",
-    "setup": "PRISMA_OUTPUT=./generated/client pnpify prisma generate & PRISMA_OUTPUT=./generated/client pnpify prisma db push",
+    "setup": "prisma generate && prisma db push",
     "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts"
   },
   "engines": {
-    "node": "20.12.2",
-    "yarn": "4.1.1"
+    "node": "20.12.2"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.556.0",
@@ -34,10 +33,8 @@
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "^18.0.1",
-    "@yarnpkg/pnpify": "^4.0.1",
     "dotenv-cli": "^7.4.1",
     "prisma": "5.12.0",
-    "shared": "workspace:^",
     "ts-node-dev": "^1.1.8",
     "typescript": "^5.4.3"
   }

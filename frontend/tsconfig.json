@@ -1,16 +1,19 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES6",
     "module": "esnext",
     "jsx": "react-jsx",
-    "strict": false,
-    "allowJs": false,
-    "moduleResolution": "node",
+    "rootDir": "./",
     "outDir": "./build/",
-    "rootDir": "./"
+    "paths": {
+      "@shared/types": ["../shared"]
+    },
+    "moduleResolution": "Node"
   },
-  "include": [
-    "src"
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../shared"
+    }
   ]
 }

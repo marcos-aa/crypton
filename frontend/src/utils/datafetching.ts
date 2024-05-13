@@ -1,5 +1,4 @@
-import { StreamData, Tickers } from "shared/streamtypes"
-import { UIUser, UserData } from "shared/usertypes"
+import { StreamData, Tickers, UIUser, UserData } from "@shared/types"
 import api from "../services/api"
 import { genGuestStreams, local } from "./helpers"
 

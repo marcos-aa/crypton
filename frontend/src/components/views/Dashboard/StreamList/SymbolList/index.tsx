@@ -1,5 +1,6 @@
 import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Stream, StreamData, SymTracker } from "@shared/types"
 import { QueryClient } from "@tanstack/react-query"
 import ObjectID from "bson-objectid"
 import { ChangeEvent, MouseEvent, Suspense, useState } from "react"
@@ -11,7 +12,6 @@ import {
   useLocation,
 } from "react-router"
 import { Form } from "react-router-dom"
-import { Stream, StreamData, SymTracker } from "shared/streamtypes"
 import api from "../../../../../services/api"
 import { getPairs } from "../../../../../utils/datafetching"
 import {

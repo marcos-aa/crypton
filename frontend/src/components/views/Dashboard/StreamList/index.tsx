@@ -5,11 +5,11 @@ import {
   faUpRightAndDownLeftFromCenter,
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { StreamData, Tickers } from "@shared/types"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { memo, useEffect } from "react"
 import { Link, createSearchParams, useFetcher } from "react-router-dom"
 import useWebSocket from "react-use-websocket"
-import { StreamData, Tickers } from "shared/streamtypes"
 import { getGuestStreams, getStreams } from "../../../../utils/datafetching"
 import {
   createTicksParameter,
@@ -200,7 +200,10 @@ function StreamList({
 
             <div className={styles.streamButtons}>
               <IconLink
-                to={`/dashboard/streams/window?${createTicksParameter(stream.symbols, "symbols")}`}
+                to={`/dashboard/streams/window?${createTicksParameter(
+                  stream.symbols,
+                  "symbols"
+                )}`}
                 icon={faUpRightAndDownLeftFromCenter}
                 title="Expand stream"
               />
@@ -214,7 +217,9 @@ function StreamList({
               ) : (
                 <>
                   <IconLink
-                    to={`/dashboard/${verified ? `streams/${stream.id}` : "export"}`}
+                    to={`/dashboard/${
+                      verified ? `streams/${stream.id}` : "export"
+                    }`}
                     title="Edit stream"
                     icon={faPencil}
                     state={{

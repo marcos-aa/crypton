@@ -1,7 +1,6 @@
+import { StreamData, UIUser } from "@shared/types"
 import { useQuery } from "@tanstack/react-query"
 import { memo } from "react"
-import { StreamData } from "shared/streamtypes"
-import { UIUser } from "shared/usertypes"
 import { getGuestUser, getUser } from "../../../../utils/datafetching"
 import FullDate from "./FullDate"
 import styles from "./styles.module.scss"

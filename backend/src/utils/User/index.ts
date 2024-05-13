@@ -1,9 +1,9 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
+import { UserTokens } from "@shared/types"
 import { hashSync } from "bcryptjs"
 import Joi from "joi"
 import { JwtPayload, verify } from "jsonwebtoken"
 import crypto from "node:crypto"
-import { UserTokens } from "shared/usertypes"
 import prisma from "../../../prisma/client"
 import {
   CredError,

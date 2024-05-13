@@ -1,4 +1,4 @@
-import { WindowedTicker } from "shared/streamtypes"
+import { WindowedTicker } from "@shared/types"
 import styles from "./styles.module.scss"
 
 export type Prices = Pick<

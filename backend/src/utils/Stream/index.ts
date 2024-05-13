@@ -1,6 +1,6 @@
+import { RawTicker, Ticker, Tickers, WindowedTicker } from "@shared/types"
 import axios from "axios"
 import NodeCache from "node-cache"
-import { RawTicker, Ticker, Tickers, WindowedTicker } from "shared/streamtypes"
 
 interface CachedTickers {
   cached: Tickers

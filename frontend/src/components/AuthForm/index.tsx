@@ -5,7 +5,6 @@ import {
   useUserInput,
 } from "../../utils/customHooks"
 
-import { ResMessage } from "shared"
 import { InputData } from "../../utils/helpers"
 import LoadingError from "../LoadingError"
 import AuthButtons from "./AuthButtons"
@@ -15,7 +14,7 @@ import styles from "./styles.module.scss"
 
 interface FormProps {
   action: string
-  submit(input: InputData): Promise<ResMessage | void>
+  submit(input: InputData): Promise<string | void>
   children?: ReactNode
   exfields?: string[]
 }

@@ -1,3 +1,4 @@
+import { Tickers } from "@shared/types"
 import { AxiosResponse } from "axios"
 import { Suspense } from "react"
 import {
@@ -9,7 +10,6 @@ import {
   useNavigate,
 } from "react-router"
 import { Link } from "react-router-dom"
-import { Tickers } from "shared/streamtypes"
 import api from "../../../services/api"
 import { local } from "../../../utils/helpers"
 import Logo from "../../Logo"

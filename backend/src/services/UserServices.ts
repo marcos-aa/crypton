@@ -1,6 +1,6 @@
+import { UserData, UserTokens } from "@shared/types"
 import { hashSync } from "bcryptjs"
 import Joi from "joi"
-import { UserData, UserTokens } from "shared/usertypes"
 import prisma from "../../prisma/client"
 import UserUtils from "../utils/User"
 import { checkPassword, signToken } from "../utils/helpers"

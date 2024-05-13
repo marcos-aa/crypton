@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
     "rootDir": "./",
     "outDir": "./dist",
     "strict": true,
-    "skipLibCheck": true,
-    "typeRoots": ["./src/@types"],
-    "strictPropertyInitialization": false
-  }
+    "paths": {
+      "@shared/types": ["../shared"]
+    }
+  },
+  "references": [
+    {
+      "path": "../shared/"
+    }
+  ]
 }
