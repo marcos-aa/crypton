@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test:web": "cypress open -b electron"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -30,6 +31,7 @@
     "@types/react": "^18.2.43",
     "@types/uuid": "^8.3.4",
     "@vitejs/plugin-react": "^2.1.0",
+    "cypress": "^13.9.0",
     "typescript": "^5.4.3",
     "vite": "^3.1.8",
     "vitest": "^0.24.3"
