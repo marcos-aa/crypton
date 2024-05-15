@@ -1,3 +1,7 @@
+function getCyElement(tag: string, dataName: string) {
+  return cy.get(`${tag}[data-cy=${dataName}]`)
+}
+
 describe("Guest mode", () => {
   describe("User logs as guest for the first time", () => {
     after(() => cy.clearAllLocalStorage())
@@ -7,7 +11,7 @@ describe("Guest mode", () => {
     })
 
     it("When the user clicks the 'Get realtime updates now' button", () => {
-      cy.get("button[data-cy='guestButtton']").click()
+      getCyElement("button", "guestButton").click()
     })
 
     it("Then the user should be redirected to the dashboard page", () => {
@@ -20,10 +24,17 @@ describe("Guest mode", () => {
         date.getMonth() + 1
       }/${date.getFullYear()}`
 
-      cy.get("span[data-cy='joinDate']").should("have.text", formattedDate)
+      getCyElement("span", "joinDate").should("have.text", formattedDate)
     })
 
-    it("And the user should see a zeroed total of unique symbols, total symbols and total streams", () => {})
-    it("And the user should see a CTA to create a stream", () => {})
+    it("And the user should see a zeroed total of unique symbols, total symbols and total streams", () => {
+      getCyElement("span", "infoItem").each((el) => {
+        expect(el.text().trim()).to.equal("0")
+      })
+    })
+
+    it("And the user should see a CTA to create a stream", () => {
+      getCyElement("h2", "streamCta").should("be.visible")
+    })
   })
 })

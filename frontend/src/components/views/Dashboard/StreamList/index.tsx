@@ -174,7 +174,7 @@ function StreamList({
 
       {data.tstreams < 1 && (
         <div className={styles.streamList} id={styles.streamCta}>
-          <h2>Create a new stream to get started</h2>
+          <h2 data-cy="streamCta">Create a new stream to get started</h2>
         </div>
       )}
 
