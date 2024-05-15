@@ -1,8 +1,15 @@
 import react from "@vitejs/plugin-react"
+import removeCyDataAttributes from "rollup-plugin-jsx-remove-attributes"
 import { defineConfig } from "vite"
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    removeCyDataAttributes({
+      attributes: ["data-cy"],
+      usage: "vite",
+    }),
+  ],
   css: {
     modules: {
       scopeBehaviour: "local",
