@@ -10,7 +10,7 @@ export default function FullDate({ date, style, title, hour }: DateProps) {
   return (
     <p className={style}>
       {title}
-      <span>
+      <span data-cy="joinDate">
         {hour && `${join.getHours()}:${join.getUTCMinutes()} -`}
         {join.getUTCDate()}/{join.getUTCMonth() + 1}/{join.getUTCFullYear()}
       </span>

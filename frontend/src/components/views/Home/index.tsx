@@ -71,6 +71,7 @@ export default function Home() {
               className={styles.action}
               type="button"
               onClick={handleGuest}
+              data-cy="guestButton"
             >
               Get realtime updates now
             </button>

@@ -1,8 +1,3 @@
-function getInfoItems() {
-  const items = cy.get("div > p[class*='infoItem'] span")
-  return items
-}
-
 describe("Guest mode", () => {
   describe("User logs as guest for the first time", () => {
     after(() => cy.clearAllLocalStorage())
@@ -12,7 +7,7 @@ describe("Guest mode", () => {
     })
 
     it("When the user clicks the 'Get realtime updates now' button", () => {
-      cy.get(`button[class*="action"]`).click()
+      cy.get("button[data-cy='guestButtton']").click()
     })
 
     it("Then the user should be redirected to the dashboard page", () => {
@@ -24,8 +19,8 @@ describe("Guest mode", () => {
       const formattedDate = `${date.getDate()}/${
         date.getMonth() + 1
       }/${date.getFullYear()}`
-      const joinData = getInfoItems().first()
-      joinData.should("have.text", formattedDate)
+
+      cy.get("span[data-cy='joinDate']").should("have.text", formattedDate)
     })
 
     it("And the user should see a zeroed total of unique symbols, total symbols and total streams", () => {})

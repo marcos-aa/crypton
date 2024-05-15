@@ -38,13 +38,13 @@ function UserInfo({ initialUser, tsyms, tstreams, usyms }: InfoProps) {
         />
 
         <p className={styles.infoItem}>
-          Total streams: <span> {tstreams} </span>
+          Total streams: <span data-cy="infoItem"> {tstreams} </span>
         </p>
         <p className={styles.infoItem}>
-          Total symbols: <span> {tsyms} </span>
+          Total symbols: <span data-cy="infoItem"> {tsyms} </span>
         </p>
         <p className={styles.infoItem}>
-          Unique symbols: <span> {usyms} </span>
+          Unique symbols: <span data-cy="infoItem"> {usyms} </span>
         </p>
       </div>
     </section>
