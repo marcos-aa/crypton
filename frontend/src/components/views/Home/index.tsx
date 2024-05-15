@@ -17,6 +17,7 @@ import SymbolTicks from "../Dashboard/StreamList/SymbolTicks"
 import streamStyles from "../Dashboard/StreamList/styles.module.scss"
 import SkeletonHero from "./Hero/Skeleton"
 import styles from "./styles.module.scss"
+
 export const homeLoader = async () => {
   const token = localStorage.getItem(local.token)
   if (token) return redirect("/dashboard")

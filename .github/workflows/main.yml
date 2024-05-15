@@ -1,0 +1,25 @@
+name: Client E2E tests
+on:
+  push:
+    branches:
+      - main
+      - CI/cypress
+
+jobs:
+  cypress-e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install express app dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Run express server
+        run: npm run dev &
+        working-directory: backend
+
+      - uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          working-directory: frontend
