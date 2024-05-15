@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "test:web": "cypress open -b electron"
+    "tests:web": "cypress open -b electron"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",

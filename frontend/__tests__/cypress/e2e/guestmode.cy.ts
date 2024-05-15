@@ -1,7 +1,13 @@
+function getInfoItems() {
+  const items = cy.get("div > p[class*='infoItem'] span")
+  return items
+}
+
 describe("Guest mode", () => {
   describe("User logs as guest for the first time", () => {
+    after(() => cy.clearAllLocalStorage())
+
     it("Given the user is on the home page", () => {
-      localStorage.clear()
       cy.visit("/")
     })
 
@@ -10,7 +16,7 @@ describe("Guest mode", () => {
     })
 
     it("Then the user should be redirected to the dashboard page", () => {
-      cy.url().should("match", new RegExp(`^http://localhost:3001/dashboard$`))
+      cy.url().should("eq", "http://localhost:3001/dashboard")
     })
 
     it("And the user should see the current date as their join date", () => {
@@ -18,7 +24,7 @@ describe("Guest mode", () => {
       const formattedDate = `${date.getDate()}/${
         date.getMonth() + 1
       }/${date.getFullYear()}`
-      const joinData = cy.get("div > p[class*='infoItem'] span").first()
+      const joinData = getInfoItems().first()
       joinData.should("have.text", formattedDate)
     })
 

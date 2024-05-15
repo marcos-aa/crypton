@@ -3,10 +3,9 @@ import { defineConfig } from "cypress"
 export default defineConfig({
   chromeWebSecurity: false,
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
     baseUrl: "http://localhost:3001",
     testIsolation: false,
+    specPattern: "__tests__/cypress/e2e/*.cy.ts",
+    supportFile: "__tests__/cypress/support/e2e.ts",
   },
 })
