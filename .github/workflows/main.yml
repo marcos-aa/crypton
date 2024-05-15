@@ -3,11 +3,15 @@ on:
   push:
     branches:
       - main
-
 jobs:
   cypress-e2e-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.12.2
+
       - uses: actions/checkout@v4
       - name: Install express app dependencies
         run: npm install
@@ -17,7 +21,6 @@ jobs:
         run: npm run dev &
         working-directory: backend
 
-      - uses: actions/checkout@v4
       - uses: cypress-io/github-action@v6
         with:
           start: npm run dev
