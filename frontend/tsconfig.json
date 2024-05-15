@@ -3,14 +3,14 @@
     "target": "ES6",
     "module": "esnext",
     "jsx": "react-jsx",
+    "types": ["cypress"],
     "rootDir": "./",
     "outDir": "./build/",
     "paths": {
       "@shared/types": ["../shared"]
     },
-    "moduleResolution": "Node"
+    "moduleResolution": "Bundler"
   },
-  "include": ["src"],
   "references": [
     {
       "path": "../shared"
