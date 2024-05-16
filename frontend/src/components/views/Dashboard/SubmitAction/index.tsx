@@ -7,7 +7,7 @@ interface SubmitProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function SubmitAction(props: SubmitProps) {
   return (
-    <button {...props} className="action" type="submit">
+    <button {...props} className="action" type="submit" data-cy="submitBtn">
       {props.children}
     </button>
   )

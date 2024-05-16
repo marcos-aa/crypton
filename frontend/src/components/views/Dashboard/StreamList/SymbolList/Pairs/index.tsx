@@ -23,9 +23,14 @@ function Pairs({ search, pairs, handlePush }: PairProps) {
     }
   }, [search])
 
-  return matches.map((match) => (
-    <li className={styles.symbol} onClick={handlePush} key={match}>
-      {match}
+  return matches.map((pair) => (
+    <li
+      data-cy="cryptoPair"
+      className={styles.symbol}
+      onClick={handlePush}
+      key={pair}
+    >
+      {pair}
     </li>
   ))
 }

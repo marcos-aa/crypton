@@ -167,7 +167,7 @@ function StreamList({
     <main id={styles.streamPanel}>
       <div className={styles.streamSettings}>
         <h1> Your streams </h1>
-        <Link className="action" to="streams">
+        <Link className="action" to="streams" data-cy="createStream">
           Create
         </Link>
       </div>

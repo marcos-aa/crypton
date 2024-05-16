@@ -8,7 +8,7 @@ interface CancelProps {
 export default function CancellableAction({ children }: CancelProps) {
   return (
     <div id={styles.actions}>
-      <Link className="action" to="/dashboard">
+      <Link className="action" to="/dashboard" data-cy="formCancel">
         Cancel
       </Link>
 
