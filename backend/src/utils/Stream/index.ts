@@ -18,7 +18,7 @@ const tformatter = Intl.NumberFormat("en-us", {
   maximumFractionDigits: 2,
 })
 
-const baseURL = "https://api.binance.us/api/v3"
+const baseURL = "https://api.binance.com/api/v3"
 
 export default class StreamUtils {
   formatRawTicker(rawTicker: RawTicker): Ticker {
