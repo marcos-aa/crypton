@@ -5,23 +5,32 @@ on:
       - main
 jobs:
   cypress-e2e-tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.2
 
-      - uses: actions/checkout@v4
       - name: Install express app dependencies
         run: npm install
         working-directory: backend
+
+      - name: Install client dependencies
+        run: npm install
+        working-directory: frontend
 
       - name: Run express server
         run: npm run dev &
         working-directory: backend
 
-      - uses: cypress-io/github-action@v6
-        with:
-          start: npm run dev
-          working-directory: frontend
+      - name: Run client server
+        run: npm run dev &
+        working-directory: frontend
+
+      - name: Run tests
+        run: npm run tests:headless
+        working-directory: frontend
