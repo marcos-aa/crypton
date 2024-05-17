@@ -61,8 +61,12 @@ describe("Guest mode", () => {
       getCyElement("button", "submitBtn").should("be.visible")
     })
 
-    it("And the user should see a button to cancel stream creation", () => {
-      getCyElement("a", "formCancel").should("have.attr", "href", "/dashboard")
+    it("Then the user clicks the 'Cancel' link to close the modal", () => {
+      getCyElement("a", "formCancel").click()
+    })
+
+    it("And the user should be redirected to the dashboard page", () => {
+      cy.url().should("eq", baseUrl + "/dashboard")
     })
   })
 })
