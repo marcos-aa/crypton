@@ -9,8 +9,8 @@ import {
 import ObjectID from "bson-objectid"
 
 import prisma from "../../prisma/client"
-import StreamUtils from "../utils/Stream"
 import { oidSchema, rawSchema, streamSchema } from "../utils/schemas"
+import StreamUtils from "./AssetServices"
 
 type WriteErrors = Array<{
   code: number

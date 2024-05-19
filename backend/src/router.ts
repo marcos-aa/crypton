@@ -1,22 +1,25 @@
 import { Router } from "express"
 
-import { SessionController } from "./controllers/SessionController"
-import { StreamController } from "./controllers/StreamController"
-import { UserController } from "./controllers/UserController"
-
-// Utils controller
-import StreamHandler from "./utils/Stream/Handler"
-import UserHandler from "./utils/User/Handler"
+import AssetController from "./controllers/AssetController"
+import EmailController from "./controllers/MailController"
+import StreamController from "./controllers/StreamController"
+import UserController from "./controllers/UserController"
 
 import isAuthorized from "./middleware/ensureAuth"
 import { tryWrapper } from "./middleware/tryWrapper"
 const router = Router()
 
 router.post("/user", tryWrapper(new UserController().create))
-router.put("/user", tryWrapper(new UserController().update))
+router.post("/user/token", tryWrapper(new UserController().createTokens))
+router.put(
+  "/user/name",
+  isAuthorized,
+  tryWrapper(new UserController().updateName)
+)
 router.get("/user", isAuthorized, tryWrapper(new UserController().read))
+router.put("/user", tryWrapper(new UserController().updateToken))
 router.delete("/user", isAuthorized, tryWrapper(new UserController().delete))
-router.delete("/session", new SessionController().delete)
+router.delete("/session", new UserController().deleteSession)
 
 router.post("/streams", isAuthorized, tryWrapper(new StreamController().create))
 router.post(
@@ -32,20 +35,18 @@ router.delete(
   tryWrapper(new StreamController().delete)
 )
 
-router.put("/user/name", isAuthorized, tryWrapper(new UserHandler().updateName))
 router.put(
   "/user/email",
   isAuthorized,
-  tryWrapper(new UserHandler().updateEmail)
+  tryWrapper(new EmailController().updateEmail)
 )
-router.put("/user/password", tryWrapper(new UserHandler().updatePassword))
-router.post("/user/code", tryWrapper(new UserHandler().createSendmail))
-router.put("/user/validate", tryWrapper(new UserHandler().updateValidation))
-router.post("/user/validate/bounce", new UserHandler().createBounce)
-router.post("/user/validate/complaint", new UserHandler().createComplaint)
-router.post("/user/token", tryWrapper(new UserHandler().createToken))
-router.get("/pairs", new StreamHandler().readPairs)
-router.get("/tickers", new StreamHandler().readTickers)
-router.get("/tickers/window", new StreamHandler().readTickWindow)
+router.put("/user/password", tryWrapper(new EmailController().updatePassword))
+router.post("/user/code", tryWrapper(new EmailController().createMail))
+router.put("/user/validate", tryWrapper(new EmailController().updateValidation))
+router.post("/user/validate/bounce", new EmailController().createBounce)
+router.post("/user/validate/complaint", new EmailController().createComplaint)
+router.get("/pairs", new AssetController().readAssets)
+router.get("/tickers", new AssetController().readTickers)
+router.get("/tickers/window", new AssetController().readTickWindow)
 
 export { router }

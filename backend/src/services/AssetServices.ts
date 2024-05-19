@@ -55,7 +55,7 @@ export default class StreamUtils {
     return { cached, uncached: notCached }
   }
 
-  async getPairs(): Promise<string[]> {
+  async getAssets(): Promise<string[]> {
     let prices = cache.keys()
     if (prices.length >= 2000) return prices.sort()
 

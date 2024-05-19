@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import StreamServices from "../services/StreamServices"
 
-export class StreamController {
+export default class StreamController {
   async create(req: Request, res: Response) {
     const { symbols } = req.body
     const result = await new StreamServices().create(req.id, symbols)

@@ -1,15 +1,16 @@
 import { Request, Response } from "express"
 
-import StreamUtils from "."
-export default class StreamHandler {
-  async readPairs(req: Request, res: Response) {
-    const pairs = await new StreamUtils().getPairs()
+import AssetServices from "../services/AssetServices"
+
+export default class AssetController {
+  async readAssets(req: Request, res: Response) {
+    const pairs = await new AssetServices().getAssets()
     return res.json(pairs)
   }
 
   async readTickers(req: Request, res: Response) {
     const { symbols } = req.query
-    const tickers = await new StreamUtils().getTickers(symbols as string[])
+    const tickers = await new AssetServices().getTickers(symbols as string[])
     return res.json(tickers)
   }
 
@@ -18,7 +19,7 @@ export default class StreamHandler {
       symbols: string[]
       winsize: string
     }
-    const historyTickers = await new StreamUtils().getWinTickers(
+    const historyTickers = await new AssetServices().getWinTickers(
       symbols,
       winsize
     )

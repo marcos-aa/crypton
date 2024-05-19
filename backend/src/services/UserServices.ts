@@ -1,8 +1,8 @@
 import { UserData, UserTokens } from "@shared/types"
 import { hashSync } from "bcryptjs"
 import Joi from "joi"
+import { JwtPayload, verify } from "jsonwebtoken"
 import prisma from "../../prisma/client"
-import UserUtils from "../utils/User"
 import { checkPassword, signToken } from "../utils/helpers"
 import {
   CredError,
@@ -11,6 +11,9 @@ import {
   oidSchema,
   userSchema,
 } from "../utils/schemas"
+import UserUtils from "./MailServices"
+
+type Tokens = Pick<UserTokens, "accessToken" | "refreshToken">
 
 export default class UserServices {
   async create(name: string, email: string, pass: string) {
@@ -44,6 +47,36 @@ export default class UserServices {
 
     await utils.sendMail(id, email)
     return id
+  }
+
+  async createTokens(refToken: string): Promise<Tokens> {
+    const { JWT_SECRET, JWT_SECRET_REF, JWT_EXPIRY, JWT_EXPIRY_REF } =
+      process.env
+    const decoded = verify(refToken, process.env.JWT_SECRET_REF) as JwtPayload
+    const id = decoded.id
+    if (!id) throw new CredError(m.invalidToken, 401)
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        refreshToken: true,
+      },
+    })
+
+    if (user?.refreshToken !== refToken)
+      throw new CredError(m.invalidToken, 403)
+    const [accessToken, refreshToken] = [
+      signToken(user.id, JWT_SECRET, JWT_EXPIRY),
+      signToken(user.id, JWT_SECRET_REF, JWT_EXPIRY_REF),
+    ]
+
+    await prisma.user.update({
+      where: { id },
+      data: { refreshToken },
+    })
+
+    return { accessToken, refreshToken }
   }
 
   async read(id: string): Promise<UserData> {
@@ -114,6 +147,16 @@ export default class UserServices {
       accessToken,
       refreshToken,
     }
+  }
+
+  async updateName(id: string, name: string) {
+    await userSchema.extract("name").validateAsync(name)
+    await prisma.user.update({
+      where: { id },
+      data: {
+        name,
+      },
+    })
   }
 
   async delete(id: string, pass: string) {
