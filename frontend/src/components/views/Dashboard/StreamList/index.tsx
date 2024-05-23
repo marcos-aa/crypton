@@ -217,9 +217,7 @@ function StreamList({
               ) : (
                 <>
                   <IconLink
-                    to={`/dashboard/${
-                      verified ? `streams/${stream.id}` : "export"
-                    }`}
+                    to={`/dashboard/${verified ? `streams/${stream.id}` : "export"}`}
                     title="Edit stream"
                     icon={faPencil}
                     state={{

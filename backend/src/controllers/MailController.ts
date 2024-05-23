@@ -5,7 +5,7 @@ import { genCookie } from "../utils/helpers"
 type SESRecipients = [
   {
     emailAddress: string
-  }
+  },
 ]
 
 interface BounceMessage {
