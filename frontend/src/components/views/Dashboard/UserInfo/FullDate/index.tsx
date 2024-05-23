@@ -6,13 +6,15 @@ interface DateProps {
 }
 
 export default function FullDate({ date, style, title, hour }: DateProps) {
-  const join = new Date(date)
+  const dateObj = new Date(date)
+  const DMYFormmated = dateObj.toLocaleDateString("en-UK")
+
   return (
     <p className={style}>
       {title}
       <span data-cy="joinDate">
-        {hour && `${join.getHours()}:${join.getUTCMinutes()} -`}
-        {join.getUTCDate()}/{join.getUTCMonth() + 1}/{join.getUTCFullYear()}
+        {hour && `${dateObj.getHours()}:${dateObj.getUTCMinutes()} -`}
+        {DMYFormmated}
       </span>
     </p>
   )
