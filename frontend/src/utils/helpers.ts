@@ -55,13 +55,12 @@ export const local = {
 export const messages: { [key: string]: string } = {
   name: "Name must contain only word characters.",
   email: "Please enter a valid email.",
-  pass: "Passwords must have special, uppercase, lowercase and digit characters",
+  pass: "Passwords must include uppercase, lowercase and digit characters",
   passmin: "Password must have at least 8 characters",
-  passmax: "Password must have at most 32 characters",
   cpassword: "Passwords must match",
 }
 
-const passRegex = /^([^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$/
+const passRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?!.*\s).{8,}$/
 
 const userSchema = yup
   .object({
@@ -73,11 +72,7 @@ const userSchema = yup
     password: yup
       .string()
       .min(8, messages.passmin)
-      .max(32, messages.passmax)
-      .test({
-        test: (v: string) => !passRegex.test(v),
-        message: messages.pass,
-      }),
+      .matches(passRegex, messages.pass),
   })
   .noUnknown(true, "Form must not contain invalid fields")
 

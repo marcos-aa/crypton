@@ -29,17 +29,14 @@ const credSchema = {
     "string.email": "Email must contain a valid domain",
   }),
   pass: Joi.string()
-    .pattern(/^([^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$/, {
-      invert: true,
-    })
+    .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?!.*\s).{8,}$/)
     .min(8)
     .max(32)
     .required()
     .messages({
       "string.min": "Password must have at least 8 characters",
-      "string.max": "Password must have at most 32 characters",
-      "string.pattern.invert.base":
-        "Password must combine special, uppercase, lowercase and digit characters",
+      "string.pattern.base":
+        "Password must include uppercase, lowercase and digit characters",
     }),
 }
 
