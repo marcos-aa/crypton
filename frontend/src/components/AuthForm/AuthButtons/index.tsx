@@ -14,7 +14,12 @@ export default function AuthButtons({
   return (
     <div id="actions">
       {children?.[0]}
-      <button disabled={invalid} type="submit" className="action fullwd">
+      <button
+        disabled={invalid}
+        type="submit"
+        data-cy="submitForm"
+        className="action fullwd"
+      >
         {action}
       </button>
       {!children?.[0] ? children : children?.[1]}

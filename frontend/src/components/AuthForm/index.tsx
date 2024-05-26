@@ -64,6 +64,7 @@ export default function AuthForm({
       {exfields.map((field) => {
         return (
           <InputField
+            data-cy={field}
             key={field}
             autoComplete={field}
             onChange={handleChange}
@@ -87,6 +88,7 @@ export default function AuthForm({
       )}
 
       <InputField
+        data-cy="password"
         autoComplete={"new-password"}
         onChange={handleChange}
         name="password"
