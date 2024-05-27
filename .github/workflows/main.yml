@@ -3,9 +3,21 @@ on:
   push:
     branches:
       - main
+      - ci/cypress
 jobs:
   cypress-e2e-tests:
     runs-on: self-hosted
+    env:
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
+      APP_MAIL: ${{secrets.APP_MAIL}}
+      SES_ACCESS: ${{secrets.SES_ACCESS}}
+      SES_SECRET: ${{secrets.SES_SECRET}}
+      SES_REGION: ${{secrets.SES_REGION}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      JWT_SECRET_REF: ${{secrets.JWT_SECRET_REF}}
+      JWT_EXPIRY: ${{secrets.JWT_EXPIRY}}
+      JWT_EXPIRY_REF: ${{secrets.JWT_EXPIRY_REF}}
+      MAX_REFRESH: ${{secrets.MAX_REFRESH}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
