@@ -16,7 +16,7 @@ const fillAndSubmit = (email: string, password: string) => {
   })
 }
 
-describe("Login", () => {
+describe("User signin", () => {
   before(() => {
     cy.clearAllLocalStorage()
     cy.visit("/register/signin")

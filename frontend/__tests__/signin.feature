@@ -1,4 +1,4 @@
-Feature: Login
+Feature: User signin
    I want to log into Crypton with my email and password
 
    Background:
