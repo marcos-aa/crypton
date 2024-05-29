@@ -51,7 +51,7 @@ describe("User signin", () => {
       cy.url().should("eq", baseURL + "/dashboard")
     })
 
-    it("And I should see 'Tester' in the 'display name' field", () => {
+    it("And I should see the user chosen name 'Tester' in the 'display name' field", () => {
       cy.contains("Tester")
     })
 
