@@ -1,6 +1,5 @@
 import { AxiosError } from "axios"
 import { useRouteError } from "react-router"
-import { Link } from "react-router-dom"
 import { useLogout } from "../../utils/customHooks"
 import { local } from "../../utils/helpers"
 import Logo from "../Logo"
@@ -20,9 +19,12 @@ export default function ErrorPage() {
         <p>{error?.response?.data}</p>
 
         <div id={styles.errActions}>
-          <Link to="/dashboard" className={styles.errOption}>
-            Go to dashboard
-          </Link>
+          <button
+            className={styles.errOption}
+            onClick={() => window.location.reload()}
+          >
+            Refresh page
+          </button>
 
           <button onClick={logout} className={styles.errOption}>
             Logout
