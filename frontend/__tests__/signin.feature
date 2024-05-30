@@ -12,11 +12,11 @@ Feature: User signin
   
   Examples:
     | email                             | password  | createdAt  | verified | outcome
-    | marcosandrade+crypton@gmail.com   | WrnPass01 | 26/05/2024 | true     | see a 'Invalid credentials' error message
-    | marcosandrade+uncrypton@test.com  | Tester01  | 26/05/2024 | false    | be redirected to the email validation page
+    | marcosandrade.it+crypton@gmail.com   | WrnPass01 | 26/05/2024 | true     | see a 'Invalid credentials' error message
+    | marcosandrade.it+uncrypton@test.com  | Tester01  | 26/05/2024 | false    | be redirected to the email validation page
 
   Scenario: I successfully log in with a verified account and valid credentials
-    When I type 'marcosandrade+crypton@gmail.com' in the 'Email' field
+    When I type 'marcosandrade.it+crypton@gmail.com' in the 'Email' field
     And I type  'Tester00' in the 'Password' field
     And I click the 'Sign in' button
     Then I should be redirected to the dashboard page

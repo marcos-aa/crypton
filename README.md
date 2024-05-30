@@ -22,11 +22,13 @@ Create customizable cryptocurrency streams with your chosen pairs and track thei
 
 1. Install the project's dependencies by running `npm install` or your package manager's respective command inside the `backend` and `frontend` directories.
 2. Create a `.env` file inside the `backend` directory and fill it with the necessary values in accordance with the examples provided in `./backend/.env.examples`
-3. Run the `setup` script with your package manager to generate the prisma database client and create the unique database indexes within the mongodb instance you configured earlier in the `.env` file.
+3. Run the `generate` script with your package manager to generate the prisma database client and create the unique database indexes within the mongodb instance you configured earlier in the `.env` file.
 4. Run the `dev` script within `./backend` to launch the node js development server.
 5. Run the `dev` script within `./frontend` to launch the react development server.
 
 ## Problems with US based servers and github hosted runners
-US-based servers such as the ones used by github hosted runners will encounter a 'Restricted location' error when using Binance's `.com` API endpoint due to US user access restrictions. __Use one of the following solutions to get around this problem__:
-1. Change the Binance API endpoint located at [index.ts](./backend/src/utils/Stream/index.ts) from `.com` to `.us`. _Note:  this is the easiest solution, but will reduce the amount of available currency pairs from 2000+ to around 500._
+
+US-based servers such as the ones used by github hosted runners will encounter a 'Restricted location' error when using Binance's `.com` API endpoint due to US user access restrictions. **Use one of the following solutions to get around this problem**:
+
+1. Change the Binance API endpoint located at [index.ts](./backend/src/utils/Stream/index.ts) from `.com` to `.us`. _Note: this is the easiest solution, but will reduce the amount of available currency pairs from 2000+ to around 500._
 2. Deploy a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) located outside the US and run this repo's actions with it.

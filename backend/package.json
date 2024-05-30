@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/src/app.js",
-    "setup": "prisma generate && prisma db push",
+    "generate": "prisma generate && prisma db push",
     "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts"
   },
   "engines": {
