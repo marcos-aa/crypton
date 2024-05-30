@@ -6,14 +6,14 @@ async function createUsers() {
     data: [
       {
         name: "Tester",
-        email: "marcosandrade.it+crypton@gmail.com",
+        email: "crypton+verified@crypton.icu",
         hashpass: hashSync("Tester00", 8),
         createdAt: "2024-05-26T22:13:37.757Z",
         verified: true,
       },
       {
         name: "Tester U.",
-        email: "marcosandrade.it+uncrypton@gmail.com",
+        email: "crypton@crypton.icu",
         hashpass: hashSync("Tester01", 8),
         createdAt: "2024-05-26T22:13:39.757Z",
       },

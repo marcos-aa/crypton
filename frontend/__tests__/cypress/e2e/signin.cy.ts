@@ -1,6 +1,6 @@
 import { baseURL, fillAuthForm, getCyElement } from "../utils"
 
-const verifiedMail = "marcosandrade.it+crypton@gmail.com"
+const verifiedMail = "crypton+verified@crypton.icu"
 
 describe("User signin", () => {
   before(() => {
@@ -22,7 +22,7 @@ describe("User signin", () => {
       getCyElement("password").clear()
     })
 
-    fillAuthForm("marcosandrade.it+uncrypton@gmail.com", "Tester01")
+    fillAuthForm("crypton@crypton.icu", "Tester01")
 
     it("Then I should be redirected to the email validation page", () => {
       cy.url().should("eq", baseURL + "/register/validate")

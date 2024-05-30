@@ -10,12 +10,13 @@ function fillWithName(name: string, email: string, password: string) {
 
 describe("User signup", () => {
   before(() => {
+    cy.task("clear:unverified")
     cy.clearAllLocalStorage()
     cy.visit("/register/signup")
   })
 
   describe("I fail to create an account with an already verified email address", () => {
-    fillWithName("Tester", "marcosandrade.it+crypton@gmail.com", "Tester01")
+    fillWithName("Tester", "crypton+verified@crypton.icu", "Tester01")
 
     it("Then I should see a 'This email is already registered.' error message", () => {
       cy.contains("This email is already registered.")
@@ -28,16 +29,18 @@ describe("User signup", () => {
         cy.wrap($el).clear()
       })
     )
-    fillWithName("Crypton", "crypton@crypton.icu", "Crypton00")
+    fillWithName("Tester U.", "crypton@crypton.icu", "Tester01")
 
     it("Then I should be redirected to the email validation page", () => {
       cy.url().should("eq", baseURL + "/register/validate")
     })
   })
 
-  describe("I am redirected to the email validation page when trying to sign up with a registered but unverified email address", () => {
+  describe(`I am redirected to the email validation page 
+            when trying to sign up with an unverified 
+            email address`, () => {
     before(() => cy.go("back"))
-    fillWithName("Crypton", "crypton@crypton.icu", "Crypton00")
+    fillWithName("Tester U.", "crypton@crypton.icu", "Tester01")
 
     it("Then I should be redirected to the email validation page", () => {
       cy.url().should("eq", baseURL + "/register/validate")

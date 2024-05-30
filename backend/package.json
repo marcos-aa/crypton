@@ -7,7 +7,9 @@
     "build": "tsc",
     "start": "node ./dist/src/app.js",
     "generate": "prisma generate && prisma db push",
-    "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts"
+    "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts",
+    "dev:tests": "ts-node-dev --env-file=.env.test --exit-child --respawn --transpile-only ./src/app.ts",
+    "studio:tests": "dotenv -e .env.test -- npx prisma studio"
   },
   "engines": {
     "node": "20.12.2"
