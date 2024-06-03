@@ -1,6 +1,14 @@
 import { hashSync } from "bcryptjs"
+import dotenv from "dotenv"
+import path from "path"
+// DOTENV config must be loaded before client, otherwise path will be ignored.
+dotenv.config({
+  path: path.resolve(__dirname, "../.env.test"),
+})
+
 import client from "./client"
 
+console.log(process.env.DATABASE_URL)
 async function setupTestUsers() {
   return Promise.all([
     client.user.createMany({
@@ -23,6 +31,4 @@ async function setupTestUsers() {
   ])
 }
 
-setupTestUsers()
-  .catch((d) => console.log(d))
-  .then((d) => console.log(d))
+setupTestUsers().catch((e) => console.log(e))

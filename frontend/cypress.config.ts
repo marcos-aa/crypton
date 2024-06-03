@@ -19,10 +19,9 @@ export default defineConfig({
       }),
         on("before:run", async () => {
           try {
-            await asyncExec(
-              "npx dotenv -e .env.test -- ts-node ./prisma/setup-tests.ts",
-              { cwd: "../backend" }
-            )
+            await asyncExec("npx ts-node ./prisma/setup-tests.ts", {
+              cwd: "../backend",
+            })
             return
           } catch (e) {
             throw new Error(e)
@@ -30,10 +29,9 @@ export default defineConfig({
         }),
         on("after:run", async () => {
           try {
-            await asyncExec(
-              "npx dotenv -e .env.test -- ts-node ./prisma/teardown-tests.ts",
-              { cwd: "../backend" }
-            )
+            await asyncExec("npx ts-node ./prisma/teardown-tests.ts", {
+              cwd: "../backend",
+            })
           } catch (e) {
             throw new Error(e)
           }

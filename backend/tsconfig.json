@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "NodeNext",
     "rootDir": "./",
+    "moduleResolution": "Node",
     "outDir": "./dist",
     "strict": true,
     "paths": {
