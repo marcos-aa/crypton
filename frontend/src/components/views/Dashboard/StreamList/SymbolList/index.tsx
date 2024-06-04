@@ -152,67 +152,68 @@ export default function SymbolList() {
 
   return (
     <ModalContainer id={styles.symbolModal} predecessor="/dashboard">
-      <header id={styles.modalHeader}>
-        <h1> Select up to 5 currencies </h1>
-        <label id={styles.searchBox}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
-          <input
-            name="search"
-            type="text"
-            placeholder="Search"
-            value={search}
-            autoFocus
-            onChange={handleSearch}
-          />
-        </label>
-      </header>
+      <section className={styles.modal}>
+        <header id={styles.modalHeader}>
+          <h1> Select up to 5 currencies </h1>
+          <label id={styles.searchBox}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <input
+              name="search"
+              type="text"
+              placeholder="Search"
+              value={search}
+              autoFocus
+              onChange={handleSearch}
+            />
+          </label>
+        </header>
 
-      <Form
-        id={styles.symbolOptions}
-        action={pathname}
-        method={pagestate?.symbols ? "put" : "post"}
-      >
-        <div id={styles.activeItems}>
-          {selected?.map((symbol) => {
-            return (
-              <div
-                id={styles.activeItem}
-                key={symbol}
-                onClick={() => handleRemoval(symbol)}
-              >
-                <input
-                  type="text"
-                  value={symbol}
-                  readOnly
-                  name="selected"
-                  className={styles.selected}
-                />
-                <button type="button" aria-label={`Remove ${symbol}`}>
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
-            )
-          })}
-        </div>
+        <Form
+          id={styles.symbolOptions}
+          action={pathname}
+          method={pagestate?.symbols ? "put" : "post"}
+        >
+          <div id={styles.activeItems}>
+            {selected?.map((symbol) => {
+              return (
+                <div
+                  id={styles.activeItem}
+                  key={symbol}
+                  onClick={() => handleRemoval(symbol)}
+                >
+                  <input
+                    type="text"
+                    value={symbol}
+                    readOnly
+                    name="selected"
+                    className={styles.selected}
+                  />
+                  <button type="button" aria-label={`Remove ${symbol}`}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
+              )
+            })}
+          </div>
 
-        <CancellableAction>
-          <ActionAnimation actpath={pathname}>
-            <SubmitAction disabled={selected.length < 1}>
-              {pagestate?.symbols ? "Update" : "Create"}
-            </SubmitAction>
-          </ActionAnimation>
-        </CancellableAction>
-      </Form>
-
-      <ul id={styles.symbolList}>
+          <CancellableAction>
+            <ActionAnimation actpath={pathname}>
+              <SubmitAction disabled={selected.length < 1}>
+                {pagestate?.symbols ? "Update" : "Create"}
+              </SubmitAction>
+            </ActionAnimation>
+          </CancellableAction>
+        </Form>
         <Suspense fallback={<SkeletonPairs />}>
           <Await resolve={pairs} errorElement={<p>Error!</p>}>
             {(pairs: string[]) => (
-              <Pairs pairs={pairs} search={search} handlePush={handlePush} />
+              <ul id={styles.symbolList}>
+                <Pairs pairs={pairs} search={search} handlePush={handlePush} />
+              </ul>
             )}
           </Await>
         </Suspense>
-      </ul>
+      </section>
     </ModalContainer>
   )
 }
