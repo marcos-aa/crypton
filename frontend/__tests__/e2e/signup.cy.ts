@@ -24,13 +24,22 @@ describe("User signup", () => {
     cy.url().should("include", "/register/validate")
   })
 
-  it(`I am redirected to the email validation page
-            when trying to sign up with an unverified
-            email address`, () => {
+  it(`I am redirected to the email validation page when trying to sign up with an unverified email address`, () => {
     cy.go("back")
     cy.task("getUserCreds").then((c: EtherealCreds) => {
       fillWithName("Tester U.", c.email, c.pass)
     })
     cy.url().should("include", "/register/validate")
+  })
+
+  it("I fail to validate an account with an invalid code", () => {
+    cy.getWithAttr("emailCode").type("invalid")
+    cy.getWithAttr("submitForm").click()
+    cy.contains("Invalid code")
+  })
+
+  it("I resend a email verification code to my email address", () => {
+    cy.getWithAttr("resendCode").click()
+    cy.contains("We sent a verification code to your email address")
   })
 })

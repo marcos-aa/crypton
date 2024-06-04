@@ -74,16 +74,23 @@ export default function ValidateUser({ style }: ValidationProps) {
       onSubmit={handleValidation}
       onClick={stopPropagation}
     >
-      <h3> Place the verification code sent to your email below. </h3>
+      <h3> Type or paste the verification code sent to your email here </h3>
       <input
         type="text"
         name="code"
         placeholder="Email verification code"
         onChange={(event) => setCode(event.target.value)}
+        data-cy="emailCode"
       />
+
       <ErrorResponse loading={error.loading} message={error.message} />
       <AuthButtons action="Validate" invalid={code.length < 4}>
-        <button className="redirLink" type="button" onClick={handleResend}>
+        <button
+          className="redirLink"
+          type="button"
+          onClick={handleResend}
+          data-cy="resendCode"
+        >
           Resend code
         </button>
       </AuthButtons>
