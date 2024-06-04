@@ -65,6 +65,8 @@ export default function ValidateUser({ style }: ValidationProps) {
     }
   }
 
+  const goBack = () => navigate(-1)
+
   return (
     <form
       id={styles[style] || "credModalForm"}
@@ -86,10 +88,14 @@ export default function ValidateUser({ style }: ValidationProps) {
         </button>
       </AuthButtons>
 
-      {/* @ts-ignore */}
-      <Link to={-1} title="Cancel" id={styles.exitButton}>
+      <button
+        title="Cancel"
+        id={styles.exitButton}
+        type="button"
+        onClick={goBack}
+      >
         <FontAwesomeIcon icon={faArrowLeft} />
-      </Link>
+      </button>
     </form>
   )
 }
