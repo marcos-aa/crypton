@@ -6,33 +6,21 @@
   margin-left: auto;
   max-width: 100%;
 
-  h1 {
-    font-weight: bold;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-
-    p {
-      font-size: 1.3rem;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-    span {
-      color: green;
-    }
-    a {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: #215b77;
-    }
-
-    a:target {
-      color: red;
-    }
+  nav {
+    display: flex;
+    width: 100%;
   }
-}
 
-.navlink {
-  margin: 5px;
-}
-.navlink.active {
-  text-decoration: underline;
+  .navlink {
+    width: 100%;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.4);
+    padding: 5px 0;
+  }
+
+  .navlink.active {
+    color: black;
+    border-bottom: 1px solid black;
+  }
 }

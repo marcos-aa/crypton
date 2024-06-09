@@ -8,27 +8,24 @@ export default function Registration() {
     <ModalContainer predecessor="/">
       <section id={styles.register}>
         <CloseModal predecessor="/" />
-        <h1>
-          Enjoy fully customizable streams with a
+        <nav>
           <NavLink
             to="/register/signin"
             className={({ isActive }) =>
               isActive ? `${styles.active} ${styles.navlink}` : styles.navlink
             }
           >
-            verified account
+            Sign In
           </NavLink>
-          or
           <NavLink
             to="/register/signup"
             className={({ isActive }) =>
               isActive ? `${styles.active} ${styles.navlink}` : styles.navlink
             }
           >
-            create a new one
+            Sign Up
           </NavLink>
-          now!
-        </h1>
+        </nav>
         <Outlet />
       </section>
     </ModalContainer>
