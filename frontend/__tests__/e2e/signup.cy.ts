@@ -16,13 +16,13 @@ describe("User signup", () => {
 
   it("I successfully create a new account with an unregistered email address", () => {
     cy.get("input[data-cy]").each(($el) => cy.wrap($el).clear())
-    fillWithName("Tester U.", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
     cy.url().should("include", "/register/validate")
   })
 
   it(`I am redirected to the email validation page when trying to sign up with an unverified email address`, () => {
     cy.go("back")
-    fillWithName("Tester U.", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
 
     cy.url().should("include", "/register/validate")
   })
@@ -38,7 +38,7 @@ describe("User signup", () => {
     cy.contains("We sent a verification code to your email address")
   })
 
-  it("I get a verification code from my email inbox", () => {
+  it("I use a valid verification code to verify an account", () => {
     cy.task("getUserMail").then((res: string) => {
       const parser = new DOMParser()
       const parsedHtml = parser.parseFromString(res, "text/html")
@@ -47,6 +47,7 @@ describe("User signup", () => {
       cy.getWithAttr("emailCode").clear()
       cy.getWithAttr("emailCode").type(code)
       cy.getWithAttr("submitForm").click()
+      cy.contains("Tertes")
     })
   })
 })
