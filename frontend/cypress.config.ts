@@ -4,17 +4,36 @@ import { defineConfig } from "cypress"
 import util from "node:util"
 const asyncExec = util.promisify(exec)
 
+interface MailMessage {
+  _id: string
+}
+
 export default defineConfig({
   chromeWebSecurity: false,
   e2e: {
     async setupNodeEvents(on, config) {
-      const { data } = await axios.post("https://api.nodemailer.com/user", {
-        requestor: "crypton",
-        version: "1.0",
-      })
       on("task", {
-        getUserCreds() {
-          return { email: data.user, pass: data.pass }
+        async getUserMail() {
+          const baseMailURL = "https://mailsac.com/api"
+          const address = config.env.MAILSAC_MAIL
+          const headers = {
+            "Mailsac-Key": config.env.MAILSAC_KEY,
+          }
+          try {
+            const { data } = await axios.get<MailMessage[]>(
+              `${baseMailURL}/addresses/${address}/messages`,
+              { headers }
+            )
+
+            const { data: mailHtml } = await axios.get<string>(
+              `${baseMailURL}/dirty/${address}/${data[0]._id}`,
+              { headers }
+            )
+
+            return mailHtml
+          } catch (e) {
+            return `error, ${e}`
+          }
         },
       }),
         on("before:run", async () => {

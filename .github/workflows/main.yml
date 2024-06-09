@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - ci/tests
 jobs:
   cypress-e2e-tests:
     runs-on: self-hosted
@@ -17,6 +18,8 @@ jobs:
       JWT_EXPIRY: ${{secrets.JWT_EXPIRY}}
       JWT_EXPIRY_REF: ${{secrets.JWT_EXPIRY_REF}}
       MAX_REFRESH: ${{secrets.MAX_REFRESH}}
+      CYPRESS_MAILSAC_KEY: ${{secrets.CYPRESS_MAILSAC_KEY}}
+      CYPRESS_MAILSAC_MAIL: ${{secrets.CYPRESS_MAILSACK_MAIL}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

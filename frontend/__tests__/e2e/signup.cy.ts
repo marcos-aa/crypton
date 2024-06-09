@@ -1,4 +1,3 @@
-import { EtherealCreds } from "../support/commands"
 function fillWithName(name: string, email: string, password: string) {
   cy.getWithAttr("name").type(name)
   cy.fillAuthCreds(email, password)
@@ -17,18 +16,14 @@ describe("User signup", () => {
 
   it("I successfully create a new account with an unregistered email address", () => {
     cy.get("input[data-cy]").each(($el) => cy.wrap($el).clear())
-    cy.task("getUserCreds").then((c: EtherealCreds) => {
-      fillWithName("Tester U.", c.email, c.pass)
-    })
-
+    fillWithName("Tester U.", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
     cy.url().should("include", "/register/validate")
   })
 
   it(`I am redirected to the email validation page when trying to sign up with an unverified email address`, () => {
     cy.go("back")
-    cy.task("getUserCreds").then((c: EtherealCreds) => {
-      fillWithName("Tester U.", c.email, c.pass)
-    })
+    fillWithName("Tester U.", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+
     cy.url().should("include", "/register/validate")
   })
 
@@ -41,5 +36,17 @@ describe("User signup", () => {
   it("I resend a email verification code to my email address", () => {
     cy.getWithAttr("resendCode").click()
     cy.contains("We sent a verification code to your email address")
+  })
+
+  it("I get a verification code from my email inbox", () => {
+    cy.task("getUserMail").then((res: string) => {
+      const parser = new DOMParser()
+      const parsedHtml = parser.parseFromString(res, "text/html")
+      const code = parsedHtml.querySelector("code").textContent.trim()
+
+      cy.getWithAttr("emailCode").clear()
+      cy.getWithAttr("emailCode").type(code)
+      cy.getWithAttr("submitForm").click()
+    })
   })
 })
