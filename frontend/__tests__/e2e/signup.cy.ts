@@ -9,18 +9,18 @@ describe("User signup", () => {
     cy.visit("/register/signup")
   })
 
-  it("I fail to create an account with an already verified email address", () => {
+  it("I fail to create an account with an used email address", () => {
     fillWithName("Tester", "crypton+verified@crypton.icu", "Tester01")
     cy.contains("This email is already registered.")
   })
 
-  it("I successfully create a new account with an unregistered email address", () => {
+  it("I successfully create a new account with an unused email address", () => {
     cy.get("input[data-cy]").each(($el) => cy.wrap($el).clear())
     fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
     cy.url().should("include", "/register/validate")
   })
 
-  it(`I am redirected to the email validation page when trying to sign up with an unverified email address`, () => {
+  it(`I am redirected to the email validation page when trying to sign up with an unverified account`, () => {
     cy.go("back")
     fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
 
@@ -33,15 +33,26 @@ describe("User signup", () => {
     cy.contains("Invalid code")
   })
 
-  it("I resend a email verification code to my email address", () => {
+  it("I resend a verification code to my email address", () => {
     cy.getWithAttr("resendCode").click()
     cy.contains("We sent a verification code to your email address")
   })
 
-  it("I use a valid verification code to verify an account", () => {
-    cy.task("getUserMail").then((res: string) => {
+  it("I fetch a verification code from my email inbox", () => {
+    cy.task("getUserMail").then((htmlString: string) => {
+      cy.document({ log: false }).invoke({ log: false }, "write", htmlString)
+    })
+
+    cy.get("code")
+      .then((el) => el.text().trim())
+      .should("have.length", 6)
+    cy.reload()
+  })
+
+  it("I use a valid code to verify an account", () => {
+    cy.task("getUserMail").then((htmlString: string) => {
       const parser = new DOMParser()
-      const parsedHtml = parser.parseFromString(res, "text/html")
+      const parsedHtml = parser.parseFromString(htmlString, "text/html")
       const code = parsedHtml.querySelector("code").textContent.trim()
 
       cy.getWithAttr("emailCode").clear()
