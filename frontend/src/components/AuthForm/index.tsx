@@ -77,15 +77,21 @@ export default function AuthForm({
         )
       })}
 
-      {exfields.length < 1 && (
-        <input
-          hidden
-          title="hidden username"
-          type="text"
-          name="username"
-          autoComplete="email"
-        />
-      )}
+      {
+        /* 
+          Google recommends adding hidden username inputs even 
+          if not necessary for autocompletion purposes 
+        */
+        exfields.length < 1 && (
+          <input
+            hidden
+            title="hidden username"
+            type="text"
+            name="username"
+            autoComplete="email"
+          />
+        )
+      }
 
       <InputField
         data-cy="password"
@@ -98,8 +104,8 @@ export default function AuthForm({
         required
       />
 
-      <CheckboxField label="Show password" handleChange={togglePass} />
       <LoadingError loading={error.loading} message={error.message} />
+      <CheckboxField label="Show password" handleChange={togglePass} />
 
       <AuthButtons
         invalid={Boolean(
