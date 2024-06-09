@@ -106,7 +106,7 @@ export default function Dashboard() {
       <header>
         <Logo />
         <div id={styles.dropSettings}>
-          <button id={styles.dropCta} title="Settings">
+          <button type="button" id={styles.dropCta} title="Settings">
             <FontAwesomeIcon icon={faUserCircle} />
           </button>
 
