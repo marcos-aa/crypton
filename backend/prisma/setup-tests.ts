@@ -8,7 +8,6 @@ dotenv.config({
 
 import client from "./client"
 
-console.log(process.env.DATABASE_URL)
 async function setupTestUsers() {
   return Promise.all([
     client.user.createMany({
