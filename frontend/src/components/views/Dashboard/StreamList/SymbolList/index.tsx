@@ -40,15 +40,8 @@ interface DeferredPairs {
   pairs: Promise<string[]>
 }
 
-const pairsQuery = () => ({
-  queryKey: ["currencies"],
-  queryFn: async () => getPairs(),
-})
-
-export const pairsLoader = (qc) => () => {
-  const query = pairsQuery()
-  const pairs = qc.ensureQueryData(query)
-  return defer({ pairs })
+export const pairsLoader = () => {
+  return defer({ pairs: getPairs() })
 }
 
 const createGStream = (symbols: string[]): { data: Stream } => {
@@ -129,6 +122,7 @@ export interface PageState {
 
 export default function SymbolList() {
   const { pairs } = useLoaderData() as DeferredPairs
+  console.log(pairs)
   const { state: pagestate, pathname }: PageState = useLocation()
   const [selected, setSelected] = useState<string[]>(pagestate?.symbols || [])
   const [search, setSearch] = useState<string>("")

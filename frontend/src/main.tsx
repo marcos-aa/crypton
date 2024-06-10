@@ -81,7 +81,7 @@ const router = createBrowserRouter([
       {
         path: "streams/:id?",
         element: <SymbolList />,
-        loader: pairsLoader(queryClient),
+        loader: pairsLoader,
         action: upsertStream(queryClient),
       },
       {
