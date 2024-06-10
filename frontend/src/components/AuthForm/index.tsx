@@ -70,7 +70,7 @@ export default function AuthForm({
             onChange={handleChange}
             name={field}
             value={input[field]}
-            type={field}
+            type={field === "email" ? "email" : "text"}
             required
             warning={warnings?.[field]}
           />
