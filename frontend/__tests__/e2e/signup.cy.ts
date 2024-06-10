@@ -10,20 +10,20 @@ describe("User signup", () => {
   })
 
   it("I fail to create an account with an used email address", () => {
-    fillWithName("Tester", "crypton+verified@crypton.icu", "Tester01")
+    fillWithName("Jane Doe", Cypress.env("MAIL_VERIFIED"), "Tester01")
     cy.contains("This email is already registered.")
   })
 
-  it("I successfully create a new account with an unused email address", () => {
+  it(`I am redirected to the email validation page when trying to sign up with an unverified account`, () => {
     cy.get("input[data-cy]").each(($el) => cy.wrap($el).clear())
-    fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    fillWithName("John Smith", Cypress.env("MAIL_UNVERIFIED"), "Mailsac00")
+
     cy.url().should("include", "/register/validate")
   })
 
-  it(`I am redirected to the email validation page when trying to sign up with an unverified account`, () => {
+  it("I successfully create a new account with an unused email address", () => {
     cy.go("back")
-    fillWithName("Tertes", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
-
+    fillWithName("John Doe", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
     cy.url().should("include", "/register/validate")
   })
 
@@ -58,7 +58,7 @@ describe("User signup", () => {
       cy.getWithAttr("emailCode").clear()
       cy.getWithAttr("emailCode").type(code)
       cy.getWithAttr("submitForm").click()
-      cy.contains("Tertes")
+      cy.contains("John Doe")
     })
   })
 })

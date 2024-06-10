@@ -1,5 +1,3 @@
-const verifiedMail = "crypton+verified@crypton.icu"
-
 describe("User signin", () => {
   before(() => {
     cy.clearAllLocalStorage()
@@ -7,7 +5,7 @@ describe("User signin", () => {
   })
 
   it("I fail to log in with invalid credentials", () => {
-    cy.fillAuthCreds(verifiedMail, "WrongPass01")
+    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "WrongPass01")
     cy.contains("Invalid email or password")
   })
 
@@ -15,15 +13,15 @@ describe("User signin", () => {
     cy.getWithAttr("email").clear()
     cy.getWithAttr("password").clear()
 
-    cy.fillAuthCreds("crypton@crypton.icu", "Tester01")
+    cy.fillAuthCreds(Cypress.env("MAIL_UNVERIFIED"), "Tester01")
     cy.url().should("include", "/register/validate")
   })
 
   it("I successfully log in with a verified account and valid credentials", () => {
     cy.go(-1)
-    cy.fillAuthCreds(verifiedMail, "Tester00")
+    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
     cy.url().should("include", "/dashboard")
-    cy.contains("Tester")
+    cy.contains("Jane Doe")
     cy.contains("26/05/2024")
   })
 })

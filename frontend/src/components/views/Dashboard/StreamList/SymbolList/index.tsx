@@ -122,7 +122,6 @@ export interface PageState {
 
 export default function SymbolList() {
   const { pairs } = useLoaderData() as DeferredPairs
-  console.log(pairs)
   const { state: pagestate, pathname }: PageState = useLocation()
   const [selected, setSelected] = useState<string[]>(pagestate?.symbols || [])
   const [search, setSearch] = useState<string>("")

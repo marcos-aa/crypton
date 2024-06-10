@@ -7,23 +7,22 @@ dotenv.config({
 })
 
 import client from "./client"
-
 async function setupTestUsers() {
   return Promise.all([
     client.user.createMany({
       data: [
         {
-          name: "Tester",
-          email: "crypton+verified@crypton.icu",
+          name: "Jane Doe",
+          email: process.env.MAIL_VERIFIED as string,
           hashpass: hashSync("Tester00", 8),
           createdAt: "2024-05-26T22:13:37.757Z",
           verified: true,
         },
         {
-          name: "Tester U.",
-          email: "crypton@crypton.icu",
+          name: "John Smith",
+          email: process.env.MAIL_UNVERIFIED as string,
           hashpass: hashSync("Tester01", 8),
-          createdAt: "2024-05-26T22:13:39.757Z",
+          createdAt: "2024-05-26T22:13:37.757Z",
         },
       ],
     }),
