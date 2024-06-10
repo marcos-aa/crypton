@@ -14,7 +14,7 @@ export default function SignIn() {
 
   const signIn = async (input: InputData) => {
     const { data } = await api.put<UserData | string>("/user", {
-      email: input.email,
+      email: input.email.trim(),
       password: input.password,
     })
 

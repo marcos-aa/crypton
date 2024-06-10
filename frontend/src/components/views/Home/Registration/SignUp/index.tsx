@@ -17,8 +17,8 @@ export default function SignUp({ isExport }: SignProps) {
 
   const signUp = async (input: InputData) => {
     const { data: id } = await api.post<string>("/user", {
-      name: input.name,
-      email: input.email,
+      name: input.name.trim(),
+      email: input.email.trim(),
       password: input.password,
     })
 
