@@ -9,10 +9,24 @@ declare global {
     interface Chainable {
       getWithAttr(attr: string): Cypress.Chainable<JQuery<HTMLElement>>
       fillAuthCreds(email: string, password: string): void
+      fillSignUp(name: string, email: string, password: string): void
+      waitForStream(): void
     }
   }
 }
+Cypress.Commands.add(
+  "fillSignUp",
+  (name: string, email: string, password: string) => {
+    cy.getWithAttr("name").type(name)
+    cy.fillAuthCreds(email, password)
+  }
+)
 
+Cypress.Commands.add("waitForStream", () => {
+  cy.intercept("POST", "/streams").as("newStream")
+  cy.getWithAttr("submitBtn").click()
+  cy.wait("@newStream")
+})
 Cypress.Commands.add("getWithAttr", (attr: string) => {
   return cy.get(`[data-cy=${attr}]`)
 })

@@ -60,7 +60,6 @@ export default defineConfig({
     },
     baseUrl: "http://localhost:3001",
     experimentalInteractiveRunEvents: true,
-    testIsolation: false,
     specPattern: "__tests__/e2e/*.cy.ts",
     supportFile: "__tests__/support/e2e.ts",
     screenshotsFolder: "__tests__/screenshots",
