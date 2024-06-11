@@ -164,7 +164,7 @@ function StreamList({
   }, [data.streams])
 
   return (
-    <main id={styles.streamPanel}>
+    <main id={styles.streamPanel} data-cy="streamPanel">
       <div className={styles.streamSettings}>
         <h1> Your streams </h1>
         <Link className="action" to="streams" data-cy="createStream">
@@ -180,7 +180,7 @@ function StreamList({
 
       {data.streams.map((stream) => {
         return (
-          <div className={styles.streamList} key={stream.id}>
+          <div className={styles.streamList} key={stream.id} data-cy="stream">
             {stream.symbols.map((symbol) => {
               const sym = data.tickers[symbol]
               return (
@@ -218,6 +218,7 @@ function StreamList({
                 <>
                   <IconLink
                     to={`/dashboard/${verified ? `streams/${stream.id}` : "export"}`}
+                    data-cy="editStream"
                     title="Edit stream"
                     icon={faPencil}
                     state={{

@@ -147,7 +147,7 @@ export default function SymbolList() {
     <ModalContainer id={styles.symbolModal} predecessor="/dashboard">
       <section className={styles.modal}>
         <header id={styles.modalHeader}>
-          <h1> Select up to 5 currencies </h1>
+          <h1> Select up to 5 assets </h1>
           <label id={styles.searchBox}>
             <FontAwesomeIcon icon={faMagnifyingGlass} />
             <input
@@ -176,6 +176,7 @@ export default function SymbolList() {
                 >
                   <input
                     type="text"
+                    data-cy="selectedAsset"
                     value={symbol}
                     readOnly
                     name="selected"

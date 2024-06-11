@@ -8,7 +8,11 @@ dotenv.config({
 import client from "./client"
 
 async function delUnverifiedUsers() {
-  await Promise.all([client.user.deleteMany({}), client.ucodes.deleteMany({})])
+  await Promise.all([
+    client.user.deleteMany({}),
+    client.ucodes.deleteMany({}),
+    client.stream.deleteMany({}),
+  ])
 }
 
 delUnverifiedUsers().catch((e) => e)

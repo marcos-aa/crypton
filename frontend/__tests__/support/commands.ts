@@ -10,10 +10,21 @@ declare global {
       getWithAttr(attr: string): Cypress.Chainable<JQuery<HTMLElement>>
       fillAuthCreds(email: string, password: string): void
       fillSignUp(name: string, email: string, password: string): void
+      checkTotals(streams: number, assets: number, uniques: number): void
       waitForStream(): void
     }
   }
 }
+
+Cypress.Commands.add(
+  "checkTotals",
+  (streams: number, assets: number, uniques: number) => {
+    cy.contains(`Streams: ${streams}`)
+    cy.contains(`Assets: ${assets}`)
+    cy.contains(`Unique assets: ${uniques}`)
+  }
+)
+
 Cypress.Commands.add(
   "fillSignUp",
   (name: string, email: string, password: string) => {

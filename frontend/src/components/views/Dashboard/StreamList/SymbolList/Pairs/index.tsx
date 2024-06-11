@@ -25,7 +25,7 @@ function Pairs({ search, pairs, handlePush }: PairProps) {
 
   return matches.map((pair) => (
     <li
-      data-cy="cryptoPair"
+      data-cy="asset"
       className={styles.symbol}
       onClick={handlePush}
       key={pair}
