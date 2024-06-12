@@ -1,9 +1,20 @@
 import { Tickers } from "@shared/types"
 
 describe("User streams", () => {
-  beforeEach(() => {
+  let atoken: string
+
+  before(() => {
     cy.visit("/register/signin")
+    cy.intercept("PUT", "/user").as("login")
     cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
+    cy.wait("@login").then((intercepted) => {
+      atoken = intercepted.response.body.accessToken
+    })
+  })
+
+  beforeEach(() => {
+    localStorage.setItem("u_token", atoken)
+    cy.visit("/dashboard")
   })
 
   it("I open and close the assets page", () => {
