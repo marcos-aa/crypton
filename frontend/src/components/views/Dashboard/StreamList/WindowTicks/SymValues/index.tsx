@@ -33,7 +33,11 @@ function SymValues({
         key={symbol}
         className={`${styles.symRow} ${expanded == symbol ? styles.fullSym : ""}`}
       >
-        <h2 className={styles.rowTitle} onClick={expandSymbol}>
+        <h2
+          className={styles.rowTitle}
+          onClick={expandSymbol}
+          data-cy="historicalAsset"
+        >
           {symbol}
         </h2>
 
@@ -66,7 +70,7 @@ function SymValues({
           </div>
         </div>
 
-        <div className={styles.symValues}>
+        <div className={styles.symValues} data-cy="historicalData">
           <span> Last price: {comparedValue.last}</span>
           <span> Weighted average: {comparedValue.average}</span>
           <span className={comparedDecrease ? "priceFall" : "priceRaise"}>

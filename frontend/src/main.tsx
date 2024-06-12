@@ -93,7 +93,7 @@ const router = createBrowserRouter([
         element: <ValidationModal origin="/dashboard/export" />,
       },
       {
-        path: "streams/window",
+        path: "streams/historical",
         element: <WindowTicks />,
         loader: windowLoader(queryClient),
       },

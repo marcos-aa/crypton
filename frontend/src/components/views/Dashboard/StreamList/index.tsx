@@ -200,12 +200,13 @@ function StreamList({
 
             <div className={styles.streamButtons}>
               <IconLink
-                to={`/dashboard/streams/window?${createTicksParameter(
+                to={`/dashboard/streams/historical?${createTicksParameter(
                   stream.symbols,
                   "symbols"
                 )}`}
                 icon={faUpRightAndDownLeftFromCenter}
                 title="Expand stream"
+                data-cy="expandStream"
               />
 
               {stream.userId === "guest" && isImporting ? (
@@ -232,7 +233,11 @@ function StreamList({
                       method="delete"
                       action={`/dashboard/streams/delete/${stream.id}`}
                     >
-                      <button type="submit" title="Delete stream">
+                      <button
+                        type="submit"
+                        title="Delete stream"
+                        data-cy="deleteStream"
+                      >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </fetcher.Form>
@@ -240,6 +245,7 @@ function StreamList({
                     <IconLink
                       to={`streams/delete/${stream.id}`}
                       title="Delete stream"
+                      data-cy="deleteStream"
                       icon={faTrash}
                     />
                   )}

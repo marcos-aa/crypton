@@ -1,3 +1,5 @@
+import { Tickers } from "@shared/types"
+
 describe("User streams", () => {
   beforeEach(() => {
     cy.visit("/register/signin")
@@ -40,5 +42,35 @@ describe("User streams", () => {
     cy.getWithAttr("submitBtn").click()
     cy.getWithAttr("stream").should("have.length", 2)
     cy.checkTotals(2, 3, 3)
+  })
+
+  it("I disable the stream deletion prompt and delete a stream", () => {
+    cy.getWithAttr("deleteStream").first().click()
+    cy.get("input[type=checkbox]").click()
+    cy.getWithAttr("submitBtn").click()
+    cy.getWithAttr("stream").should("have.length", 1)
+    cy.checkTotals(1, 2, 2)
+  })
+
+  it("I open and close the historical data page for a stream", () => {
+    cy.intercept(
+      "/tickers/window?symbols[]=1000SATSTRY&symbols[]=AAVEBNB&winsize=7d"
+    ).as("getWindowTicks")
+    cy.getWithAttr("expandStream").first().click()
+    cy.url().should("include", "/streams/historical")
+    cy.contains("1s")
+    cy.contains("7d")
+    cy.wait("@getWindowTicks").then((intercepted) => {
+      const body: Tickers = intercepted.response.body
+      const inchTickers = {
+        "1000SATSTRY": body["1000SATSTRY"],
+        AAVEBNB: body["AAVEBNB"],
+      }
+      cy.checkTickerValue("1000SATSTRY", inchTickers["1000SATSTRY"])
+      cy.checkTickerValue("AAVEBNB", inchTickers["AAVEBNB"])
+    })
+
+    cy.getWithAttr("closeInnerModal").click()
+    cy.getWithAttr("historicalAsset").should("have.length", 0)
   })
 })

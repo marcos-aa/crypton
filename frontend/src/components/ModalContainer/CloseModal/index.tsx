@@ -10,7 +10,12 @@ export default function CloseModal({ predecessor }: CloseProps) {
   const { closeModal } = useCloseModal(predecessor)
 
   return (
-    <button type="button" title="Close modal" className={styles.actionClose}>
+    <button
+      type="button"
+      title="Close modal"
+      className={styles.actionClose}
+      data-cy="closeInnerModal"
+    >
       <FontAwesomeIcon icon={faXmark} onClick={closeModal} />
     </button>
   )

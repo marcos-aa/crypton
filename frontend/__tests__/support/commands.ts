@@ -1,4 +1,7 @@
 /// <reference types="cypress" />
+
+import { Ticker } from "@shared/types"
+
 export interface EtherealCreds {
   email: string
   pass: string
@@ -11,10 +14,23 @@ declare global {
       fillAuthCreds(email: string, password: string): void
       fillSignUp(name: string, email: string, password: string): void
       checkTotals(streams: number, assets: number, uniques: number): void
+      checkTickerValue(asset: string, value: Ticker): void
       waitForStream(): void
     }
   }
 }
+
+Cypress.Commands.add("checkTickerValue", (asset: string, value: Ticker) => {
+  cy.getWithAttr("historicalAsset")
+    .contains(asset)
+    .siblings("[data-cy=historicalData]")
+    .within(() => {
+      cy.contains(`Last price: ${value.last}`)
+      cy.contains(`Weighted average: ${value.average}`)
+      cy.contains(`Price change: ${value.change}`)
+      cy.contains(`Price change %: ${value.pchange}`)
+    })
+})
 
 Cypress.Commands.add(
   "checkTotals",
