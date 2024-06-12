@@ -8,8 +8,9 @@
     "start": "node ./dist/src/app.js",
     "generate": "prisma generate && prisma db push",
     "dev": "ts-node-dev --exit-child --respawn --transpile-only ./src/app.ts",
-    "dev:tests": "ts-node-dev --env-file=.env.test --exit-child --respawn --transpile-only ./src/app.ts",
-    "studio:tests": "dotenv -e .env.test -- npx prisma studio"
+    "test:studio": "dotenv -e .env.test -- npx prisma studio",
+    "test:teardown": "ts-node ./prisma/teardown-tests.ts",
+    "test:setup": "ts-node ./prisma/setup-tests.ts"
   },
   "engines": {
     "node": "20.12.2"

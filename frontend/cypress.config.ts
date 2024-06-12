@@ -9,7 +9,6 @@ interface MailMessage {
 }
 
 export default defineConfig({
-  chromeWebSecurity: false,
   e2e: {
     async setupNodeEvents(on, config) {
       on("task", {

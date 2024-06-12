@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "tests:web": "concurrently -k --success first 'cd ../backend && npm run dev:tests' 'npm run dev' 'cypress open -b electron'",
-    "tests:headless": "concurrently -k --success first 'cypress run' 'cd ../backend && npm run dev:tests' 'npm run dev'"
+    "test:server": "cd ../backend && npx ts-node-dev --env-file=.env.test --exit-child --respawn --transpile-only ./src/app.ts",
+    "test:web": "concurrently -k -s first 'npm run test:server' 'npm run dev' 'cypress open --e2e --browser electron'",
+    "test:headless": "concurrently -k -s first 'npm run test:server' 'npm run dev' 'cypress run'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
