@@ -5,4 +5,5 @@ node_modules
 .env
 .env.test
 cypress.env.json
+*/__tests__/screenshots
 .yarn
