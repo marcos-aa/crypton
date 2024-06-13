@@ -34,7 +34,7 @@ describe("User streams", () => {
     cy.checkTotals(2, 4, 3)
   })
 
-  it("I modify a stream, removing the '1INCHBTC' symbol", () => {
+  it("I modify a stream, removing the '1INCHBTC' asset", () => {
     cy.getWithAttr("editStream").first().click()
     cy.getWithAttr("selectedAsset").should("have.length", 2).first().click()
     cy.getWithAttr("selectedAsset").should("have.length", 1)
