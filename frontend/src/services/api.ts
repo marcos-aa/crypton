@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios"
 import { saveHeader } from "../utils/datafetching"
 
 const baseURL =
-  import.meta.env.MODE === "production"
+  import.meta.env?.MODE === "production"
     ? "https://api.crypton.icu"
     : "http://localhost:3000"
 const api = axios.create({

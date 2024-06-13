@@ -43,11 +43,11 @@ interface NotifReturn {
 }
 
 export const local = {
-  token: "u_token",
-  streams: "u_streams",
-  window: "u_prefWindow",
-  joined: "u_joinDate",
-  expStreams: "u_exportStreams",
+  token: "u:token",
+  streams: "u:streams",
+  window: "u:prefWindow",
+  joined: "u:joinDate",
+  expStreams: "u:exportStreams",
   expPrompt: "u:exportPrompt",
   delPrompt: "u:delPrompt",
 }
