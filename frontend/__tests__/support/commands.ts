@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import { Ticker } from "@shared/types"
+import { local } from "../../src/utils/helpers"
 
 export interface EtherealCreds {
   email: string
@@ -18,6 +19,24 @@ declare global {
       waitForStream(): void
     }
   }
+}
+
+export function visitDashboard() {
+  let atoken: string
+
+  before(() => {
+    cy.visit("/register/signin")
+    cy.intercept("PUT", "/user").as("login")
+    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
+    cy.wait("@login").then((intercepted) => {
+      atoken = intercepted.response.body.accessToken
+    })
+  })
+
+  beforeEach(() => {
+    cy.visit("/dashboard")
+    localStorage.setItem(local.token, atoken)
+  })
 }
 
 Cypress.Commands.add("checkTickerValue", (asset: string, value: Ticker) => {

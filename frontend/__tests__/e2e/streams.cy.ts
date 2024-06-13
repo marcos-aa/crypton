@@ -1,22 +1,9 @@
 import { Tickers } from "@shared/types"
 import { local } from "../../src/utils/helpers"
+import { visitDashboard } from "../support/commands"
 
 describe("User streams", () => {
-  let atoken: string
-
-  before(() => {
-    cy.visit("/register/signin")
-    cy.intercept("PUT", "/user").as("login")
-    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
-    cy.wait("@login").then((intercepted) => {
-      atoken = intercepted.response.body.accessToken
-    })
-  })
-
-  beforeEach(() => {
-    cy.visit("/dashboard")
-    localStorage.setItem(local.token, atoken)
-  })
+  visitDashboard()
 
   it("I open and close the assets page", () => {
     cy.getWithAttr("createStream").click()
