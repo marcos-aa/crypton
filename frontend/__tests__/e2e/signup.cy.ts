@@ -1,3 +1,5 @@
+const unverifiedPass = "Mailsac00"
+
 describe("User signup", () => {
   beforeEach(() => cy.visit("/register/signup"))
 
@@ -7,24 +9,24 @@ describe("User signup", () => {
   })
 
   it(`I am redirected to the email validation page when trying to sign up with an unverified account`, () => {
-    cy.fillSignUp("John Smith", Cypress.env("MAIL_UNVERIFIED"), "Mailsac00")
+    cy.fillSignUp("John Smith", Cypress.env("MAIL_UNVERIFIED"), unverifiedPass)
     cy.url().should("include", "/register/validate")
   })
 
   it("I successfully create a new account with an unused email address", () => {
-    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), unverifiedPass)
     cy.url().should("include", "/register/validate")
   })
 
   it("I fail to validate an account with an invalid code", () => {
-    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), unverifiedPass)
     cy.getWithAttr("emailCode").type("invalid")
     cy.getWithAttr("submitForm").click()
     cy.contains("Invalid code")
   })
 
   it("I resend a verification code to my email address", () => {
-    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+    cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), unverifiedPass)
     cy.getWithAttr("resendCode").click()
     cy.contains("We sent a verification code to your email address")
   })
@@ -45,7 +47,7 @@ describe("User signup", () => {
       const parsedHtml = parser.parseFromString(htmlString, "text/html")
       const code = parsedHtml.querySelector("code").textContent.trim()
 
-      cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), "Mailsac00")
+      cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), unverifiedPass)
       cy.getWithAttr("emailCode").type(code)
       cy.getWithAttr("submitForm").click()
       cy.contains("John Doe")

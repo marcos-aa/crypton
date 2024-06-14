@@ -14,7 +14,7 @@ describe("User signin", () => {
   })
 
   it("I successfully log in with a verified account and valid credentials", () => {
-    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
+    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), Cypress.env("MAIL_PASS"))
     cy.url().should("include", "/dashboard")
     cy.contains("Jane Doe")
     cy.contains("26/05/2024")
