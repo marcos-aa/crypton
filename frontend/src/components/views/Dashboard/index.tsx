@@ -105,14 +105,15 @@ export default function Dashboard() {
     <div className="page" id={styles.dashboard}>
       <header>
         <Logo />
-        <div id={styles.dropSettings}>
+        <div id={styles.dropSettings} data-cy="dropSettings">
           <button type="button" id={styles.dropCta} title="Settings">
             <FontAwesomeIcon icon={faUserCircle} />
           </button>
 
-          <div id={styles.dropList}>
+          <div id={styles.dropList} data-cy="dropOptions">
             <Link
               className={styles.dropAction}
+              data-cy="openSettings"
               to={verified ? "/dashboard/settings" : "/dashboard/export"}
             >
               <FontAwesomeIcon icon={faCog} /> Settings
@@ -124,11 +125,16 @@ export default function Dashboard() {
                 className={styles.dropAction}
                 onClick={handleImport}
                 disabled={notif.type == "loading"}
+                data-cy="exportCta"
               >
                 <FontAwesomeIcon icon={faUpload} /> Import local streams
               </button>
             ) : (
-              <Link className={styles.dropAction} to="/dashboard/export">
+              <Link
+                className={styles.dropAction}
+                to="/dashboard/export"
+                data-cy="exportCta"
+              >
                 <FontAwesomeIcon icon={faCloud} /> Export data to cloud
               </Link>
             )}
@@ -136,6 +142,7 @@ export default function Dashboard() {
               type="button"
               className={styles.dropAction}
               onClick={handleLogout}
+              data-cy="logoutButton"
             >
               <FontAwesomeIcon icon={faSignOut} /> Logout
             </button>

@@ -17,6 +17,7 @@ declare global {
       checkTotals(streams: number, assets: number, uniques: number): void
       checkTickerValue(asset: string, value: Ticker): void
       waitForStream(): void
+      setupDropdown(): void
     }
   }
 }
@@ -38,6 +39,23 @@ export function visitDashboard() {
     localStorage.setItem(local.token, atoken)
   })
 }
+
+Cypress.Commands.add("setupDropdown", () => {
+  // Cypress does not support hover events
+
+  cy.getWithAttr("dropOptions").then((el) => {
+    cy.getWithAttr("dropSettings").then((drop) => {
+      drop.get()
+      drop.on("mouseover", () => {
+        el.css("visibility", "visible")
+      })
+
+      drop.on("mouseout", () => {
+        el.css("visibility", "hidden")
+      })
+    })
+  })
+})
 
 Cypress.Commands.add("checkTickerValue", (asset: string, value: Ticker) => {
   cy.getWithAttr("historicalAsset")
