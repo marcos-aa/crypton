@@ -68,7 +68,9 @@ export default function UserSettings() {
           action="/dashboard/settings"
           method="put"
         >
-          <label htmlFor="name">{user?.name}</label>
+          <label htmlFor="name" data-cy="nameLabel">
+            {user?.name}
+          </label>
 
           <input type="text" name="name" id="name" autoComplete="name" />
           <ActionAnimation actpath="/dashboard/settings">

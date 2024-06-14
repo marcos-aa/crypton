@@ -29,4 +29,15 @@ describe("User settings", () => {
     cy.getWithAttr("exportCta").click()
     cy.contains("No local streams found")
   })
+
+  it("I change my username", () => {
+    cy.setupDropdown()
+    cy.getWithAttr("dropSettings").trigger("mouseover")
+    cy.getWithAttr("openSettings").click()
+    cy.get("input[name='name']").type("Jane M. Doe")
+    cy.getWithAttr("submitBtn").click()
+    cy.getWithAttr("nameLabel").should("have.text", "Jane M. Doe")
+    cy.getWithAttr("closeInnerModal").click()
+    cy.getWithAttr("username").should("have.text", "Jane M. Doe")
+  })
 })

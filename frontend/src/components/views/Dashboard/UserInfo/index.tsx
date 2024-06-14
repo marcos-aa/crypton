@@ -26,7 +26,11 @@ function UserInfo({ initialUser, tsyms, tstreams, usyms }: InfoProps) {
 
   return (
     <section className={`${styles.userData} ${styles.panel}`}>
-      <h2 className={`${styles.infoItem} ${styles.name}`} aria-label="name">
+      <h2
+        className={`${styles.infoItem} ${styles.name}`}
+        aria-label="name"
+        data-cy="username"
+      >
         {user?.name}
       </h2>
       <div className={styles.userInfo}>
