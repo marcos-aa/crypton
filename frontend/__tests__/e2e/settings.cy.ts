@@ -56,4 +56,21 @@ describe("User settings", () => {
       cy.contains(newmail)
     })
   })
+
+  it("I change my password", () => {
+    cy.openSettings()
+    cy.getWithAttr("changePassword").click()
+    cy.getWithAttr("password").type("NewPassword00")
+    cy.intercept("PUT", "/user/password").as("updatePassword")
+    cy.getWithAttr("submitForm").click()
+    cy.url().should("include", "/validate")
+    cy.wait("@updatePassword")
+    cy.wait(1000)
+
+    cy.task("getUserMail").then((htmlString: string) => {
+      const code = parseEmail(htmlString)
+      cy.getWithAttr("emailCode").type(code)
+      cy.getWithAttr("submitForm").click()
+    })
+  })
 })
