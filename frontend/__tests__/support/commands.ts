@@ -18,8 +18,15 @@ declare global {
       checkTickerValue(asset: string, value: Ticker): void
       waitForStream(): void
       setupDropdown(): void
+      openSettings(): void
     }
   }
+}
+export function parseEmail(html: string): string {
+  const parser = new DOMParser()
+  const parsedHtml = parser.parseFromString(html, "text/html")
+  const code = parsedHtml.querySelector("code").textContent.trim()
+  return code
 }
 
 export function visitDashboard() {
@@ -55,6 +62,13 @@ Cypress.Commands.add("setupDropdown", () => {
       })
     })
   })
+})
+
+Cypress.Commands.add("openSettings", () => {
+  cy.setupDropdown()
+  cy.setupDropdown()
+  cy.getWithAttr("dropSettings").trigger("mouseover")
+  cy.getWithAttr("openSettings").click()
 })
 
 Cypress.Commands.add("checkTickerValue", (asset: string, value: Ticker) => {

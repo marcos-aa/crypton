@@ -89,6 +89,7 @@ export default function UserSettings() {
             className="action"
             to="/dashboard/settings/email"
             state={credState}
+            data-cy="changeEmail"
           >
             Change
           </Link>
@@ -103,6 +104,7 @@ export default function UserSettings() {
             className="action"
             to="/dashboard/settings/password"
             state={credState}
+            data-cy="changePassword"
           >
             Change
           </Link>

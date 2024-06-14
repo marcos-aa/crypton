@@ -1,3 +1,5 @@
+import { parseEmail } from "../support/commands"
+
 const unverifiedPass = "Mailsac00"
 
 describe("User signup", () => {
@@ -43,9 +45,7 @@ describe("User signup", () => {
 
   it("I use a valid code to verify an account", () => {
     cy.task("getUserMail").then((htmlString: string) => {
-      const parser = new DOMParser()
-      const parsedHtml = parser.parseFromString(htmlString, "text/html")
-      const code = parsedHtml.querySelector("code").textContent.trim()
+      const code = parseEmail(htmlString)
 
       cy.fillSignUp("John Doe", Cypress.env("MAILSAC_MAIL"), unverifiedPass)
       cy.getWithAttr("emailCode").type(code)
