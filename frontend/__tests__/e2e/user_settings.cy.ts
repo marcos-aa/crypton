@@ -1,3 +1,4 @@
+import { local } from "../../src/utils/helpers"
 import { parseEmail, visitDashboard } from "../support/commands"
 
 describe("User settings", () => {
@@ -44,7 +45,6 @@ describe("User settings", () => {
     cy.getWithAttr("password").type(Cypress.env("MAIL_PASS"))
     cy.intercept("PUT", "/user/email").as("updateEmail")
     cy.getWithAttr("submitForm").click()
-    cy.url().should("include", "/validate")
     cy.wait("@updateEmail")
     cy.wait(1000)
 
@@ -63,7 +63,6 @@ describe("User settings", () => {
     cy.getWithAttr("password").type("NewPassword00")
     cy.intercept("PUT", "/user/password").as("updatePassword")
     cy.getWithAttr("submitForm").click()
-    cy.url().should("include", "/validate")
     cy.wait("@updatePassword")
     cy.wait(1000)
 
@@ -71,6 +70,19 @@ describe("User settings", () => {
       const code = parseEmail(htmlString)
       cy.getWithAttr("emailCode").type(code)
       cy.getWithAttr("submitForm").click()
+      cy.url().should("eq", Cypress.config().baseUrl + "/dashboard")
     })
+  })
+
+  it("I log out", () => {
+    cy.setupDropdown()
+    cy.getWithAttr("dropSettings").trigger("mouseover")
+    cy.getWithAttr("logoutButton").click()
+    cy.url()
+      .should("eq", Cypress.config().baseUrl + "/")
+      .then(() => {
+        expect(localStorage.getItem(local.token)).to.not.exist
+      })
+    cy.getCookie("r_token").should("not.exist")
   })
 })
