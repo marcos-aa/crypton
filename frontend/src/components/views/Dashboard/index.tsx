@@ -94,7 +94,7 @@ export default function Dashboard() {
 
   const handleImport = () => {
     if (!localStorage.getItem(local.streams))
-      return updateNotif("No guest streams found")
+      return updateNotif("No local streams found")
 
     updateNotif("Your streams are being uploaded to the server", "loading")
     const uid = qc.getQueryData<UIUser>(["user"]).id
