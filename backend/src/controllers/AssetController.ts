@@ -5,7 +5,7 @@ import AssetServices from "../services/AssetServices"
 export default class AssetController {
   async readAssets(req: Request, res: Response) {
     const pairs = await new AssetServices().getAssets()
-    return res.json(pairs)
+    return res.header("Cache-Control", "public, max-age=86400").json(pairs)
   }
 
   async readTickers(req: Request, res: Response) {
