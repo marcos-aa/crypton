@@ -1,13 +1,16 @@
 import { Tickers } from "@shared/types"
 import { local } from "../../src/utils/helpers"
-import { visitDashboard } from "../support/commands"
 
 describe("User streams", () => {
-  visitDashboard()
+  beforeEach(() => {
+    cy.login(Cypress.env("MAIL_VERIFIED"), Cypress.env("MAIL_PASS"))
+  })
 
   it("I open and close the assets page", () => {
+    cy.intercept("GET", "/pairs").as("assets")
     cy.getWithAttr("createStream").click()
     cy.url().should("include", "/dashboard/streams")
+    cy.wait("@assets")
     cy.getWithAttr("asset").should("have.length.greaterThan", 2000)
     cy.getWithAttr("formCancel").click()
     cy.getWithAttr("asset").should("have.length", 0)

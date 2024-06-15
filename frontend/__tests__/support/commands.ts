@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
 import { Ticker } from "@shared/types"
-import { local } from "../../src/utils/helpers"
 
 export interface EtherealCreds {
   email: string
@@ -19,6 +18,7 @@ declare global {
       waitForStream(): void
       setupDropdown(): void
       openSettings(): void
+      login(email: string, password: string): void
     }
   }
 }
@@ -29,24 +29,12 @@ export function parseEmail(html: string): string {
   return code
 }
 
-export function visitDashboard() {
-  let atoken: string
-
-  before(() => {
-    cy.visit("/register/signin")
-    cy.intercept("PUT", "/user").as("login")
-    cy.fillAuthCreds(Cypress.env("MAIL_VERIFIED"), "Tester00")
-    cy.wait("@login").then((intercepted) => {
-      atoken = intercepted.response.body.accessToken
-    })
-  })
-
-  beforeEach(() => {
-    cy.visit("/dashboard")
-    localStorage.setItem(local.token, atoken)
-  })
-}
-
+Cypress.Commands.add("login", (email: string, password: string) => {
+  cy.visit("/register/signin")
+  cy.intercept("PUT", "/user").as("login")
+  cy.fillAuthCreds(email, password)
+  cy.wait("@login")
+})
 Cypress.Commands.add("setupDropdown", () => {
   // Cypress does not support hover events
 

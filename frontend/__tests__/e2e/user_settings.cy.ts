@@ -1,8 +1,20 @@
 import { local } from "../../src/utils/helpers"
-import { parseEmail, visitDashboard } from "../support/commands"
+import { parseEmail } from "../support/commands"
 
 describe("User settings", () => {
-  visitDashboard()
+  const newmail: string = Cypress.env("MAILSAC_MAIL").replace(
+    "@mailsac.com",
+    "+updated@mailsac.com"
+  )
+
+  beforeEach(() => {
+    cy.login(
+      Cypress.currentTest.title === "I change my password"
+        ? newmail
+        : Cypress.env("MAIL_VERIFIED"),
+      Cypress.env("MAIL_PASS")
+    )
+  })
 
   it("I open and close the settings dropdown", () => {
     cy.setupDropdown()
@@ -24,6 +36,18 @@ describe("User settings", () => {
     cy.contains("No local streams found")
   })
 
+  it("I log out", () => {
+    cy.setupDropdown()
+    cy.getWithAttr("dropSettings").trigger("mouseover")
+    cy.getWithAttr("logoutButton").click()
+    cy.url()
+      .should("eq", Cypress.config().baseUrl + "/")
+      .then(() => {
+        expect(localStorage.getItem(local.token)).to.not.exist
+      })
+    cy.getCookie("r_token").should("not.exist")
+  })
+
   it("I change my username", () => {
     cy.openSettings()
     cy.get("input[name='name']").type("Jane M. Doe")
@@ -35,10 +59,6 @@ describe("User settings", () => {
 
   it("I change my email address", () => {
     cy.openSettings()
-    const newmail: string = Cypress.env("MAILSAC_MAIL").replace(
-      "@mailsac.com",
-      "+updated@mailsac.com"
-    )
 
     cy.getWithAttr("changeEmail").click()
     cy.getWithAttr("email").type(newmail)
@@ -72,17 +92,5 @@ describe("User settings", () => {
       cy.getWithAttr("submitForm").click()
       cy.url().should("eq", Cypress.config().baseUrl + "/dashboard")
     })
-  })
-
-  it("I log out", () => {
-    cy.setupDropdown()
-    cy.getWithAttr("dropSettings").trigger("mouseover")
-    cy.getWithAttr("logoutButton").click()
-    cy.url()
-      .should("eq", Cypress.config().baseUrl + "/")
-      .then(() => {
-        expect(localStorage.getItem(local.token)).to.not.exist
-      })
-    cy.getCookie("r_token").should("not.exist")
   })
 })
