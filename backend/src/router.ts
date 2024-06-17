@@ -46,7 +46,7 @@ router.put("/user/validate", tryWrapper(new EmailController().updateValidation))
 router.post("/user/validate/bounce", new EmailController().createBounce)
 router.post("/user/validate/complaint", new EmailController().createComplaint)
 router.get("/pairs", new AssetController().readAssets)
-router.get("/tickers", new AssetController().readTickers)
+router.get("/pairs/latest", new AssetController().readTickers)
 router.get("/tickers/window", new AssetController().readTickWindow)
 
 export { router }
