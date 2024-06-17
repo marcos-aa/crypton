@@ -13,7 +13,7 @@ import {
 } from "react-router"
 import { Form } from "react-router-dom"
 import api from "../../../../../services/api"
-import { getPairs } from "../../../../../utils/datafetching"
+import { getAssets } from "../../../../../utils/datafetching"
 import {
   addTicks,
   createTicksParameter,
@@ -40,8 +40,8 @@ interface DeferredPairs {
   pairs: Promise<string[]>
 }
 
-export const pairsLoader = () => {
-  return defer({ pairs: getPairs() })
+export const assetsLoader = () => {
+  return defer({ pairs: getAssets() })
 }
 
 const createGStream = (symbols: string[]): { data: Stream } => {

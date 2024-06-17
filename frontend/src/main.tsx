@@ -10,7 +10,7 @@ import DeleteStream, {
   deleteStream,
 } from "./components/views/Dashboard/StreamList/DeleteStream"
 import SymbolList, {
-  pairsLoader,
+  assetsLoader,
   upsertStream,
 } from "./components/views/Dashboard/StreamList/SymbolList"
 import WindowTicks, {
@@ -81,7 +81,7 @@ const router = createBrowserRouter([
       {
         path: "streams/:id?",
         element: <SymbolList />,
-        loader: pairsLoader,
+        loader: assetsLoader,
         action: upsertStream(queryClient),
       },
       {

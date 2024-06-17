@@ -22,7 +22,7 @@ export const homeLoader = async () => {
   const token = localStorage.getItem(local.token)
   if (token) return redirect("/dashboard")
 
-  const tickersPromise = api.get<Tickers>("/pairs/latest", {
+  const tickersPromise = api.get<Tickers>("/tickers/preview", {
     params: {
       symbols: [
         "BTCBUSD",

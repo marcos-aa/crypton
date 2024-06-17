@@ -11,6 +11,12 @@ export default class AssetController {
   async readTickers(req: Request, res: Response) {
     const { symbols } = req.query
     const tickers = await new AssetServices().getTickers(symbols as string[])
+    return res.json(tickers)
+  }
+
+  async readTickersPreview(req: Request, res: Response) {
+    const { symbols } = req.query
+    const tickers = await new AssetServices().getTickers(symbols as string[])
     return res.header("Cache-Control", "public, max-age=3600").json(tickers)
   }
 

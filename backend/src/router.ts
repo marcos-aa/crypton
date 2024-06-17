@@ -45,8 +45,10 @@ router.post("/user/code", tryWrapper(new EmailController().createMail))
 router.put("/user/validate", tryWrapper(new EmailController().updateValidation))
 router.post("/user/validate/bounce", new EmailController().createBounce)
 router.post("/user/validate/complaint", new EmailController().createComplaint)
-router.get("/pairs", new AssetController().readAssets)
-router.get("/pairs/latest", new AssetController().readTickers)
+router.get("/assets", new AssetController().readAssets)
+
+router.get("/tickers", new AssetController().readTickers)
+router.get("/tickers/preview", new AssetController().readTickersPreview)
 router.get("/tickers/window", new AssetController().readTickWindow)
 
 export { router }

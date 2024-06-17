@@ -7,7 +7,7 @@ describe("User streams", () => {
   })
 
   it("I open and close the assets page", () => {
-    cy.intercept("GET", "/pairs").as("assets")
+    cy.intercept("GET", "/assets").as("assets")
     cy.getWithAttr("createStream").click()
     cy.url().should("include", "/dashboard/streams")
     cy.wait("@assets")

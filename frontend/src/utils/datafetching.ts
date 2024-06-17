@@ -7,6 +7,16 @@ export const saveHeader = (token: string) => {
   api.defaults.headers.common.authorization = `Bearer ${token}`
 }
 
+const getAssets = async (): Promise<string[]> => {
+  const { data: assets } = await api.get<string[]>("/assets")
+  return assets
+}
+
+const getUser = async (): Promise<UIUser> => {
+  const { data } = await api.get<UserData>("/user")
+  return data.user
+}
+
 const getGuestUser = (): UIUser => {
   const joinDate = JSON.parse(localStorage.getItem(local.joined))
 
@@ -19,11 +29,6 @@ const getGuestUser = (): UIUser => {
   }
 
   return udata
-}
-
-const getUser = async (): Promise<UIUser> => {
-  const { data } = await api.get<UserData>("/user")
-  return data.user
 }
 
 const getStreams = async (): Promise<StreamData> => {
@@ -47,11 +52,6 @@ const getGuestStreams = async (): Promise<StreamData> => {
   return { ...queriable, tickers }
 }
 
-const getPairs = async (): Promise<string[]> => {
-  const { data: pairs } = await api.get<string[]>("/pairs")
-  return pairs
-}
-
 const getWindowTicks = async (symbols: string[], window: string) => {
   const { data } = await api.get<Tickers>("/tickers/window", {
     params: {
@@ -63,9 +63,9 @@ const getWindowTicks = async (symbols: string[], window: string) => {
 }
 
 export {
+  getAssets,
   getGuestStreams,
   getGuestUser,
-  getPairs,
   getStreams,
   getUser,
   getWindowTicks,
