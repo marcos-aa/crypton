@@ -6,11 +6,12 @@ describe("User settings", () => {
     email: Cypress.env("MAIL_VERIFIED"),
     password: Cypress.env("MAIL_PASS"),
   }
-  const newPass = "NewPassword00"
 
   beforeEach(() => {
-    cy.login(creds.email, creds.password)
-    cy.setupDropdown()
+    if (Cypress.currentTest.title !== "I try to login with an old password") {
+      cy.login(creds.email, creds.password)
+      cy.setupDropdown()
+    }
   })
 
   it("I open and close the settings dropdown", () => {
@@ -73,9 +74,11 @@ describe("User settings", () => {
   })
 
   it("I change my password", () => {
+    creds.password = "NewPassword00"
+
     cy.openSettings()
     cy.getWithAttr("changePassword").click()
-    cy.getWithAttr("password").type(newPass)
+    cy.getWithAttr("password").type(creds.password)
     cy.intercept("PUT", "/user/password").as("updatePassword")
     cy.getWithAttr("submitForm").click()
     cy.wait("@updatePassword")
@@ -87,5 +90,20 @@ describe("User settings", () => {
       cy.getWithAttr("submitForm").click()
       cy.url().should("eq", Cypress.config().baseUrl + "/dashboard")
     })
+  })
+
+  it("I try to login with an old password", () => {
+    cy.login(creds.email, Cypress.env("MAIL_PASS"))
+    cy.contains("Invalid email or password")
+  })
+
+  it("I delete my account", () => {
+    cy.openSettings()
+    cy.getWithAttr("deleteAccount").click()
+    cy.getWithAttr("password").type(creds.password)
+    cy.intercept("DELETE", "/user").as("deleteUser")
+    cy.getWithAttr("submitForm").click()
+    cy.wait("@deleteUser")
+    cy.url().should("eq", Cypress.config().baseUrl + "/")
   })
 })

@@ -115,6 +115,7 @@ export default function UserSettings() {
             className={styles.deleteAction}
             title="Delete account"
             to="/dashboard/settings/delete"
+            data-cy="deleteAccount"
             state={{ verified }}
           >
             Delete account
