@@ -2,22 +2,18 @@ import { local } from "../../src/utils/helpers"
 import { parseEmail } from "../support/commands"
 
 describe("User settings", () => {
-  const newmail: string = Cypress.env("MAILSAC_MAIL").replace(
-    "@mailsac.com",
-    "+updated@mailsac.com"
-  )
+  const creds = {
+    email: Cypress.env("MAIL_VERIFIED"),
+    password: Cypress.env("MAIL_PASS"),
+  }
+  const newPass = "NewPassword00"
 
   beforeEach(() => {
-    cy.login(
-      Cypress.currentTest.title === "I change my password"
-        ? newmail
-        : Cypress.env("MAIL_VERIFIED"),
-      Cypress.env("MAIL_PASS")
-    )
+    cy.login(creds.email, creds.password)
+    cy.setupDropdown()
   })
 
   it("I open and close the settings dropdown", () => {
-    cy.setupDropdown()
     cy.getWithAttr("dropSettings").trigger("mouseover")
     cy.getWithAttr("openSettings").should("be.visible")
     cy.getWithAttr("exportCta").should("be.visible")
@@ -30,14 +26,12 @@ describe("User settings", () => {
   })
 
   it("I try to export local streams when there are none", () => {
-    cy.setupDropdown()
     cy.getWithAttr("dropSettings").trigger("mouseover")
     cy.getWithAttr("exportCta").click()
     cy.contains("No local streams found")
   })
 
   it("I log out", () => {
-    cy.setupDropdown()
     cy.getWithAttr("dropSettings").trigger("mouseover")
     cy.getWithAttr("logoutButton").click()
     cy.url()
@@ -58,11 +52,12 @@ describe("User settings", () => {
   })
 
   it("I change my email address", () => {
+    creds.email = creds.email.replace("@mailsac.com", "+updated@mailsac.com")
     cy.openSettings()
 
     cy.getWithAttr("changeEmail").click()
-    cy.getWithAttr("email").type(newmail)
-    cy.getWithAttr("password").type(Cypress.env("MAIL_PASS"))
+    cy.getWithAttr("email").type(creds.email)
+    cy.getWithAttr("password").type(creds.password)
     cy.intercept("PUT", "/user/email").as("updateEmail")
     cy.getWithAttr("submitForm").click()
     cy.wait("@updateEmail")
@@ -73,14 +68,14 @@ describe("User settings", () => {
       cy.getWithAttr("emailCode").type(code)
       cy.getWithAttr("submitForm").click()
       cy.openSettings()
-      cy.contains(newmail)
+      cy.contains(creds.email)
     })
   })
 
   it("I change my password", () => {
     cy.openSettings()
     cy.getWithAttr("changePassword").click()
-    cy.getWithAttr("password").type("NewPassword00")
+    cy.getWithAttr("password").type(newPass)
     cy.intercept("PUT", "/user/password").as("updatePassword")
     cy.getWithAttr("submitForm").click()
     cy.wait("@updatePassword")

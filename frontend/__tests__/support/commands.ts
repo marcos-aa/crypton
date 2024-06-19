@@ -53,8 +53,6 @@ Cypress.Commands.add("setupDropdown", () => {
 })
 
 Cypress.Commands.add("openSettings", () => {
-  cy.setupDropdown()
-  cy.setupDropdown()
   cy.getWithAttr("dropSettings").trigger("mouseover")
   cy.getWithAttr("openSettings").click()
 })
