@@ -25,14 +25,14 @@ export const homeLoader = async () => {
   const tickersPromise = api.get<Tickers>("/tickers/preview", {
     params: {
       symbols: [
-        "BTCBUSD",
-        "ETHBTC",
-        "BNBBTC",
-        "SOLETH",
         "BTCUSDT",
-        "ETHBUSD",
-        "BCHUSDT",
-        "SHIBUSDT",
+        "ETHUSDT",
+        "ADAUSDT",
+        "SOLUSDT",
+        "MATICUSDT",
+        "LTCUSDT",
+        "BNBUSDT",
+        "VETUSDT",,
       ],
     },
   })
@@ -64,7 +64,7 @@ export default function Home() {
       <main className={styles.content}>
         <section id={styles.cta}>
           <h1 id={styles.ctaTitle}>
-            Create custom streams from a list of over 2000 assets
+            Create custom streams from a list of over 500 assets
           </h1>
           <div id={styles.actions}>
             <button
@@ -94,31 +94,31 @@ export default function Home() {
                         className={`${styles.stream} ${streamStyles.streamList}`}
                       >
                         <SymbolTicks
-                          symbol="BTCBUSD"
-                          prices={tickers.BTCBUSD}
+                          symbol="BTCUSDT"
+                          prices={tickers.BTCUSDT}
                         />
-                        <SymbolTicks symbol="ETHBTC" prices={tickers.ETHBTC} />
-                        <SymbolTicks symbol="BNBBTC" prices={tickers.BNBBTC} />
-                        <SymbolTicks symbol="SOLETH" prices={tickers.SOLETH} />
+                        <SymbolTicks symbol="ETHUSDT" prices={tickers.ETHUSDT} />
+                        <SymbolTicks symbol="ADAUSDT" prices={tickers.ADAUSDT} />
+                        <SymbolTicks symbol="SOLUSDT" prices={tickers.SOLUSDT} />
                       </div>
                       <div
                         className={`${styles.stream} ${streamStyles.streamList}`}
                       >
                         <SymbolTicks
-                          symbol="BTCUSDT"
-                          prices={tickers.BTCUSDT}
+                          symbol="MATICUSDT"
+                          prices={tickers.MATICUSDT}
                         />
                         <SymbolTicks
-                          symbol="SHIBUSDT"
-                          prices={tickers.SHIBUSDT}
+                          symbol="LTCUSDT"
+                          prices={tickers.LTCUSDT}
                         />
                         <SymbolTicks
-                          symbol="ETHBUSD"
-                          prices={tickers.ETHBUSD}
+                          symbol="BNBUSDT"
+                          prices={tickers.BNBUSDT}
                         />
                         <SymbolTicks
-                          symbol="BCHUSDT"
-                          prices={tickers.BCHUSDT}
+                          symbol="VETUSDT"
+                          prices={tickers.VETUSDT}
                         />
                       </div>
                     </>
