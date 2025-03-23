@@ -3,7 +3,7 @@ import { saveHeader } from "../utils/datafetching"
 
 const baseURL =
   import.meta.env?.MODE === "production"
-    ? "https://server.crypton.icu"
+    ? "https://crypton-services.marcosandrade.dev"
     : "http://localhost:3000"
 const api = axios.create({
   baseURL,
